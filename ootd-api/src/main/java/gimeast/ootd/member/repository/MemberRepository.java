@@ -1,0 +1,17 @@
+package gimeast.ootd.member.repository;
+
+import gimeast.ootd.member.entity.MemberEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.Optional;
+
+public interface MemberRepository extends JpaRepository<MemberEntity, String> {
+    Optional<MemberEntity> findByEmail(String email);
+
+    Optional<MemberEntity> findByNickname(String nickname);
+
+    @Query("SELECT m FROM MemberEntity m LEFT JOIN FETCH m.roleSet WHERE m.email = :email")
+    Optional<MemberEntity> findByEmailWithRoles(@Param("email") String email);
+}

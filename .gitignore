@@ -1,0 +1,10 @@
+application-*.properties
+build/
+out/
+bin/
+.idea/
+*.iml
+*.log
+logs/
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
