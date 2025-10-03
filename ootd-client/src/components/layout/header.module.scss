@@ -22,11 +22,7 @@ header {
     }
 
     & .alim {
-        content: '';
-        background-image: url('../../assets/icons/alim_icon.svg');
         width: fluid-width(2rem, 4rem);
         height: fluid-width(2rem, 4rem);
-        background-repeat: no-repeat;
-        background-size: contain;
     }
 }

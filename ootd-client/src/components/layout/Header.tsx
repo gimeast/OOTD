@@ -1,10 +1,11 @@
 import styles from './header.module.scss';
+import AlimIcon from '../icons/AlimIcon.tsx';
 
 const Header = () => {
     return (
         <header>
             <h1 className={styles.logo}>OOTD</h1>
-            <button className={styles.alim}></button>
+            <AlimIcon className={styles.alim} />
         </header>
     );
 };
