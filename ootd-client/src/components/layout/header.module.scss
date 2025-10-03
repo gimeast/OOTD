@@ -1,0 +1,32 @@
+@font-face {
+    font-family: 'Pacifico';
+    src: url('../../assets/fonts/Pacifico/Pacifico-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap; /* 폰트 로딩 최적화 */
+}
+
+header {
+    height: fluid-width(5rem, 10rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid $gray-200;
+
+    padding: 0 1.5rem;
+
+    & .logo {
+        font-family: Pacifico, serif;
+        font-size: fluid-width(2rem, 4rem);
+        line-height: normal;
+    }
+
+    & .alim {
+        content: '';
+        background-image: url('../../assets/icons/alim_icon.svg');
+        width: fluid-width(2rem, 4rem);
+        height: fluid-width(2rem, 4rem);
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+}

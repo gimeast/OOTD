@@ -1,0 +1,3 @@
+@function fluid-width($min: 3.2rem, $max: 102.4rem, $min-vw: 320px, $max-vw: 1920px) {
+    @return clamp($min, $min + ($max - $min) * ((100vw - $min-vw) / ($max-vw - $min-vw)), $max);
+}
