@@ -43,10 +43,6 @@ public class Ootd extends BaseEntity {
 
     @Builder.Default
     @Column(nullable = false)
-    private Integer viewCount = 0;
-
-    @Builder.Default
-    @Column(nullable = false)
     private Integer likeCount = 0;
 
     @Builder.Default
@@ -68,10 +64,6 @@ public class Ootd extends BaseEntity {
 
     public void changeContent(String content) {
         this.content = content;
-    }
-
-    public void incrementViewCount() {
-        this.viewCount++;
     }
 
     public void incrementLikeCount() {
