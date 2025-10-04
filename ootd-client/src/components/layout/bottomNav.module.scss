@@ -19,6 +19,23 @@ nav {
         display: flex;
         justify-content: space-between;
         align-items: center;
+
+        a {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 0.5rem;
+
+            &.active::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+                height: 2px;
+                background-color: $black;
+            }
+        }
     }
 
     .homeIcon,

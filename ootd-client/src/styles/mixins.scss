@@ -1,3 +1,18 @@
-@function fluid-width($min: 3.2rem, $max: 102.4rem, $min-vw: 320px, $max-vw: 1920px) {
-    @return clamp($min, $min + ($max - $min) * ((100vw - $min-vw) / ($max-vw - $min-vw)), $max);
+@use 'sass:math';
+
+// rem 값을 px로 변환 (1rem = 10px 기준)
+@function strip-unit($value) {
+    @return math.div($value, $value * 0 + 1);
+}
+
+// 320px ~ 768px 범위에서 동작
+@function fluid-width($min, $max) {
+    $min-value: strip-unit($min); // 숫자만 추출 (예: 5rem → 5)
+    $max-value: strip-unit($max);
+    $min-px: $min-value * 10;
+    $max-px: $max-value * 10;
+
+    $slope: math.div($max-px - $min-px, 448); // (768 - 320 = 448)
+
+    @return clamp(#{$min}, calc(#{$min} + (100vw - 320px) * #{$slope}), #{$max});
 }

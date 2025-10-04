@@ -12,17 +12,22 @@ const BottomNav = () => {
     return (
         <nav>
             <div className={styles.nav_inner_box}>
-                <NavLink to='/'>{({ isActive }) => <HomeIcon className={isActive ? '' : styles.homeIcon} />}</NavLink>
-                <NavLink to='/search'>
+                <NavLink to='/' className={({ isActive }) => (isActive ? styles.active : '')}>
+                    {({ isActive }) => <HomeIcon className={isActive ? '' : styles.homeIcon} />}
+                </NavLink>
+                <NavLink to='/search' className={({ isActive }) => (isActive ? styles.active : '')}>
                     {({ isActive }) => <SearchIcon className={isActive ? '' : styles.searchIcon} />}
                 </NavLink>
-                <NavLink to='/ootd/add'>
+                <NavLink to='/ootd/add' className={({ isActive }) => (isActive ? styles.active : '')}>
                     {({ isActive }) => <OotdAddIcon className={isActive ? '' : styles.ootdAddIcon} />}
                 </NavLink>
-                <NavLink to='/likes'>
+                <NavLink to='/likes' className={({ isActive }) => (isActive ? styles.active : '')}>
                     {({ isActive }) => <LikeIcon className={isActive ? '' : styles.likeIcon} />}
                 </NavLink>
-                <NavLink to={isLoggedIn ? '/mypage' : '/login'}>
+                <NavLink
+                    to={isLoggedIn ? '/mypage' : '/login'}
+                    className={({ isActive }) => (isActive ? styles.active : '')}
+                >
                     {({ isActive }) => <UserIcon className={isActive ? '' : styles.userIcon} />}
                 </NavLink>
             </div>

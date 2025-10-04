@@ -15,23 +15,23 @@ const OotdAddIcon = ({ className, onClick }: { className: string; onClick?: () =
                 r='11'
                 fill='white'
                 stroke='currentColor'
-                stroke-width='2'
-                stroke-linecap='round'
-                stroke-linejoin='round'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
             />
             <path
                 d='M16.5 12H7.59046'
                 stroke='currentColor'
-                stroke-width='2'
-                stroke-linecap='round'
-                stroke-linejoin='round'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
             />
             <path
                 d='M12.0452 16.4548L12.0452 7.54529'
                 stroke='currentColor'
-                stroke-width='2'
-                stroke-linecap='round'
-                stroke-linejoin='round'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
             />
         </svg>
     );
