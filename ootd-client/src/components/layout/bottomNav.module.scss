@@ -1,8 +1,12 @@
 nav {
+    background: $white;
     width: 100%;
+    max-width: 76.8rem;
+    height: 5rem;
     position: fixed;
-    bottom: 1.5rem;
-    left: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
 
     display: flex;
     justify-content: center;
@@ -10,7 +14,6 @@ nav {
 
     & .nav_inner_box {
         width: 100%;
-        max-width: 76.7rem;
         padding: 0 fluid-width(2.5rem, 5rem);
 
         display: flex;

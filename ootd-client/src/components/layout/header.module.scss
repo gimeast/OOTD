@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'Pacifico';
-    src: url('../../assets/fonts/Pacifico/Pacifico-Regular.ttf') format('truetype');
+    src: url('../../assets/fonts/pacifico/Pacifico-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap; /* 폰트 로딩 최적화 */
@@ -17,21 +17,40 @@ header {
 
     & .header_inner_box {
         width: 100%;
-        max-width: 76.7rem;
 
         display: flex;
         justify-content: space-between;
         align-items: center;
+
+        & .logo {
+            font-family: Pacifico, serif;
+            font-size: fluid-width(2rem, 4rem);
+            line-height: normal;
+        }
+
+        & .alim {
+            width: fluid-width(2rem, 4rem);
+            height: fluid-width(2rem, 4rem);
+        }
     }
 
-    & .header_inner_box .logo {
-        font-family: Pacifico, serif;
-        font-size: fluid-width(2rem, 4rem);
-        line-height: normal;
-    }
+    & .page_box {
+        width: 100%;
+        position: relative;
 
-    & .header_inner_box .alim {
-        width: fluid-width(2rem, 4rem);
-        height: fluid-width(2rem, 4rem);
+        display: flex;
+        justify-content: center;
+
+        button {
+            position: absolute;
+            left: 0;
+        }
+
+        & .page_name {
+            font-size: 1.6rem;
+            font-style: normal;
+            font-weight: 700;
+            line-height: normal;
+        }
     }
 }
