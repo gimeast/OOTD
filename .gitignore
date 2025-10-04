@@ -15,7 +15,7 @@ node_modules/
 dist/
 build/
 .vite/
-.env
+.env*
 .idea/
 .DS_Store
 *.iml

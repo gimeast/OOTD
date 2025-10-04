@@ -108,5 +108,10 @@
                 text-decoration-line: underline;
             }
         }
+
+        & .msg {
+            font-size: 1.2rem;
+            color: red;
+        }
     }
 }
