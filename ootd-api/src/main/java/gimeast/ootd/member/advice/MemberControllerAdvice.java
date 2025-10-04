@@ -17,10 +17,11 @@ public class MemberControllerAdvice {
 
     @ExceptionHandler(MemberTaskException.class)
     public ResponseEntity<?> handleMemberTaskException(MemberTaskException exception) {
+        log.error("MemberTaskException: {} (code: {})", exception.getMsg(), exception.getCode());
         Map<String, Object> errors = new HashMap<>();
         errors.put("message", exception.getMsg());
         errors.put("code", exception.getCode());
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errors, HttpStatus.valueOf(exception.getCode()));
     }
 
 //    ACCESS_DENIED("ACCESS_DENIED", 403)
@@ -30,5 +31,15 @@ public class MemberControllerAdvice {
         errors.put("message", "권한이 없습니다.");
         errors.put("code", 401);
         return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleException(Exception exception) {
+        log.error("Unhandled exception: ", exception);
+        Map<String, Object> errors = new HashMap<>();
+        errors.put("message", "서버 오류가 발생했습니다.");
+        errors.put("error", exception.getMessage());
+        errors.put("code", 500);
+        return new ResponseEntity<>(errors, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
