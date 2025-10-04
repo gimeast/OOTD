@@ -8,20 +8,29 @@
 
 header {
     height: fluid-width(5rem, 10rem);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     border-bottom: 1px solid $gray-200;
-
     padding: 0 1.5rem;
 
-    & .logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & .header_inner_box {
+        width: 100%;
+        max-width: 76.7rem;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    & .header_inner_box .logo {
         font-family: Pacifico, serif;
         font-size: fluid-width(2rem, 4rem);
         line-height: normal;
     }
 
-    & .alim {
+    & .header_inner_box .alim {
         width: fluid-width(2rem, 4rem);
         height: fluid-width(2rem, 4rem);
     }
