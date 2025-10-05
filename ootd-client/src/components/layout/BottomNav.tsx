@@ -5,9 +5,10 @@ import SearchIcon from '../icons/SearchIcon.tsx';
 import LikeIcon from '../icons/HeartIcon.tsx';
 import UserIcon from '../icons/UserIcon.tsx';
 import { NavLink } from 'react-router-dom';
+import useUserStore from '../../stores/useUserStore';
 
 const BottomNav = () => {
-    const isLoggedIn = false; //todo: 실제 로그인 됐는지 체크하는 로직으로 수정 필요
+    const isLoggedIn = useUserStore(state => state.isLoggedIn);
 
     return (
         <nav>

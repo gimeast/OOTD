@@ -4,10 +4,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useActionState, useEffect, useRef, useState } from 'react';
 import { apiClient, API_ENDPOINTS } from '../api';
 import { validateEmail, validatePassword } from '../utils/validation';
+import useUserStore, { type User } from '../stores/useUserStore';
 
 type LoginState = {
     success: boolean;
     message: string;
+    user?: User;
 };
 
 const Login = () => {
@@ -16,6 +18,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const msgRef = useRef<HTMLSpanElement>(null);
     const navigate = useNavigate();
+    const login = useUserStore(state => state.login);
 
     const action = async (_previousState: LoginState, formData: FormData): Promise<LoginState> => {
         const email = formData.get('email') as string;
@@ -38,7 +41,7 @@ const Login = () => {
         try {
             const encodedPassword = btoa(password as string);
 
-            await apiClient(API_ENDPOINTS.AUTH.LOGIN, {
+            const result = await apiClient<{ user: User }>(API_ENDPOINTS.AUTH.LOGIN, {
                 method: 'POST',
                 body: {
                     email,
@@ -49,6 +52,7 @@ const Login = () => {
             return {
                 success: true,
                 message: '로그인 성공!',
+                user: result.user,
             };
         } catch (error) {
             return {
@@ -63,17 +67,16 @@ const Login = () => {
         message: '',
     });
 
-    // 이메일과 비밀번호 실시간 검증
     useEffect(() => {
         setIsActive(validateEmail(email) && validatePassword(password));
     }, [email, password]);
 
-    // 로그인 성공 시 홈으로 이동
     useEffect(() => {
-        if (state.success) {
+        if (state.success && state.user) {
+            login(state.user);
             navigate('/', { replace: true });
         }
-    }, [state.success, navigate]);
+    }, [state.success, state.user, navigate, login]);
 
     return (
         <div className={styles.login}>
