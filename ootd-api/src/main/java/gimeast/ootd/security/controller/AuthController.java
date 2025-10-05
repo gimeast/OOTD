@@ -42,7 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> makeToken(@RequestBody MemberDTO memberDTO, HttpServletResponse response) {
+    public ResponseEntity<Map<String, Object>> makeToken(@RequestBody MemberDTO memberDTO, HttpServletResponse response) {
         log.info("make token..........");
 
         MemberDTO memberDTOResult = memberService.read(memberDTO.getEmail(), memberDTO.getMpw());
@@ -51,7 +51,7 @@ public class AuthController {
         Map<String, String> tokenMap = refreshTokenService.makeTokenMap(memberDTOResult);
         setTokenCookies(response, tokenMap);
 
-        return ResponseEntity.ok(Map.of("message", "Login successful"));
+        return ResponseEntity.ok(Map.of("message", "Login successful", "user",memberDTOResult.getDataMap()));
     }
 
     @PostMapping("/token/refresh")
