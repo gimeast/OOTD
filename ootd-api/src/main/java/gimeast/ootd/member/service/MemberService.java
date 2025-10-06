@@ -88,4 +88,8 @@ public class MemberService {
         }
     }
 
+    public boolean isEmailAvailable(String email) {
+        Optional<MemberEntity> byEmail = memberRepository.findByEmail(email);
+        return byEmail.isEmpty();
+    }
 }
