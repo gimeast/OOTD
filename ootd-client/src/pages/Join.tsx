@@ -1,5 +1,5 @@
 import { useOutletContext } from 'react-router-dom';
-import { useActionState, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { LayoutContextType } from '../types/context.ts';
 import styles from './join.module.scss';
 import AuthLogoSection from '../components/common/auth/AuthLogoSection.tsx';
@@ -8,29 +8,28 @@ import AuthButton from '../components/common/auth/AuthButton.tsx';
 import useDebounce from '../hooks/useDebounce';
 import { API_ENDPOINTS, apiClient } from '../api';
 
-type JoinState = {
-    success: boolean;
-    message: string;
-};
-
 const Join = () => {
     const { setPageTitle } = useOutletContext<LayoutContextType>();
+
     const [username, setUsername] = useState('');
+
     const [nickname, setNickname] = useState('');
+    const [nicknameCheckMessage, setNicknameCheckMessage] = useState('');
+    const [isNicknameAvailable, setIsNicknameAvailable] = useState<boolean | null>(null);
+
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [passwordConfirm, setPasswordConfirm] = useState('');
-    const [agree, setAgree] = useState(false);
     const [emailCheckMessage, setEmailCheckMessage] = useState('');
     const [isEmailAvailable, setIsEmailAvailable] = useState<boolean | null>(null);
+
+    const [password, setPassword] = useState('');
+    const [passwordConfirm, setPasswordConfirm] = useState('');
+
+    const [isAgree, setIsAgree] = useState(false);
+
+    const [isActive, setIsActive] = useState(false);
+
+    const debouncedNickname = useDebounce(nickname, 800);
     const debouncedEmail = useDebounce(email, 800);
-
-    const action = async (_previousState: JoinState, formData: FormData): Promise<JoinState> => {};
-
-    const [state, formAction, isPending] = useActionState<JoinState, FormData>(action, {
-        success: false,
-        message: '',
-    });
 
     const handleTermsClick = () => {
         // TODO: 이용약관 모달 열기
@@ -38,6 +37,22 @@ const Join = () => {
 
     const handlePrivacyClick = () => {
         // TODO: 개인정보처리방침 모달 열기
+    };
+
+    const checkNicknameDuplicate = async (nickname: string): Promise<boolean> => {
+        try {
+            const result = await apiClient<{ available: boolean }>(`${API_ENDPOINTS.AUTH.CHECK_NICKNAME}`, {
+                method: 'POST',
+                body: {
+                    nickname,
+                },
+            });
+
+            return result.available;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
     };
 
     const checkEmailDuplicate = async (email: string): Promise<boolean> => {
@@ -59,6 +74,23 @@ const Join = () => {
     useEffect(() => {
         setPageTitle('회원가입');
     }, [setPageTitle]);
+
+    useEffect(() => {
+        if (debouncedNickname) {
+            checkNicknameDuplicate(debouncedNickname).then(available => {
+                if (available) {
+                    setNicknameCheckMessage('✓ 사용 가능한 닉네임입니다');
+                    setIsNicknameAvailable(true);
+                } else {
+                    setNicknameCheckMessage('✗ 이미 사용 중인 닉네임입니다');
+                    setIsNicknameAvailable(false);
+                }
+            });
+        } else if (debouncedNickname === '') {
+            setNicknameCheckMessage('');
+            setIsNicknameAvailable(null);
+        }
+    }, [debouncedNickname]);
 
     useEffect(() => {
         if (debouncedEmail && debouncedEmail.includes('@')) {
@@ -92,15 +124,23 @@ const Join = () => {
                         value={username}
                         onChange={e => setUsername(e.target.value)}
                     />
-                    <AuthInput
-                        type='text'
-                        id='nickname'
-                        name='nickname'
-                        label='닉네임'
-                        placeholder='닉네임을 입력하세요'
-                        value={nickname}
-                        onChange={e => setNickname(e.target.value)}
-                    />
+
+                    <div>
+                        <AuthInput
+                            type='text'
+                            id='nickname'
+                            name='nickname'
+                            label='닉네임'
+                            placeholder='닉네임을 입력하세요'
+                            value={nickname}
+                            onChange={e => setNickname(e.target.value)}
+                        />
+                        {nicknameCheckMessage && (
+                            <p className={`${styles.msg} ${isNicknameAvailable ? styles.success : styles.fail}`}>
+                                {nicknameCheckMessage}
+                            </p>
+                        )}
+                    </div>
                     <div>
                         <AuthInput
                             type='email'
@@ -141,8 +181,8 @@ const Join = () => {
                             type='checkbox'
                             id='agree'
                             name='agree'
-                            checked={agree}
-                            onChange={e => setAgree(e.target.checked)}
+                            checked={isAgree}
+                            onChange={e => setIsAgree(e.target.checked)}
                         />
                         <label htmlFor='agree'>
                             <button type='button' onClick={handleTermsClick} className={styles.agree}>
@@ -156,7 +196,7 @@ const Join = () => {
                         </label>
                     </div>
 
-                    <AuthButton type='submit' disabled={isPending}>
+                    <AuthButton type='submit' isActive={isActive}>
                         회원가입
                     </AuthButton>
                 </form>

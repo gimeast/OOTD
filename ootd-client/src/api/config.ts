@@ -4,5 +4,6 @@ export const API_ENDPOINTS = {
     AUTH: {
         LOGIN: '/api/v1/auth/login',
         CHECK_EMAIL: '/api/v1/auth/join/check/email',
+        CHECK_NICKNAME: '/api/v1/auth/join/check/nickname',
     },
 } as const;
