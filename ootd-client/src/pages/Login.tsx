@@ -1,10 +1,11 @@
 import styles from './login.module.scss';
 import LogoIcon from '../components/icons/LogoIcon.tsx';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import { useActionState, useEffect, useRef, useState } from 'react';
 import { apiClient, API_ENDPOINTS } from '../api';
 import { validateEmail, validatePassword } from '../utils/validation';
 import useUserStore, { type User } from '../stores/useUserStore';
+import type { LayoutContextType } from '../types/context';
 
 type LoginState = {
     success: boolean;
@@ -19,6 +20,7 @@ const Login = () => {
     const msgRef = useRef<HTMLSpanElement>(null);
     const navigate = useNavigate();
     const login = useUserStore(state => state.login);
+    const { setPageTitle } = useOutletContext<LayoutContextType>();
 
     const action = async (_previousState: LoginState, formData: FormData): Promise<LoginState> => {
         const email = formData.get('email') as string;
@@ -66,6 +68,10 @@ const Login = () => {
         success: false,
         message: '',
     });
+
+    useEffect(() => {
+        setPageTitle('로그인');
+    }, [setPageTitle]);
 
     useEffect(() => {
         setIsActive(validateEmail(email) && validatePassword(password));
