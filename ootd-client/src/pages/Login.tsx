@@ -1,11 +1,13 @@
 import styles from './login.module.scss';
-import LogoIcon from '../components/icons/LogoIcon.tsx';
 import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import { useActionState, useEffect, useRef, useState } from 'react';
 import { apiClient, API_ENDPOINTS } from '../api';
 import { validateEmail, validatePassword } from '../utils/validation';
 import useUserStore, { type User } from '../stores/useUserStore';
 import type { LayoutContextType } from '../types/context';
+import AuthLogoSection from '../components/common/auth/AuthLogoSection.tsx';
+import AuthInput from '../components/common/auth/AuthInput.tsx';
+import AuthButton from '../components/common/auth/AuthButton.tsx';
 
 type LoginState = {
     success: boolean;
@@ -86,34 +88,26 @@ const Login = () => {
 
     return (
         <div className={styles.login}>
-            <section className={styles.logo_section}>
-                <h1>
-                    <LogoIcon className={styles.logo} />
-                </h1>
-                <h2>OOTD</h2>
-                <p>오늘의 스타일을 공유해보세요</p>
-            </section>
+            <AuthLogoSection h2='OOTD' p='오늘의 스타일을 공유해보세요' />
 
             <section className={styles.login_form_section}>
                 <form action={formAction}>
-                    <div className={styles.login_form_group}>
-                        <label htmlFor='email'>이메일</label>
-                        <input
-                            type='email'
-                            id='email'
-                            name='email'
-                            placeholder='이메일을 입력하세요'
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                        />
-                    </div>
+                    <AuthInput
+                        type='email'
+                        id='email'
+                        name='email'
+                        label='이메일'
+                        placeholder='이메일을 입력하세요'
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                    />
 
-                    <div className={styles.login_form_group}>
-                        <label htmlFor='password'>비밀번호 (영문, 숫자, 특수문자 포함 8자 이상)</label>
-                        <input
+                    <div className={styles.password_group}>
+                        <AuthInput
                             type='password'
                             id='password'
                             name='password'
+                            label='비밀번호 (영문, 숫자, 특수문자 포함 8자 이상)'
                             placeholder='비밀번호를 입력하세요'
                             value={password}
                             onChange={e => setPassword(e.target.value)}
@@ -130,9 +124,9 @@ const Login = () => {
                         <Link to='/password-find'>비밀번호를 잊으셨나요?</Link>
                     </div>
 
-                    <button type='submit' className={isActive ? styles.login_btn_active : ''} disabled={isPending}>
+                    <AuthButton type='submit' disabled={isPending} isActive={isActive}>
                         로그인
-                    </button>
+                    </AuthButton>
                 </form>
                 <p className={styles.login_join_link}>
                     계정이 없으신가요? <Link to='/join'>회원가입</Link>
