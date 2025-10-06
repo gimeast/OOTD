@@ -47,7 +47,7 @@ const Login = () => {
                 method: 'POST',
                 body: {
                     email,
-                    mpw: encodedPassword,
+                    password: encodedPassword,
                 },
             });
 
