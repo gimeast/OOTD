@@ -47,6 +47,12 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("available", isAvailable));
     }
 
+    @PostMapping("/join/check/nickname")
+    public ResponseEntity<Map<String, Boolean>> checkNicknameDuplicate(@RequestBody MemberDTO memberDTO) {
+        boolean isAvailable = memberService.isNicknameAvailable(memberDTO.getNickname());
+        return ResponseEntity.ok(Map.of("available", isAvailable));
+    }
+
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> makeToken(@RequestBody MemberDTO memberDTO, HttpServletResponse response) {
         log.info("make token..........");

@@ -92,4 +92,9 @@ public class MemberService {
         Optional<MemberEntity> byEmail = memberRepository.findByEmail(email);
         return byEmail.isEmpty();
     }
+
+    public boolean isNicknameAvailable(String nickname) {
+        Optional<MemberEntity> byNickname = memberRepository.findByNickname(nickname);
+        return byNickname.isEmpty();
+    }
 }
