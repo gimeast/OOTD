@@ -22,12 +22,12 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public MemberDTO read(String email, String mpw) {
+    public MemberDTO read(String email, String password) {
         Optional<MemberEntity> result = memberRepository.findByEmail(email);
         MemberEntity memberEntity = result.orElseThrow(MemberExceptions.BAD_CREDENTIALS::get);
 
-        String decodedPassword = decodeBase64Password(mpw);
-        if (!passwordEncoder.matches(decodedPassword, memberEntity.getMpw())) {
+        String decodedPassword = decodeBase64Password(password);
+        if (!passwordEncoder.matches(decodedPassword, memberEntity.getPassword())) {
             throw MemberExceptions.BAD_CREDENTIALS.get();
         }
         return new MemberDTO(memberEntity);
@@ -44,7 +44,7 @@ public class MemberService {
         if (memberDTO.getEmail() == null || memberDTO.getEmail().trim().isEmpty()) {
             throw MemberExceptions.INVALID_EMAIL.get();
         }
-        if (memberDTO.getMpw() == null || memberDTO.getMpw().trim().isEmpty()) {
+        if (memberDTO.getPassword() == null || memberDTO.getPassword().trim().isEmpty()) {
             throw MemberExceptions.INVALID_PASSWORD.get();
         }
         if (memberDTO.getNickname() == null || memberDTO.getNickname().trim().isEmpty()) {
@@ -62,10 +62,10 @@ public class MemberService {
         Set<MemberRole> roleSet = new HashSet<>();
         roleSet.add(MemberRole.USER);
 
-        String decodedPassword = decodeBase64Password(memberDTO.getMpw());
+        String decodedPassword = decodeBase64Password(memberDTO.getPassword());
 
         MemberEntity newMember = MemberEntity.builder()
-                .mpw(passwordEncoder.encode(decodedPassword))
+                .password(passwordEncoder.encode(decodedPassword))
                 .name(memberDTO.getName())
                 .nickname(memberDTO.getNickname())
                 .email(memberDTO.getEmail())

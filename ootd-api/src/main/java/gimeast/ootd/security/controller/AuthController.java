@@ -45,7 +45,7 @@ public class AuthController {
     public ResponseEntity<Map<String, Object>> makeToken(@RequestBody MemberDTO memberDTO, HttpServletResponse response) {
         log.info("make token..........");
 
-        MemberDTO memberDTOResult = memberService.read(memberDTO.getEmail(), memberDTO.getMpw());
+        MemberDTO memberDTOResult = memberService.read(memberDTO.getEmail(), memberDTO.getPassword());
         log.info("memberDTOResult: {}", memberDTOResult);
 
         Map<String, String> tokenMap = refreshTokenService.makeTokenMap(memberDTOResult);

@@ -20,7 +20,7 @@ import java.util.Set;
 @ToString
 public class MemberDTO {
     private Long idx;
-    private String mpw;
+    private String password;
     private String name;
     private String nickname;
     private String email;
@@ -39,7 +39,7 @@ public class MemberDTO {
 
     public MemberDTO(MemberEntity memberEntity) {
         this.idx = memberEntity.getIdx();
-        this.mpw = memberEntity.getMpw();
+        this.password = memberEntity.getPassword();
         this.name = memberEntity.getName();
         this.nickname = memberEntity.getNickname();
         this.email = memberEntity.getEmail();

@@ -34,7 +34,7 @@ public class MemberEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
-    private String mpw;
+    private String password;
 
     private String name;
 
@@ -61,7 +61,7 @@ public class MemberEntity extends BaseEntity {
     private Set<MemberRole> roleSet = new HashSet<>();
 
     public void changePassword(String password) {
-        this.mpw = password;
+        this.password = password;
     }
 
     public void changeName(String name) {
