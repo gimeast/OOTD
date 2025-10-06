@@ -50,6 +50,9 @@ public class MemberService {
         if (memberDTO.getNickname() == null || memberDTO.getNickname().trim().isEmpty()) {
             throw MemberExceptions.INVALID_NICKNAME.get();
         }
+        if (memberDTO.getAllAgreed() == null || !memberDTO.getAllAgreed()) {
+            throw MemberExceptions.ALL_TERMS_NOT_AGREED.get();
+        }
 
         // 중복 검증
         if (memberRepository.findByEmail(memberDTO.getEmail()).isPresent()) {
@@ -69,6 +72,7 @@ public class MemberService {
                 .name(memberDTO.getName())
                 .nickname(memberDTO.getNickname())
                 .email(memberDTO.getEmail())
+                .allAgreed(memberDTO.getAllAgreed())
                 .roleSet(roleSet)
                 .build();
 

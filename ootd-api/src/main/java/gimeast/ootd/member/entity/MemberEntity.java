@@ -51,6 +51,10 @@ public class MemberEntity extends BaseEntity {
     @Builder.Default
     private MemberStatus status = MemberStatus.ACTIVE;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean allAgreed = false;
+
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
             name = "member_roles",

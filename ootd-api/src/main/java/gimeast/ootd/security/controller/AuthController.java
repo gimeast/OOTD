@@ -36,9 +36,9 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/join")
-    public ResponseEntity<Long> join(@RequestBody MemberDTO memberDTO) {
-        Long idx = memberService.join(memberDTO);
-        return ResponseEntity.ok(idx);
+    public ResponseEntity<Map<String, Object>> join(@RequestBody MemberDTO memberDTO) {
+        memberService.join(memberDTO);
+        return ResponseEntity.ok(Map.of("message", "Join successful", "isSuccess",true));
     }
 
     @PostMapping("/join/check/email")

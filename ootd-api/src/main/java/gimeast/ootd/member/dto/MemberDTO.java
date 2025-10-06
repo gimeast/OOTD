@@ -24,6 +24,7 @@ public class MemberDTO {
     private String name;
     private String nickname;
     private String email;
+    private Boolean allAgreed;
     private LocalDateTime regDate;
     private LocalDateTime modDate;
     private Set<MemberRole> roleSet;
@@ -43,6 +44,7 @@ public class MemberDTO {
         this.name = memberEntity.getName();
         this.nickname = memberEntity.getNickname();
         this.email = memberEntity.getEmail();
+        this.allAgreed = memberEntity.getAllAgreed();
         this.regDate = memberEntity.getRegDate();
         this.modDate = memberEntity.getModDate();
         this.roleSet = memberEntity.getRoleSet();
