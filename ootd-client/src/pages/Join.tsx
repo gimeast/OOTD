@@ -1,10 +1,17 @@
 import { useOutletContext } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import type { LayoutContextType } from '../types/context.ts';
 import styles from './join.module.scss';
 import AuthLogoSection from '../components/common/auth/AuthLogoSection.tsx';
 import AuthInput from '../components/common/auth/AuthInput.tsx';
 import AuthButton from '../components/common/auth/AuthButton.tsx';
+import useDebounce from '../hooks/useDebounce';
+import { API_ENDPOINTS, apiClient } from '../api';
+
+type JoinState = {
+    success: boolean;
+    message: string;
+};
 
 const Join = () => {
     const { setPageTitle } = useOutletContext<LayoutContextType>();
@@ -14,6 +21,16 @@ const Join = () => {
     const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
     const [agree, setAgree] = useState(false);
+    const [emailCheckMessage, setEmailCheckMessage] = useState('');
+    const [isEmailAvailable, setIsEmailAvailable] = useState<boolean | null>(null);
+    const debouncedEmail = useDebounce(email, 800);
+
+    const action = async (_previousState: JoinState, formData: FormData): Promise<JoinState> => {};
+
+    const [state, formAction, isPending] = useActionState<JoinState, FormData>(action, {
+        success: false,
+        message: '',
+    });
 
     const handleTermsClick = () => {
         // TODO: 이용약관 모달 열기
@@ -23,9 +40,42 @@ const Join = () => {
         // TODO: 개인정보처리방침 모달 열기
     };
 
+    const checkEmailDuplicate = async (email: string): Promise<boolean> => {
+        try {
+            const result = await apiClient<{ available: boolean }>(`${API_ENDPOINTS.AUTH.CHECK_EMAIL}`, {
+                method: 'POST',
+                body: {
+                    email,
+                },
+            });
+
+            return result.available;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    };
+
     useEffect(() => {
         setPageTitle('회원가입');
     }, [setPageTitle]);
+
+    useEffect(() => {
+        if (debouncedEmail && debouncedEmail.includes('@')) {
+            checkEmailDuplicate(debouncedEmail).then(available => {
+                if (available) {
+                    setEmailCheckMessage('✓ 사용 가능한 이메일입니다');
+                    setIsEmailAvailable(true);
+                } else {
+                    setEmailCheckMessage('✗ 이미 사용 중인 이메일입니다');
+                    setIsEmailAvailable(false);
+                }
+            });
+        } else if (debouncedEmail === '') {
+            setEmailCheckMessage('');
+            setIsEmailAvailable(null);
+        }
+    }, [debouncedEmail]);
 
     return (
         <div className={styles.join}>
@@ -51,15 +101,22 @@ const Join = () => {
                         value={nickname}
                         onChange={e => setNickname(e.target.value)}
                     />
-                    <AuthInput
-                        type='email'
-                        id='email'
-                        name='email'
-                        label='이메일'
-                        placeholder='이메일을 입력하세요'
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
-                    />
+                    <div>
+                        <AuthInput
+                            type='email'
+                            id='email'
+                            name='email'
+                            label='이메일'
+                            placeholder='이메일을 입력하세요'
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                        />
+                        {emailCheckMessage && (
+                            <p className={`${styles.msg} ${isEmailAvailable ? styles.success : styles.fail}`}>
+                                {emailCheckMessage}
+                            </p>
+                        )}
+                    </div>
                     <AuthInput
                         type='password'
                         id='password'
@@ -99,7 +156,9 @@ const Join = () => {
                         </label>
                     </div>
 
-                    <AuthButton type='submit'>회원가입</AuthButton>
+                    <AuthButton type='submit' disabled={isPending}>
+                        회원가입
+                    </AuthButton>
                 </form>
             </section>
         </div>

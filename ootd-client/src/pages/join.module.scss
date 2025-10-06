@@ -64,4 +64,15 @@
     & form button[type='submit'] {
         margin-top: 2.5rem;
     }
+
+    & .msg {
+        margin-top: 0.5rem;
+        font-size: 1.2rem;
+    }
+    & .msg.success {
+        color: green;
+    }
+    & .msg.fail {
+        color: red;
+    }
 }
