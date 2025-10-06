@@ -6,6 +6,7 @@ import Likes from './pages/Likes.tsx';
 import Mypage from './pages/Mypage.tsx';
 import Login from './pages/Login.tsx';
 import Home from './pages/Home.tsx';
+import Join from './pages/Join.tsx';
 
 function App() {
     return (
@@ -16,8 +17,9 @@ function App() {
                     <Route path='search' element={<Search />} />
                     <Route path='ootd/add' element={<OotdAdd />} />
                     <Route path='likes' element={<Likes />} />
-                    <Route path='mypage' element={<Mypage />} />
                     <Route path='login' element={<Login />} />
+                    <Route path='mypage' element={<Mypage />} />
+                    <Route path='join' element={<Join />} />
                 </Route>
             </Routes>
         </BrowserRouter>
