@@ -2,12 +2,13 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import type { LayoutContextType } from '../types/context.ts';
 import styles from './join.module.scss';
-import AuthLogoSection from '../components/common/auth/AuthLogoSection.tsx';
+import LogoSection from '../components/common/LogoSection.tsx';
 import AuthInput from '../components/common/auth/AuthInput.tsx';
-import AuthButton from '../components/common/auth/AuthButton.tsx';
+import BasicButton from '../components/common/BasicButton.tsx';
 import useDebounce from '../hooks/useDebounce';
 import { API_ENDPOINTS, apiClient } from '../api';
 import { validateEmail, validatePassword } from '../utils/validation.ts';
+import BasicModal from '../components/common/BasicModal.tsx';
 
 type JoinResponse = {
     isSuccess: boolean;
@@ -39,6 +40,7 @@ const Join = () => {
     const [isAgree, setIsAgree] = useState(false);
     const [isActive, setIsActive] = useState(false);
     const [isPending, setIsPending] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
 
     const handleTermsClick = () => {
@@ -99,7 +101,7 @@ const Join = () => {
             });
 
             if (result.isSuccess) {
-                navigate('/', { replace: true });
+                setIsModalOpen(true);
             }
         } catch (error) {
             console.error(error);
@@ -176,7 +178,9 @@ const Join = () => {
 
     return (
         <div className={styles.join}>
-            <AuthLogoSection h2='OOTD 시작하기' p='나만의 스타일을 세상에 공유해보세요' />
+            <div className={styles.logo_section}>
+                <LogoSection h2='OOTD 시작하기' p='나만의 스타일을 세상에 공유해보세요' />
+            </div>
 
             <section className={styles.join_form_section}>
                 <form onSubmit={handleJoin}>
@@ -268,11 +272,23 @@ const Join = () => {
                         </label>
                     </div>
 
-                    <AuthButton type='submit' disabled={isPending || !isActive} isActive={isActive}>
+                    <BasicButton type='submit' disabled={isPending || !isActive} isActive={isActive}>
                         회원가입
-                    </AuthButton>
+                    </BasicButton>
                 </form>
             </section>
+
+            <BasicModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                title='환영합니다!'
+                subTitle='OOTD 회원가입이 완료되었습니다!'
+                confirmText='시작하기'
+                onConfirm={() => {
+                    setIsModalOpen(false);
+                    navigate('/login');
+                }}
+            />
         </div>
     );
 };

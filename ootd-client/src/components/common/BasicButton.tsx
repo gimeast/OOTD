@@ -1,4 +1,4 @@
-import styles from './authButton.module.scss';
+import styles from './basicButton.module.scss';
 
 type AuthButtonProps = {
     type?: 'submit' | 'button';
@@ -8,17 +8,17 @@ type AuthButtonProps = {
     children: React.ReactNode;
 };
 
-const AuthButton = ({ type = 'submit', onClick, disabled, isActive, children }: AuthButtonProps) => {
+const BasicButton = ({ type = 'submit', onClick, disabled, isActive, children }: AuthButtonProps) => {
     return (
         <button
             type={type}
             onClick={onClick}
             disabled={disabled}
-            className={isActive ? styles.active : ''}
+            className={`${styles.basic_btn} ${isActive ? styles.active : ''}`}
         >
             {children}
         </button>
     );
 };
 
-export default AuthButton;
+export default BasicButton;

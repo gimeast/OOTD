@@ -5,9 +5,9 @@ import { apiClient, API_ENDPOINTS } from '../api';
 import { validateEmail, validatePassword } from '../utils/validation';
 import useUserStore, { type User } from '../stores/useUserStore';
 import type { LayoutContextType } from '../types/context';
-import AuthLogoSection from '../components/common/auth/AuthLogoSection.tsx';
+import LogoSection from '../components/common/LogoSection.tsx';
 import AuthInput from '../components/common/auth/AuthInput.tsx';
-import AuthButton from '../components/common/auth/AuthButton.tsx';
+import BasicButton from '../components/common/BasicButton.tsx';
 
 type LoginState = {
     success: boolean;
@@ -88,7 +88,7 @@ const Login = () => {
 
     return (
         <div className={styles.login}>
-            <AuthLogoSection h2='OOTD' p='오늘의 스타일을 공유해보세요' />
+            <LogoSection h2='OOTD' p='오늘의 스타일을 공유해보세요' />
 
             <section className={styles.login_form_section}>
                 <form action={formAction}>
@@ -124,9 +124,9 @@ const Login = () => {
                         <Link to='/password-find'>비밀번호를 잊으셨나요?</Link>
                     </div>
 
-                    <AuthButton type='submit' disabled={isPending} isActive={isActive}>
+                    <BasicButton type='submit' disabled={isPending} isActive={isActive}>
                         로그인
-                    </AuthButton>
+                    </BasicButton>
                 </form>
                 <p className={styles.login_join_link}>
                     계정이 없으신가요? <Link to='/join'>회원가입</Link>

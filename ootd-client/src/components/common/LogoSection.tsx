@@ -1,7 +1,7 @@
-import styles from './authLogoSection.module.scss';
-import LogoIcon from '../../icons/LogoIcon.tsx';
+import styles from './logoSection.module.scss';
+import LogoIcon from '../icons/LogoIcon.tsx';
 
-const AuthLogoSection = ({ h2, p }: { h2: string; p: string }) => {
+const LogoSection = ({ h2, p }: { h2: string; p: string }) => {
     return (
         <section className={styles.logo_section}>
             <h1>
@@ -13,4 +13,4 @@ const AuthLogoSection = ({ h2, p }: { h2: string; p: string }) => {
     );
 };
 
-export default AuthLogoSection;
+export default LogoSection;
