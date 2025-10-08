@@ -3,6 +3,7 @@ export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export const API_ENDPOINTS = {
     AUTH: {
         LOGIN: '/api/v1/auth/login',
+        REFRESH_TOKEN: '/api/v1/auth/token/refresh',
         JOIN: '/api/v1/auth/join',
         CHECK_EMAIL: '/api/v1/auth/join/check/email',
         CHECK_NICKNAME: '/api/v1/auth/join/check/nickname',
@@ -10,5 +11,6 @@ export const API_ENDPOINTS = {
     OOTD: {
         CREATE: '/api/v1/ootd',
         LIST: '/api/v1/ootd',
+        IMAGE: { UPLOAD: '/api/v1/upload/images' },
     },
 } as const;

@@ -5,26 +5,23 @@ import ImageBox from '../components/common/ImageBox.tsx';
 import styles from './ootdAdd.module.scss';
 import BasicButton from '../components/common/BasicButton.tsx';
 import DeleteIcon from '../components/icons/DeleteIcon.tsx';
+import { API_ENDPOINTS, apiClient } from '../api';
 
 type Product = { productName: string; productLink: string };
 
 const OotdAdd = () => {
     const { setPageTitle } = useOutletContext<LayoutContextType>();
 
-    const [images, setImages] = useState<string[]>([]);
+    const [imageFiles, setImageFiles] = useState<File[]>([]);
     const [products, setProducts] = useState<Product[]>([]);
     const [isActive, setIsActive] = useState<boolean>(false);
 
     const handleFileSelect = (file: File) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setImages(prev => [...prev, reader.result as string]);
-        };
-        reader.readAsDataURL(file);
+        setImageFiles(prev => [...prev, file]);
     };
 
     const handleDeleteImage = (index: number) => {
-        setImages(prev => prev.filter((_, i) => i !== index));
+        setImageFiles(prev => prev.filter((_, i) => i !== index));
     };
 
     const handleProductAdd = () => {
@@ -42,8 +39,26 @@ const OotdAdd = () => {
         setProducts(prev => prev.filter((_, i) => i !== index));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // 1. 이미지 업로드
+        const imageFormData = new FormData();
+        imageFiles.forEach(file => {
+            imageFormData.append('images', file);
+        });
+
+        try {
+            const imageResult = await apiClient(API_ENDPOINTS.OOTD.IMAGE.UPLOAD, {
+                method: 'POST',
+                body: imageFormData,
+            });
+
+            // 2. 이미지 업로드 성공 후 나머지 데이터 저장
+            console.log('이미지 업로드 성공:', imageResult);
+        } catch (error) {
+            console.error('이미지 업로드 실패:', error);
+        }
     };
 
     useEffect(() => {
@@ -51,10 +66,10 @@ const OotdAdd = () => {
     }, [setPageTitle]);
 
     useEffect(() => {
-        if (images.length > 0) {
+        if (imageFiles.length > 0) {
             setIsActive(true);
         }
-    }, [images]);
+    }, [imageFiles]);
 
     return (
         <div className={styles.ootd_add}>
@@ -62,12 +77,15 @@ const OotdAdd = () => {
                 <section className={styles.image_section}>
                     <h2>사진 선택</h2>
                     <ul className={styles.image_list}>
-                        {images.map((imageUrl, index) => (
+                        {imageFiles.map((file, index) => (
                             <li key={index}>
-                                <ImageBox imageUrl={imageUrl} onDelete={() => handleDeleteImage(index)} />
+                                <ImageBox
+                                    imageUrl={URL.createObjectURL(file)}
+                                    onDelete={() => handleDeleteImage(index)}
+                                />
                             </li>
                         ))}
-                        {images.length < 2 && (
+                        {imageFiles.length < 2 && (
                             <li>
                                 <ImageBox onFileSelect={handleFileSelect} />
                             </li>
@@ -145,7 +163,7 @@ const OotdAdd = () => {
                 </section>
 
                 <div className={styles.basic_btn}>
-                    <BasicButton type='submit' children='OOTD 업로드' isActive={isActive} />
+                    <BasicButton type='submit' children='OOTD 업로드' isActive={isActive} disabled={!isActive} />
                 </div>
             </form>
         </div>
