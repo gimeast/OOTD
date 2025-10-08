@@ -88,7 +88,9 @@ const Login = () => {
 
     return (
         <div className={styles.login}>
-            <LogoSection h2='OOTD' p='오늘의 스타일을 공유해보세요' />
+            <div className={styles.logo_section}>
+                <LogoSection h2='OOTD' p='오늘의 스타일을 공유해보세요' />
+            </div>
 
             <section className={styles.login_form_section}>
                 <form action={formAction}>

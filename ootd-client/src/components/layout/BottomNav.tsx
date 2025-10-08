@@ -19,11 +19,17 @@ const BottomNav = () => {
                 <NavLink to='/search' className={({ isActive }) => (isActive ? styles.active : '')}>
                     {({ isActive }) => <SearchIcon className={isActive ? '' : styles.searchIcon} />}
                 </NavLink>
-                <NavLink to='/ootd/add' className={({ isActive }) => (isActive ? styles.active : '')}>
-                    {({ isActive }) => <OotdAddIcon className={isActive ? '' : styles.ootdAddIcon} />}
+                <NavLink
+                    to={isLoggedIn ? '/ootd/add' : '/login'}
+                    className={({ isActive }) => (isLoggedIn && isActive ? styles.active : '')}
+                >
+                    {({ isActive }) => <OotdAddIcon className={isLoggedIn && isActive ? '' : styles.ootdAddIcon} />}
                 </NavLink>
-                <NavLink to='/likes' className={({ isActive }) => (isActive ? styles.active : '')}>
-                    {({ isActive }) => <LikeIcon className={isActive ? '' : styles.likeIcon} />}
+                <NavLink
+                    to={isLoggedIn ? '/likes' : '/login'}
+                    className={({ isActive }) => (isLoggedIn && isActive ? styles.active : '')}
+                >
+                    {({ isActive }) => <LikeIcon className={isLoggedIn && isActive ? '' : styles.likeIcon} />}
                 </NavLink>
                 <NavLink
                     to={isLoggedIn ? '/mypage' : '/login'}
