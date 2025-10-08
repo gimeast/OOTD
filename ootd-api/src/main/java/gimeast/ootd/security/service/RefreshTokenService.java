@@ -36,21 +36,21 @@ public class RefreshTokenService {
      */
     @Transactional
     public Map<String, String> makeTokenMap(MemberDTO memberDTOResult) {
-        String email = memberDTOResult.getEmail();
+        Long memberIdx = memberDTOResult.getIdx();
         Map<String, Object> dataMap = memberDTOResult.getDataMap();
         String accessToken = jwtUtil.createToken(dataMap, jwtAccessTokenMin);
-        String refreshToken = jwtUtil.createToken(Map.of("email", email), jwtRefreshTokenMin);
+        String refreshToken = jwtUtil.createToken(Map.of("idx", memberIdx), jwtRefreshTokenMin);
 
         log.info("accessToken: {}", accessToken);
         log.info("refreshToken: {}", refreshToken);
 
-        refreshTokenRepository.findByEmail(email)
+        refreshTokenRepository.findByMemberIdx(memberIdx)
                 .ifPresentOrElse(
                         token -> token.updateToken(refreshToken, LocalDateTime.now().plusMinutes(jwtRefreshTokenMin)),
                         () -> refreshTokenRepository.save(
                                 RefreshToken.builder()
                                         .refreshToken(refreshToken)
-                                        .email(email)
+                                        .memberIdx(memberIdx)
                                         .expiryDate(LocalDateTime.now().plusMinutes(jwtRefreshTokenMin))
                                         .build()
                         )
@@ -61,13 +61,13 @@ public class RefreshTokenService {
 
     /**
      * DB에 저장된 Refresh Token을 이용해 새로운 Access Token 발급
-     * @param email
+     * @param memberIdx
      * @return
      */
     @Transactional
-    public Map<String, String> refreshAccessToken(String email) {
+    public Map<String, String> refreshAccessToken(Long memberIdx) {
         // DB에서 Refresh Token 조회
-        RefreshToken refreshToken = refreshTokenRepository.findByEmail(email)
+        RefreshToken refreshToken = refreshTokenRepository.findByMemberIdx(memberIdx)
                 .orElseThrow(() -> new RuntimeException("Refresh Token not found"));
 
         // Refresh Token 만료 확인
@@ -83,11 +83,11 @@ public class RefreshTokenService {
         }
 
         // 새로운 Access Token 생성
-        MemberDTO memberDTO = memberService.getByEmail(email);
+        MemberDTO memberDTO = memberService.getByIdx(memberIdx);
         Map<String, Object> dataMap = memberDTO.getDataMap();
         String newAccessToken = jwtUtil.createToken(dataMap, jwtAccessTokenMin);
 
-        log.info("New accessToken created for email: {}", email);
+        log.info("New accessToken created for memberIdx: {}", memberIdx);
 
         return Map.of("accessToken", newAccessToken);
     }

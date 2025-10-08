@@ -25,15 +25,15 @@ public class RefreshToken extends BaseEntity {
     private String refreshToken;
 
     @Column(nullable = false, unique = true)
-    private String email;
+    private Long memberIdx;
 
     @Column(nullable = false)
     private LocalDateTime expiryDate;
 
     @Builder
-    public RefreshToken(String refreshToken, String email, LocalDateTime expiryDate) {
+    public RefreshToken(String refreshToken, Long memberIdx, LocalDateTime expiryDate) {
         this.refreshToken = refreshToken;
-        this.email = email;
+        this.memberIdx = memberIdx;
         this.expiryDate = expiryDate;
     }
 

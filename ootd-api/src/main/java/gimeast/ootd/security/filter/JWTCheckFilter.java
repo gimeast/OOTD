@@ -73,23 +73,24 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             //토큰 검증 결과에 문제가 없다면
             log.info("tokenMap: {}", tokenMap);
 
-            String email = tokenMap.get("email").toString();
+            Long memberIdx = Long.valueOf(tokenMap.get("idx").toString());
 
-            Optional<MemberEntity> byEmail = memberRepository.findByEmailWithRoles(email);
+            Optional<MemberEntity> memberOptional = memberRepository.findByIdWithRoles(memberIdx);
 
-            if (byEmail.isEmpty()) {
+            if (memberOptional.isEmpty()) {
                 handleException(response, new Exception("MEMBER NOT FOUND"));
                 return;
             }
 
-            String[] roles = byEmail.get().getRoleSet().stream()
+            MemberEntity member = memberOptional.get();
+            String[] roles = member.getRoleSet().stream()
                     .map(Enum::name)
                     .toArray(String[]::new);
 
             //토큰 검증 결과를 이용해서 Authentication 객체를 생성
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(
-                            new CustomUserPrincipal(email),
+                            new CustomUserPrincipal(member.getEmail()),
                             null,
                             Arrays.stream(roles)
                                     .map(role -> new SimpleGrantedAuthority("ROLE_" + role))

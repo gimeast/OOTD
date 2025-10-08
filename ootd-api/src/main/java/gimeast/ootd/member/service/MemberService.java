@@ -39,6 +39,12 @@ public class MemberService {
         return new MemberDTO(memberEntity);
     }
 
+    public MemberDTO getByIdx(Long idx) {
+        Optional<MemberEntity> result = memberRepository.findById(idx);
+        MemberEntity memberEntity = result.orElseThrow(MemberExceptions.NOT_FOUND::get);
+        return new MemberDTO(memberEntity);
+    }
+
     public Long join(MemberDTO memberDTO) {
         // 필수 항목 검증
         if (memberDTO.getEmail() == null || memberDTO.getEmail().trim().isEmpty()) {

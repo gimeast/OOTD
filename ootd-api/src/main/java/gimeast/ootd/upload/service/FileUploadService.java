@@ -27,9 +27,9 @@ public class FileUploadService {
     // 최적화 설정
     private static final int MAX_WIDTH = 1920;  // 최대 가로 크기
     private static final int MAX_HEIGHT = 1920; // 최대 세로 크기
-    private static final float QUALITY = 0.85f; // 이미지 품질 (0.0 ~ 1.0)
+    private static final float QUALITY = 0.85f; // JPEG 품질 (0.0 ~ 1.0)
     private static final int THUMBNAIL_SIZE = 200; // 썸네일 크기
-    private static final String OUTPUT_FORMAT = "webp"; // 출력 포맷
+    private static final String OUTPUT_FORMAT = "jpg"; // 출력 포맷 (JPEG)
 
     public List<ImageUploadResult> uploadImages(MultipartFile[] files) throws IOException {
         List<ImageUploadResult> results = new ArrayList<>();
@@ -46,9 +46,9 @@ public class FileUploadService {
             // 날짜별 폴더 생성
             String folderPath = makeFolder();
 
-            // 확장자 추출 및 변환 (WebP로 통일)
+            // 확장자 추출 및 변환 (JPEG로 통일)
             String extension = getFileExtension(originalFilename);
-            String optimizedExtension = shouldConvertToWebP(contentType) ? OUTPUT_FORMAT : extension;
+            String optimizedExtension = shouldOptimize(contentType) ? OUTPUT_FORMAT : extension;
             String optimizedFilename = uuid + "_" + removeExtension(originalFilename) + "." + optimizedExtension;
 
             String saveName = uploadPath + File.separator + folderPath + File.separator + optimizedFilename;
@@ -63,8 +63,8 @@ public class FileUploadService {
                             .outputQuality(QUALITY)
                             .keepAspectRatio(true);
 
-                    // WebP로 변환
-                    if (shouldConvertToWebP(contentType)) {
+                    // JPEG로 변환 (PNG 제외)
+                    if (shouldOptimize(contentType)) {
                         builder.outputFormat(OUTPUT_FORMAT);
                     }
 
@@ -108,9 +108,12 @@ public class FileUploadService {
         return results;
     }
 
-    private boolean shouldConvertToWebP(String contentType) {
-        // 모든 이미지를 WebP로 변환 (WebP는 투명도와 애니메이션 모두 지원)
-        return contentType != null && contentType.startsWith("image");
+    private boolean shouldOptimize(String contentType) {
+        // PNG, GIF를 제외한 이미지를 JPEG로 변환 (투명도 보존)
+        return contentType != null &&
+               contentType.startsWith("image") &&
+               !contentType.equals("image/png") &&
+               !contentType.equals("image/gif");
     }
 
     private String getFileExtension(String filename) {

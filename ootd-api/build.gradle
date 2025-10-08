@@ -33,6 +33,7 @@ repositories {
 dependencies {
     implementation 'net.coobird:thumbnailator:0.4.20'
     // https://mvnrepository.com/artifact/net.coobird/thumbnailator
+
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'

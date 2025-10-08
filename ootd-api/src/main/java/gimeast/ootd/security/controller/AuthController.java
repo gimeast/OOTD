@@ -29,8 +29,8 @@ public class AuthController {
     @Value("${cookie.secure}")
     private boolean cookieSecure;
 
-    @Value("${jwt.access-token.min}")
-    private int accessTokenMin;
+    @Value("${jwt.refresh-token.min}")
+    private int refreshTokenMin;
 
     private final MemberService memberService;
     private final RefreshTokenService refreshTokenService;
@@ -73,7 +73,7 @@ public class AuthController {
     ) {
         log.info("refresh token request..........");
 
-        // 쿠키에서 Access Token 추출 (만료된 토큰에서 email 추출용)
+        // 쿠키에서 Access Token 추출 (만료된 토큰에서 idx 추출용)
         String accessToken = getCookieValue(request, "accessToken");
 
         if (accessToken == null) {
@@ -83,14 +83,14 @@ public class AuthController {
         log.info("access token from cookie............{}", accessToken);
 
         try {
-            // Access Token에서 email 추출 (만료되어도 가능)
+            // Access Token에서 idx 추출 (만료되어도 가능)
             Map<String, Object> claims = jwtUtil.getClaims(accessToken);
-            String email = claims.get("email").toString();
+            Long memberIdx = Long.valueOf(claims.get("idx").toString());
 
-            log.info("Refresh token for email: {}", email);
+            log.info("Refresh token for memberIdx: {}", memberIdx);
 
             // DB에서 저장된 Refresh Token 조회 및 검증
-            Map<String, String> tokenMap = refreshTokenService.refreshAccessToken(email);
+            Map<String, String> tokenMap = refreshTokenService.refreshAccessToken(memberIdx);
             setTokenCookies(response, tokenMap);
 
             return ResponseEntity.ok(Map.of("message", "Token refreshed successfully"));
@@ -102,11 +102,12 @@ public class AuthController {
 
     private void setTokenCookies(HttpServletResponse response, Map<String, String> tokenMap) {
         // Access Token만 HttpOnly 쿠키로 설정 (Refresh Token은 서버 DB에만 저장)
+        // 쿠키 만료시간은 Refresh Token과 동일하게 설정하여 자동 갱신 가능하도록 함
         Cookie accessTokenCookie = new Cookie("accessToken", tokenMap.get("accessToken"));
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setSecure(cookieSecure);
         accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(accessTokenMin * 60);
+        accessTokenCookie.setMaxAge(refreshTokenMin * 60);
         response.addCookie(accessTokenCookie);
     }
 
