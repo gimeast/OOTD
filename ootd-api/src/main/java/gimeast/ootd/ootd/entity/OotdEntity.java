@@ -29,7 +29,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Ootd extends BaseEntity {
+public class OotdEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -55,12 +55,16 @@ public class Ootd extends BaseEntity {
     private OotdStatus status = OotdStatus.ACTIVE;
 
     @Builder.Default
-    @OneToMany(mappedBy = "ootd", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OotdImage> images = new ArrayList<>();
+    @OneToMany(mappedBy = "ootdEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OotdImageEntity> images = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "ootd", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OotdHashtag> hashtags = new ArrayList<>();
+    @OneToMany(mappedBy = "ootdEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OotdHashtagEntity> hashtags = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "ootdEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OotdProductEntity> products = new ArrayList<>();
 
     public void changeContent(String content) {
         this.content = content;
@@ -90,11 +94,15 @@ public class Ootd extends BaseEntity {
         this.status = OotdStatus.DELETED;
     }
 
-    public void addImage(OotdImage image) {
+    public void addImage(OotdImageEntity image) {
         this.images.add(image);
     }
 
-    public void addHashtag(OotdHashtag hashtag) {
+    public void addHashtag(OotdHashtagEntity hashtag) {
         this.hashtags.add(hashtag);
+    }
+
+    public void addProduct(OotdProductEntity product) {
+        this.products.add(product);
     }
 }

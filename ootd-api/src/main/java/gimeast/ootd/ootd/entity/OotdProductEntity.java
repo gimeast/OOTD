@@ -18,36 +18,39 @@ import org.springframework.data.annotation.CreatedDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "ootd_image")
+@Table(name = "ootd_product")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OotdImage {
+public class OotdProductEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ootd_id", nullable = false)
-    private Ootd ootd;
+    private OotdEntity ootdEntity;
 
-    @Column(nullable = false, length = 500)
-    private String imageUrl;
+    @Column(nullable = false, length = 200)
+    private String productName;
+
+    @Column(length = 500)
+    private String productLink;
 
     @Column(nullable = false)
-    private Integer imageOrder;
-
-    @Column(length = 255)
-    private String originalFilename;
-
-    private Long fileSize;
+    private Integer displayOrder;
 
     @CreatedDate
     @Column(name = "regdate", updatable = false)
     private LocalDateTime regDate;
 
-    public void changeImageOrder(Integer imageOrder) {
-        this.imageOrder = imageOrder;
+    public void changeDisplayOrder(Integer displayOrder) {
+        this.displayOrder = displayOrder;
+    }
+
+    public void changeProductInfo(String productName, String productLink) {
+        this.productName = productName;
+        this.productLink = productLink;
     }
 }
