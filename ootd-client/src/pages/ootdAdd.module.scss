@@ -1,0 +1,107 @@
+.ootd_add {
+    padding: 0 1.5rem;
+
+    .image_section {
+        margin-top: 3rem;
+
+        h2 {
+            font-weight: 400;
+            font-size: 1.2rem;
+            line-height: 100%;
+        }
+
+        & .image_list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+    }
+
+    & .content_section,
+    & .hashtags_section {
+        margin-top: 2rem;
+
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        font-weight: 400;
+        font-size: 1.2rem;
+        line-height: 100%;
+
+        textarea {
+            height: 7rem;
+            border-radius: 0.5rem;
+
+            background: #f9fafb;
+            border: none;
+            padding: 1.4rem 1.5rem;
+
+            font-weight: 400;
+            font-size: 1.4rem;
+            line-height: 100%;
+        }
+    }
+
+    & .products_section {
+        margin-top: 2rem;
+
+        & .products_section_title {
+            display: flex;
+            justify-content: space-between;
+
+            & h2 {
+                font-weight: 400;
+                font-size: 1.2rem;
+                line-height: 100%;
+            }
+            & button {
+                font-weight: 400;
+                font-size: 1.2rem;
+                line-height: 100%;
+            }
+        }
+
+        & .products_list {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+
+            & .product_info {
+                background-color: #f9fafb;
+                padding: 1.5rem;
+                border-radius: 0.5rem;
+
+                & .product_info_header {
+                    display: flex;
+                    justify-content: space-between;
+
+                    & h3 {
+                        font-weight: 400;
+                        font-size: 1.2rem;
+                        line-height: 100%;
+                    }
+                }
+
+                & .products_input {
+                    margin-top: 1.5rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+
+                    input {
+                        height: 3rem;
+                        padding: 0 1.5rem;
+                        border: 1px solid #d9d9d9;
+                        border-radius: 0.5rem;
+                    }
+                }
+            }
+        }
+    }
+
+    & .basic_btn {
+        margin-top: 2rem;
+    }
+}
