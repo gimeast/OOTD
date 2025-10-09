@@ -286,7 +286,7 @@ const Join = () => {
                 confirmText='시작하기'
                 onConfirm={() => {
                     setIsModalOpen(false);
-                    navigate('/login');
+                    navigate('/login', { replace: true });
                 }}
             />
         </div>

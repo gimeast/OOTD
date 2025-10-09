@@ -6,6 +6,7 @@ import styles from './ootdAdd.module.scss';
 import BasicButton from '../components/common/BasicButton.tsx';
 import DeleteIcon from '../components/icons/DeleteIcon.tsx';
 import { API_ENDPOINTS, apiClient } from '../api';
+import BasicModal from '../components/common/BasicModal.tsx';
 
 type Product = { productName: string; productLink: string };
 
@@ -17,6 +18,7 @@ const OotdAdd = () => {
     const [hashtags, setHashtags] = useState('');
     const [products, setProducts] = useState<Product[]>([]);
     const [isActive, setIsActive] = useState<boolean>(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const navigate = useNavigate();
 
@@ -80,8 +82,9 @@ const OotdAdd = () => {
                 },
             });
 
-            console.log('create response:', response);
-            navigate('/', { replace: true });
+            if (response) {
+                setIsModalOpen(true);
+            }
         } catch (error) {
             console.error('OOTD 업로드 실패:', error);
         }
@@ -196,6 +199,18 @@ const OotdAdd = () => {
                     <BasicButton type='submit' children='OOTD 업로드' isActive={isActive} disabled={!isActive} />
                 </div>
             </form>
+
+            <BasicModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                title='Outfit Of The Day'
+                subTitle='업로드를 완료 하였습니다!'
+                confirmText='확인'
+                onConfirm={() => {
+                    setIsModalOpen(false);
+                    navigate('/', { replace: true });
+                }}
+            />
         </div>
     );
 };
