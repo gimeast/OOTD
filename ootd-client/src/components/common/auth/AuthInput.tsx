@@ -8,9 +8,17 @@ type AuthInputProps = {
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     label: string;
+    autoComplete?: string;
 };
 
-const AuthInput = ({ type, id, name, placeholder, value, onChange, label }: AuthInputProps) => {
+const AuthInput = ({ type, id, name, placeholder, value, onChange, label, autoComplete }: AuthInputProps) => {
+    const getAutoComplete = () => {
+        if (autoComplete) return autoComplete;
+        if (type === 'email') return 'email';
+        if (type === 'password') return 'current-password';
+        return undefined;
+    };
+
     return (
         <div className={styles.form_group}>
             <label htmlFor={id}>{label}</label>
@@ -21,6 +29,7 @@ const AuthInput = ({ type, id, name, placeholder, value, onChange, label }: Auth
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
+                autoComplete={getAutoComplete()}
             />
         </div>
     );
