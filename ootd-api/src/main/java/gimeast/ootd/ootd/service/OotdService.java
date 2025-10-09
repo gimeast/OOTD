@@ -26,9 +26,9 @@ public class OotdService {
     private final HashtagRepository hashtagRepository;
 
     @Transactional
-    public OotdDTO saveOotd(OotdDTO ootdDTO) {
-        // Member 조회
-        MemberEntity member = memberRepository.findById(ootdDTO.getMember().getIdx())
+    public OotdDTO saveOotd(OotdDTO ootdDTO, Long memberIdx) {
+        // Member 조회 (토큰에서 받은 idx 사용)
+        MemberEntity member = memberRepository.findById(memberIdx)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
 
         // OotdEntity 생성

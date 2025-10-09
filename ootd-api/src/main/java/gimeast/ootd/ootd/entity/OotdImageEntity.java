@@ -1,5 +1,6 @@
 package gimeast.ootd.ootd.entity;
 
+import gimeast.ootd.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,9 +14,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ootd_image")
@@ -23,7 +21,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OotdImageEntity {
+public class OotdImageEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,10 +40,6 @@ public class OotdImageEntity {
     private String originalFilename;
 
     private Long fileSize;
-
-    @CreatedDate
-    @Column(name = "regdate", updatable = false)
-    private LocalDateTime regDate;
 
     public void changeImageOrder(Integer imageOrder) {
         this.imageOrder = imageOrder;

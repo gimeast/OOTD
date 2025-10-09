@@ -90,7 +90,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             //토큰 검증 결과를 이용해서 Authentication 객체를 생성
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(
-                            new CustomUserPrincipal(member.getEmail()),
+                            new CustomUserPrincipal(member.getIdx(), member.getEmail()),
                             null,
                             Arrays.stream(roles)
                                     .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
