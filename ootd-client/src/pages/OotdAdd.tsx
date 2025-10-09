@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { LayoutContextType } from '../types/context.ts';
 import ImageBox from '../components/common/ImageBox.tsx';
 import styles from './ootdAdd.module.scss';
@@ -21,6 +22,34 @@ const OotdAdd = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
+
+    const uploadImageMutation = useMutation({
+        mutationFn: async (imageFiles: File[]) => {
+            const imageFormData = new FormData();
+            imageFiles.forEach(file => {
+                imageFormData.append('images', file);
+            });
+            return await apiClient(API_ENDPOINTS.OOTD.IMAGE.UPLOAD, {
+                method: 'POST',
+                body: imageFormData,
+            });
+        },
+    });
+
+    const createOotdMutation = useMutation({
+        mutationFn: async (data: {
+            images: Array<Record<string, unknown>>;
+            content: string;
+            hashtags: string[];
+            products: Array<{ productName: string; productLink: string; displayOrder: number }>;
+        }) => {
+            return await apiClient(API_ENDPOINTS.OOTD.CREATE, {
+                method: 'POST',
+                body: data,
+            });
+        },
+    });
 
     const handleFileSelect = (file: File) => {
         setImageFiles(prev => [...prev, file]);
@@ -48,16 +77,8 @@ const OotdAdd = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const imageFormData = new FormData();
-        imageFiles.forEach(file => {
-            imageFormData.append('images', file);
-        });
-
         try {
-            const imageResult = await apiClient(API_ENDPOINTS.OOTD.IMAGE.UPLOAD, {
-                method: 'POST',
-                body: imageFormData,
-            });
+            const imageResult = await uploadImageMutation.mutateAsync(imageFiles);
 
             const imagesWithOrder = (imageResult as Array<Record<string, unknown>>).map((image, index) => ({
                 ...image,
@@ -69,24 +90,21 @@ const OotdAdd = () => {
                 displayOrder: index,
             }));
 
-            const response = await apiClient(API_ENDPOINTS.OOTD.CREATE, {
-                method: 'POST',
-                body: {
-                    images: imagesWithOrder,
-                    content,
-                    hashtags: hashtags
-                        .split('#')
-                        .filter(tag => tag.trim())
-                        .map(tag => tag.trim()),
-                    products: productsWithOrder,
-                },
+            await createOotdMutation.mutateAsync({
+                images: imagesWithOrder,
+                content,
+                hashtags: hashtags
+                    .split('#')
+                    .filter(tag => tag.trim())
+                    .map(tag => tag.trim()),
+                products: productsWithOrder,
             });
 
-            if (response) {
-                setIsModalOpen(true);
-            }
+            queryClient.invalidateQueries({ queryKey: ['ootdList'] });
+            setIsModalOpen(true);
         } catch (error) {
-            console.error('OOTD 업로드 실패:', error);
+            console.error('업로드 실패:', error);
+            alert('업로드 중 오류가 발생했습니다.');
         }
     };
 
@@ -99,6 +117,8 @@ const OotdAdd = () => {
             setIsActive(true);
         }
     }, [imageFiles]);
+
+    const isLoading = uploadImageMutation.isPending || createOotdMutation.isPending;
 
     return (
         <div className={styles.ootd_add}>
@@ -196,7 +216,9 @@ const OotdAdd = () => {
                 </section>
 
                 <div className={styles.basic_btn}>
-                    <BasicButton type='submit' children='OOTD 업로드' isActive={isActive} disabled={!isActive} />
+                    <BasicButton type='submit' isActive={isActive && !isLoading} disabled={!isActive || isLoading}>
+                        {isLoading ? '업로드 중...' : 'OOTD 업로드'}
+                    </BasicButton>
                 </div>
             </form>
 
