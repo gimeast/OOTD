@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import type { LayoutContextType } from '../types/context.ts';
 import ImageBox from '../components/common/ImageBox.tsx';
 import styles from './ootdAdd.module.scss';
@@ -13,8 +13,12 @@ const OotdAdd = () => {
     const { setPageTitle } = useOutletContext<LayoutContextType>();
 
     const [imageFiles, setImageFiles] = useState<File[]>([]);
+    const [content, setContent] = useState('');
+    const [hashtags, setHashtags] = useState('');
     const [products, setProducts] = useState<Product[]>([]);
     const [isActive, setIsActive] = useState<boolean>(false);
+
+    const navigate = useNavigate();
 
     const handleFileSelect = (file: File) => {
         setImageFiles(prev => [...prev, file]);
@@ -42,7 +46,6 @@ const OotdAdd = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // 1. 이미지 업로드
         const imageFormData = new FormData();
         imageFiles.forEach(file => {
             imageFormData.append('images', file);
@@ -54,10 +57,33 @@ const OotdAdd = () => {
                 body: imageFormData,
             });
 
-            // 2. 이미지 업로드 성공 후 나머지 데이터 저장
-            console.log('이미지 업로드 성공:', imageResult);
+            const imagesWithOrder = (imageResult as Array<Record<string, unknown>>).map((image, index) => ({
+                ...image,
+                imageOrder: index,
+            }));
+
+            const productsWithOrder = products.map((product, index) => ({
+                ...product,
+                displayOrder: index,
+            }));
+
+            const response = await apiClient(API_ENDPOINTS.OOTD.CREATE, {
+                method: 'POST',
+                body: {
+                    images: imagesWithOrder,
+                    content,
+                    hashtags: hashtags
+                        .split('#')
+                        .filter(tag => tag.trim())
+                        .map(tag => tag.trim()),
+                    products: productsWithOrder,
+                },
+            });
+
+            console.log('create response:', response);
+            navigate('/', { replace: true });
         } catch (error) {
-            console.error('이미지 업로드 실패:', error);
+            console.error('OOTD 업로드 실패:', error);
         }
     };
 
@@ -98,6 +124,8 @@ const OotdAdd = () => {
                     <textarea
                         name='content'
                         id='content'
+                        value={content}
+                        onChange={e => setContent(e.target.value)}
                         aria-labelledby='content-title'
                         placeholder='오늘의 스타일에 대해 설명해주세요...'
                     />
@@ -108,6 +136,8 @@ const OotdAdd = () => {
                     <textarea
                         name='hashtags'
                         id='hashtags'
+                        value={hashtags}
+                        onChange={e => setHashtags(e.target.value)}
                         aria-labelledby='hashtags-title'
                         placeholder='#데일리룩 #OOTD #캐주얼'
                     />
