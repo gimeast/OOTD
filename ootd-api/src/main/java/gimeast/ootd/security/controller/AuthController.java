@@ -10,12 +10,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Duration;
 import java.util.Map;
 
 @RestController
@@ -28,6 +31,9 @@ public class AuthController {
 
     @Value("${cookie.secure}")
     private boolean cookieSecure;
+
+    @Value("${cookie.same-site:Lax}")
+    private String cookieSameSite;
 
     @Value("${jwt.refresh-token.min}")
     private int refreshTokenMin;
@@ -103,12 +109,16 @@ public class AuthController {
     private void setTokenCookies(HttpServletResponse response, Map<String, String> tokenMap) {
         // Access Token만 HttpOnly 쿠키로 설정 (Refresh Token은 서버 DB에만 저장)
         // 쿠키 만료시간은 Refresh Token과 동일하게 설정하여 자동 갱신 가능하도록 함
-        Cookie accessTokenCookie = new Cookie("accessToken", tokenMap.get("accessToken"));
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(cookieSecure);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(refreshTokenMin * 60);
-        response.addCookie(accessTokenCookie);
+
+        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", tokenMap.get("accessToken"))
+                .httpOnly(true)
+                .secure(cookieSecure)
+                .path("/")
+                .maxAge(Duration.ofMinutes(refreshTokenMin))
+                .sameSite(cookieSameSite)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
     }
 
     private String getCookieValue(HttpServletRequest request, String cookieName) {

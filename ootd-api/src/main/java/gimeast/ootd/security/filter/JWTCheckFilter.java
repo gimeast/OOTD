@@ -41,11 +41,19 @@ public class JWTCheckFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
+        String method = request.getMethod();
 
+        // auth API는 모두 허용
         if (path.startsWith("/api/v1/auth/")) {
             return true;
         }
 
+        // GET /api/v1/ootd 는 로그인 없이 조회 가능
+        if ("GET".equals(method) && path.equals("/api/v1/ootd")) {
+            return true;
+        }
+
+        // API가 아닌 경로는 필터링하지 않음
         if (!path.startsWith("/api/")) {
             return true;
         }

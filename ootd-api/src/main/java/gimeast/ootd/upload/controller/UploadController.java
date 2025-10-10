@@ -27,7 +27,7 @@ public class UploadController {
             List<ImageUploadResult> results = fileUploadService.uploadImages(files);
             return ResponseEntity.ok(results);
         } catch (IOException e) {
-            log.error("이미지 업로드 실패: " + e.getMessage());
+            log.error("이미지 업로드 실패: {}", e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
     }
