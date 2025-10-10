@@ -5,6 +5,7 @@ type RequestOptions = {
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
     headers?: Record<string, string>;
     body?: any;
+    params?: Record<string, string | number>; // URL 쿼리 파라미터
     skipTokenRefresh?: boolean; // 무한 루프 방지용
 };
 
@@ -40,7 +41,7 @@ async function refreshAccessToken(): Promise<boolean> {
 }
 
 export async function apiClient<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
-    const { method = 'GET', headers = {}, body, skipTokenRefresh = false } = options;
+    const { method = 'GET', headers = {}, body, params, skipTokenRefresh = false } = options;
 
     const isFormData = body instanceof FormData;
 
@@ -59,8 +60,18 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
         config.body = isFormData ? body : JSON.stringify(body);
     }
 
+    // 쿼리 파라미터 처리
+    let url = `${API_BASE_URL}${endpoint}`;
+    if (params) {
+        const searchParams = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+            searchParams.append(key, String(value));
+        });
+        url += `?${searchParams.toString()}`;
+    }
+
     try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+        const response = await fetch(url, config);
         const result = await response.json();
 
         if (!response.ok) {

@@ -100,7 +100,7 @@ const OotdAdd = () => {
                 products: productsWithOrder,
             });
 
-            queryClient.invalidateQueries({ queryKey: ['ootdList'] });
+            queryClient.invalidateQueries({ queryKey: ['ootd', 'list'] });
             setIsModalOpen(true);
         } catch (error) {
             console.error('업로드 실패:', error);
@@ -134,7 +134,7 @@ const OotdAdd = () => {
                                 />
                             </li>
                         ))}
-                        {imageFiles.length < 2 && (
+                        {imageFiles.length < 4 && (
                             <li>
                                 <ImageBox onFileSelect={handleFileSelect} />
                             </li>
@@ -156,7 +156,7 @@ const OotdAdd = () => {
 
                 <section className={styles.hashtags_section}>
                     <h2 id='hashtags-title'>해시태그</h2>
-                    <textarea
+                    <input
                         name='hashtags'
                         id='hashtags'
                         value={hashtags}
