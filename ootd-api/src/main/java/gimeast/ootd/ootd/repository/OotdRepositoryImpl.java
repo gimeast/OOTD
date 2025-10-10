@@ -1,0 +1,97 @@
+package gimeast.ootd.ootd.repository;
+
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPQLQuery;
+import gimeast.ootd.ootd.dto.OotdListResponseDTO;
+import gimeast.ootd.ootd.entity.OotdStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static gimeast.ootd.ootd.entity.QOotdEntity.ootdEntity;
+import static gimeast.ootd.ootd.entity.QOotdImageEntity.ootdImageEntity;
+import static gimeast.ootd.ootd.entity.QOotdLikeEntity.ootdLikeEntity;
+import static gimeast.ootd.ootd.entity.QOotdBookmark.ootdBookmark;
+import static gimeast.ootd.ootd.entity.QOotdHashtagEntity.ootdHashtagEntity;
+import static gimeast.ootd.member.entity.QMemberEntity.memberEntity;
+import static gimeast.ootd.hashtag.entity.QHashtagEntity.hashtagEntity;
+
+public class OotdRepositoryImpl extends QuerydslRepositorySupport implements OotdRepositoryCustom {
+
+    public OotdRepositoryImpl() {
+        super(gimeast.ootd.ootd.entity.OotdEntity.class);
+    }
+
+    @Override
+    public Page<OotdListResponseDTO> findOotdList(Long currentMemberIdx, Pageable pageable) {
+        JPQLQuery<gimeast.ootd.ootd.entity.OotdEntity> query = from(ootdEntity)
+                .leftJoin(ootdEntity.member, memberEntity).fetchJoin()
+                .leftJoin(ootdEntity.images, ootdImageEntity)
+                .leftJoin(ootdEntity.hashtags, ootdHashtagEntity)
+                .leftJoin(ootdHashtagEntity.hashtagEntity, hashtagEntity)
+                .where(ootdEntity.status.eq(OotdStatus.ACTIVE))
+                .distinct();
+
+        // 페이징 적용
+        JPQLQuery<gimeast.ootd.ootd.entity.OotdEntity> pagedQuery = getQuerydsl().applyPagination(pageable, query);
+
+        // 전체 개수 조회
+        long total = query.fetchCount();
+
+        // 결과 조회
+        List<gimeast.ootd.ootd.entity.OotdEntity> ootdEntities = pagedQuery.fetch();
+
+        // DTO 변환
+        List<OotdListResponseDTO> dtoList = ootdEntities.stream()
+                .map(entity -> {
+                    // 이미지 리스트 조회
+                    List<String> images = entity.getImages().stream()
+                            .sorted((img1, img2) -> img1.getImageOrder().compareTo(img2.getImageOrder()))
+                            .map(gimeast.ootd.ootd.entity.OotdImageEntity::getImageUrl)
+                            .collect(Collectors.toList());
+
+                    // 해시태그 리스트 조회
+                    List<String> hashtags = entity.getHashtags().stream()
+                            .map(h -> h.getHashtagEntity().getTagName())
+                            .collect(Collectors.toList());
+
+                    // 좋아요 여부 확인
+                    Boolean isLiked = false;
+                    if (currentMemberIdx != null) {
+                        isLiked = from(ootdLikeEntity)
+                                .where(ootdLikeEntity.ootdEntity.id.eq(entity.getId())
+                                        .and(ootdLikeEntity.member.idx.eq(currentMemberIdx)))
+                                .fetchFirst() != null;
+                    }
+
+                    // 북마크 여부 확인
+                    Boolean isBookmarked = false;
+                    if (currentMemberIdx != null) {
+                        isBookmarked = from(ootdBookmark)
+                                .where(ootdBookmark.ootdEntity.id.eq(entity.getId())
+                                        .and(ootdBookmark.member.idx.eq(currentMemberIdx)))
+                                .fetchFirst() != null;
+                    }
+
+                    return OotdListResponseDTO.builder()
+                            .ootdId(entity.getId())
+                            .profileImageUrl(entity.getMember().getProfileImageUrl())
+                            .nickname(entity.getMember().getNickname())
+                            .ootdImages(images)
+                            .isLiked(isLiked)
+                            .likeCount(entity.getLikeCount())
+                            .isBookmarked(isBookmarked)
+                            .content(entity.getContent())
+                            .hashtags(hashtags)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(dtoList, pageable, total);
+    }
+}

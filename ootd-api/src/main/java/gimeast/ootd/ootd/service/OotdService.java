@@ -1,10 +1,12 @@
 package gimeast.ootd.ootd.service;
 
+import gimeast.ootd.common.dto.PageRequestDTO;
 import gimeast.ootd.hashtag.entity.HashtagEntity;
 import gimeast.ootd.hashtag.repository.HashtagRepository;
 import gimeast.ootd.member.entity.MemberEntity;
 import gimeast.ootd.member.repository.MemberRepository;
 import gimeast.ootd.ootd.dto.OotdDTO;
+import gimeast.ootd.ootd.dto.OotdListResponseDTO;
 import gimeast.ootd.ootd.entity.OotdEntity;
 import gimeast.ootd.ootd.entity.OotdHashtagEntity;
 import gimeast.ootd.ootd.entity.OotdImageEntity;
@@ -12,6 +14,9 @@ import gimeast.ootd.ootd.entity.OotdProductEntity;
 import gimeast.ootd.ootd.repository.OotdRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,5 +100,11 @@ public class OotdService {
         OotdEntity savedEntity = ootdRepository.save(ootdEntity);
 
         return new OotdDTO(savedEntity);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OotdListResponseDTO> getOotdList(PageRequestDTO pageRequestDTO, Long currentMemberIdx) {
+        Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
+        return ootdRepository.findOotdList(currentMemberIdx, pageable);
     }
 }
