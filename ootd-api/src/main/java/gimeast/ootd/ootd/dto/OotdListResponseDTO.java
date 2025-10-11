@@ -21,4 +21,5 @@ public class OotdListResponseDTO {
     private Boolean isBookmarked;
     private String content;
     private List<String> hashtags;
+    private List<ProductDTO> products;
 }

@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 import gimeast.ootd.ootd.dto.OotdListResponseDTO;
+import gimeast.ootd.ootd.dto.ProductDTO;
 import gimeast.ootd.ootd.entity.OotdStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -18,6 +19,7 @@ import static gimeast.ootd.ootd.entity.QOotdImageEntity.ootdImageEntity;
 import static gimeast.ootd.ootd.entity.QOotdLikeEntity.ootdLikeEntity;
 import static gimeast.ootd.ootd.entity.QOotdBookmark.ootdBookmark;
 import static gimeast.ootd.ootd.entity.QOotdHashtagEntity.ootdHashtagEntity;
+import static gimeast.ootd.ootd.entity.QOotdProductEntity.ootdProductEntity;
 import static gimeast.ootd.member.entity.QMemberEntity.memberEntity;
 import static gimeast.ootd.hashtag.entity.QHashtagEntity.hashtagEntity;
 
@@ -34,6 +36,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
                 .leftJoin(ootdEntity.images, ootdImageEntity)
                 .leftJoin(ootdEntity.hashtags, ootdHashtagEntity)
                 .leftJoin(ootdHashtagEntity.hashtagEntity, hashtagEntity)
+                .leftJoin(ootdEntity.products, ootdProductEntity)
                 .where(ootdEntity.status.eq(OotdStatus.ACTIVE))
                 .distinct();
 
@@ -58,6 +61,15 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
                     // 해시태그 리스트 조회
                     List<String> hashtags = entity.getHashtags().stream()
                             .map(h -> h.getHashtagEntity().getTagName())
+                            .collect(Collectors.toList());
+
+                    // 제품 리스트 조회
+                    List<ProductDTO> products = entity.getProducts().stream()
+                            .sorted((p1, p2) -> p1.getDisplayOrder().compareTo(p2.getDisplayOrder()))
+                            .map(product -> ProductDTO.builder()
+                                    .productName(product.getProductName())
+                                    .productLink(product.getProductLink())
+                                    .build())
                             .collect(Collectors.toList());
 
                     // 좋아요 여부 확인
@@ -88,6 +100,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
                             .isBookmarked(isBookmarked)
                             .content(entity.getContent())
                             .hashtags(hashtags)
+                            .products(products)
                             .build();
                 })
                 .collect(Collectors.toList());
