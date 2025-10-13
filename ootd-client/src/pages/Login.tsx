@@ -8,6 +8,7 @@ import type { LayoutContextType } from '../types/context';
 import LogoSection from '../components/common/LogoSection.tsx';
 import AuthInput from '../components/common/auth/AuthInput.tsx';
 import BasicButton from '../components/common/BasicButton.tsx';
+import { useQueryClient } from '@tanstack/react-query';
 
 type LoginState = {
     success: boolean;
@@ -22,6 +23,7 @@ const Login = () => {
     const navigate = useNavigate();
     const login = useUserStore(state => state.login);
     const { setPageTitle } = useOutletContext<LayoutContextType>();
+    const queryClient = useQueryClient();
 
     const isActive = validateEmail(email) && validatePassword(password);
 
@@ -79,9 +81,10 @@ const Login = () => {
     useEffect(() => {
         if (state.success && state.user) {
             login(state.user);
+            queryClient.invalidateQueries({ queryKey: ['ootd', 'list'] });
             navigate('/', { replace: true });
         }
-    }, [state.success, state.user, navigate, login]);
+    }, [state.success, state.user, navigate, login, queryClient]);
 
     return (
         <div className={styles.login}>
