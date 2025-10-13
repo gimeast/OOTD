@@ -90,7 +90,6 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
                         useUserStore.getState().logout(); //전역상태 변경
                         if (!endpoint.includes('/auth/me')) {
                             window.location.href = '/login';
-                            console.log('??');
                         }
                         throw new Error('인증이 만료되었습니다. 다시 로그인해주세요.');
                     }

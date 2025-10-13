@@ -16,13 +16,14 @@ type LoginState = {
 };
 
 const Login = () => {
-    const [isActive, setIsActive] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const msgRef = useRef<HTMLSpanElement>(null);
     const navigate = useNavigate();
     const login = useUserStore(state => state.login);
     const { setPageTitle } = useOutletContext<LayoutContextType>();
+
+    const isActive = validateEmail(email) && validatePassword(password);
 
     const action = async (_previousState: LoginState, formData: FormData): Promise<LoginState> => {
         const email = formData.get('email') as string;
@@ -74,10 +75,6 @@ const Login = () => {
     useEffect(() => {
         setPageTitle('로그인');
     }, [setPageTitle]);
-
-    useEffect(() => {
-        setIsActive(validateEmail(email) && validatePassword(password));
-    }, [email, password]);
 
     useEffect(() => {
         if (state.success && state.user) {

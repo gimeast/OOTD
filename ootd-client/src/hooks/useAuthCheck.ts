@@ -10,8 +10,13 @@ export function useAuthCheck() {
     const [isChecking, setIsChecking] = useState(true);
 
     useEffect(() => {
-        // 권환체크가 필요없는 로그인과 회원가입은 제외
-        if (location.pathname === '/login' || location.pathname === '/join') {
+        // 권환체크가 필요없는 부분
+        if (
+            location.pathname === '/' ||
+            location.pathname === '/search' ||
+            location.pathname === '/login' ||
+            location.pathname === '/join'
+        ) {
             setIsChecking(false);
             return;
         }
