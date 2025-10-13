@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -70,6 +71,36 @@ public class AuthController {
         setTokenCookies(response, tokenMap);
 
         return ResponseEntity.ok(Map.of("message", "Login successful", "user",memberDTOResult.getDataMap()));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(HttpServletRequest request) {
+        log.info("Get current user info..........");
+
+        // 쿠키에서 Access Token 추출
+        String accessToken = getCookieValue(request, "accessToken");
+
+        try {
+            // Access Token 검증 및 사용자 정보 추출
+            Map<String, Object> claims = jwtUtil.validateToken(accessToken);
+            Long memberIdx = Long.valueOf(claims.get("idx").toString());
+
+            log.info("Current user idx: {}", memberIdx);
+
+            // 사용자 정보 조회
+            MemberDTO memberDTO = memberService.getByIdx(memberIdx);
+
+            // 로그인 API와 동일한 형식으로 반환
+            return ResponseEntity.ok(memberDTO.getDataMap());
+
+        } catch (Exception e) {
+            log.error("Failed to get current user: {}", e.getMessage());
+            return ResponseEntity.status(401)
+                    .body(Map.of(
+                            "message", "인증이 필요합니다.",
+                            "error", "Unauthorized"
+                    ));
+        }
     }
 
     @PostMapping("/token/refresh")
