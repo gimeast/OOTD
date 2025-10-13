@@ -41,15 +41,14 @@ public class JWTCheckFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        String method = request.getMethod();
 
-        // auth API는 모두 허용
-        if (path.startsWith("/api/v1/auth/")) {
-            return true;
+        // /api/v1/auth/me는 토큰 검증 필요
+        if (path.equals("/api/v1/auth/me")) {
+            return false;
         }
 
-        // GET /api/v1/ootd 는 로그인 없이 조회 가능
-        if ("GET".equals(method) && path.equals("/api/v1/ootd")) {
+        // auth API는 모두 허용 (login, join 등)
+        if (path.startsWith("/api/v1/auth/")) {
             return true;
         }
 
@@ -72,6 +71,15 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
         //Access Token이 없는 경우
         if (accessToken == null) {
+            // GET /api/v1/ootd는 토큰 없이도 허용 (비로그인 사용자도 조회 가능)
+            String path = request.getRequestURI();
+            String method = request.getMethod();
+            if ("GET".equals(method) && path.equals("/api/v1/ootd")) {
+                log.info("Allowing unauthenticated access to GET /api/v1/ootd");
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             handleException(response, new Exception("ACCESS TOKEN NOT FOUND"));
             return;
         }

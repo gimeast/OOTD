@@ -6,6 +6,7 @@ import com.querydsl.jpa.JPQLQuery;
 import gimeast.ootd.ootd.dto.OotdListResponseDTO;
 import gimeast.ootd.ootd.dto.ProductDTO;
 import gimeast.ootd.ootd.entity.OotdStatus;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,7 @@ import static gimeast.ootd.ootd.entity.QOotdProductEntity.ootdProductEntity;
 import static gimeast.ootd.member.entity.QMemberEntity.memberEntity;
 import static gimeast.ootd.hashtag.entity.QHashtagEntity.hashtagEntity;
 
+@Log4j2
 public class OotdRepositoryImpl extends QuerydslRepositorySupport implements OotdRepositoryCustom {
 
     public OotdRepositoryImpl() {
@@ -49,6 +51,37 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
         // 결과 조회
         List<gimeast.ootd.ootd.entity.OotdEntity> ootdEntities = pagedQuery.fetch();
 
+        // 현재 사용자의 좋아요 정보 일괄 조회
+        List<Long> likedOotdIds = List.of();
+        if (currentMemberIdx != null && !ootdEntities.isEmpty()) {
+            List<Long> ootdIds = ootdEntities.stream().map(gimeast.ootd.ootd.entity.OotdEntity::getId).toList();
+            log.info("Fetching likes for currentMemberIdx: {}, ootdIds: {}", currentMemberIdx, ootdIds);
+
+            likedOotdIds = from(ootdLikeEntity)
+                    .where(ootdLikeEntity.ootdEntity.id.in(ootdIds)
+                            .and(ootdLikeEntity.member.idx.eq(currentMemberIdx)))
+                    .select(ootdLikeEntity.ootdEntity.id)
+                    .fetch();
+
+            log.info("Found liked OOTD IDs: {}", likedOotdIds);
+        } else {
+            log.info("Skipping like fetch - currentMemberIdx: {}, ootdEntities.isEmpty(): {}",
+                    currentMemberIdx, ootdEntities.isEmpty());
+        }
+        final List<Long> finalLikedOotdIds = likedOotdIds;
+
+        // 현재 사용자의 북마크 정보 일괄 조회
+        List<Long> bookmarkedOotdIds = List.of();
+        if (currentMemberIdx != null && !ootdEntities.isEmpty()) {
+            bookmarkedOotdIds = from(ootdBookmark)
+                    .where(ootdBookmark.ootdEntity.id.in(
+                            ootdEntities.stream().map(gimeast.ootd.ootd.entity.OotdEntity::getId).toList()
+                    ).and(ootdBookmark.member.idx.eq(currentMemberIdx)))
+                    .select(ootdBookmark.ootdEntity.id)
+                    .fetch();
+        }
+        final List<Long> finalBookmarkedOotdIds = bookmarkedOotdIds;
+
         // DTO 변환
         List<OotdListResponseDTO> dtoList = ootdEntities.stream()
                 .map(entity -> {
@@ -73,23 +106,11 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
                                     .build())
                             .collect(Collectors.toList());
 
-                    // 좋아요 여부 확인
-                    Boolean isLiked = false;
-                    if (currentMemberIdx != null) {
-                        isLiked = from(ootdLikeEntity)
-                                .where(ootdLikeEntity.ootdEntity.id.eq(entity.getId())
-                                        .and(ootdLikeEntity.member.idx.eq(currentMemberIdx)))
-                                .fetchFirst() != null;
-                    }
+                    // 좋아요 여부 확인 (일괄 조회한 데이터에서 확인)
+                    Boolean isLiked = finalLikedOotdIds.contains(entity.getId());
 
-                    // 북마크 여부 확인
-                    Boolean isBookmarked = false;
-                    if (currentMemberIdx != null) {
-                        isBookmarked = from(ootdBookmark)
-                                .where(ootdBookmark.ootdEntity.id.eq(entity.getId())
-                                        .and(ootdBookmark.member.idx.eq(currentMemberIdx)))
-                                .fetchFirst() != null;
-                    }
+                    // 북마크 여부 확인 (일괄 조회한 데이터에서 확인)
+                    Boolean isBookmarked = finalBookmarkedOotdIds.contains(entity.getId());
 
                     return OotdListResponseDTO.builder()
                             .ootdId(entity.getId())
