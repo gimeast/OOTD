@@ -8,6 +8,13 @@ import BookmarkIcon from '../components/icons/BookmarkIcon.tsx';
 import ImageNavIcon from '../components/icons/ImageNavIcon.tsx';
 import { API_ENDPOINTS, apiClient } from '../api';
 import { useQuery } from '@tanstack/react-query';
+import ProductOgIcon from '../components/icons/ProductOgIcon.tsx';
+
+type ProductType = {
+    productName: string;
+    productLink: string;
+    ogImage: string;
+};
 
 type OotdItemType = {
     ootdId: number;
@@ -19,6 +26,7 @@ type OotdItemType = {
     isBookmarked: boolean;
     content: string;
     hashtags: string[];
+    products: ProductType[];
 };
 
 type OotdDataType = {
@@ -115,6 +123,22 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
                 </button>
             </div>
             <span className={styles.ootd_like}>좋아요 {item.likeCount}개</span>
+
+            <ul className={styles.product_list}>
+                {item.products.map((product, index) => (
+                    <li key={index} className={styles.product_box}>
+                        <a href={product.productLink} target='_blank' rel='noopener noreferrer'>
+                            {product.ogImage ? (
+                                <img src={product.ogImage} alt={product.productName} className={styles.product_image} />
+                            ) : (
+                                <ProductOgIcon />
+                            )}
+
+                            <span className={styles.product_name}>{product.productName}</span>
+                        </a>
+                    </li>
+                ))}
+            </ul>
 
             <div className={styles.ootd_content}>{item.content}</div>
 
