@@ -13,5 +13,6 @@ export const API_ENDPOINTS = {
         CREATE: '/api/v1/ootd',
         LIST: '/api/v1/ootd',
         IMAGE: { UPLOAD: '/api/v1/upload/images' },
+        LIKE: '/api/v1/ootd/{ootdId}/like',
     },
 } as const;

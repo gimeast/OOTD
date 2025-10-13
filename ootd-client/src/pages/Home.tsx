@@ -7,7 +7,7 @@ import CommentIcon from '../components/icons/CommentIcon.tsx';
 import BookmarkIcon from '../components/icons/BookmarkIcon.tsx';
 import ImageNavIcon from '../components/icons/ImageNavIcon.tsx';
 import { API_ENDPOINTS, apiClient } from '../api';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import ProductOgIcon from '../components/icons/ProductOgIcon.tsx';
 
 type ProductType = {
@@ -61,6 +61,7 @@ type OotdDataType = {
 const OotdItem = ({ item }: { item: OotdItemType }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const imgListRef = useRef<HTMLUListElement>(null);
+    const queryClient = useQueryClient();
 
     const handleScroll = () => {
         if (imgListRef.current) {
@@ -71,7 +72,7 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
         }
     };
 
-    const handleNavClick = (index: number) => {
+    const handleImageIndexClick = (index: number) => {
         setCurrentIndex(index);
         if (imgListRef.current) {
             const itemWidth = imgListRef.current.offsetWidth;
@@ -79,6 +80,21 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
                 left: itemWidth * index,
             });
         }
+    };
+
+    const likeMutation = useMutation({
+        mutationFn: (ootdId: number) =>
+            apiClient(API_ENDPOINTS.OOTD.LIKE.replace('{ootdId}', String(ootdId)), {
+                method: 'POST',
+                body: { ootdId },
+            }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['ootd', 'list'] });
+        },
+    });
+
+    const handleLike = (ootdId: number) => {
+        likeMutation.mutate(ootdId);
     };
 
     return (
@@ -100,7 +116,7 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
                 <ul className={styles.ootd_img_nav}>
                     {item.ootdImages.map((_, index) => (
                         <li key={index}>
-                            <button onClick={() => handleNavClick(index)}>
+                            <button onClick={() => handleImageIndexClick(index)}>
                                 <ImageNavIcon isActive={currentIndex === index} />
                             </button>
                         </li>
@@ -109,7 +125,7 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
             </div>
 
             <div className={styles.ootd_btn_group}>
-                <button>
+                <button onClick={() => handleLike(item.ootdId)} disabled={likeMutation.isPending}>
                     <LikeIcon isActive={item.isLiked} />
                 </button>
                 <button>

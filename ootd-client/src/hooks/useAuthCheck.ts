@@ -10,17 +10,6 @@ export function useAuthCheck() {
     const [isChecking, setIsChecking] = useState(true);
 
     useEffect(() => {
-        // 권환체크가 필요없는 부분
-        if (
-            location.pathname === '/' ||
-            location.pathname === '/search' ||
-            location.pathname === '/login' ||
-            location.pathname === '/join'
-        ) {
-            setIsChecking(false);
-            return;
-        }
-
         const checkAuth = async () => {
             try {
                 const user = await apiClient<User>(API_ENDPOINTS.AUTH.ME, {
@@ -28,7 +17,7 @@ export function useAuthCheck() {
                 });
                 login(user);
             } catch (error) {
-                console.error(error);
+                console.log('Not logged in', error);
                 logout();
             } finally {
                 setIsChecking(false);
