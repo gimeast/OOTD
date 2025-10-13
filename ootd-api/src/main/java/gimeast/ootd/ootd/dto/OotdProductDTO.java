@@ -18,6 +18,7 @@ public class OotdProductDTO {
     private Long id;
     private String productName;
     private String productLink;
+    private String ogImage;
     private Integer displayOrder;
     private LocalDateTime regDate;
 
@@ -25,6 +26,7 @@ public class OotdProductDTO {
         this.id = entity.getId();
         this.productName = entity.getProductName();
         this.productLink = entity.getProductLink();
+        this.ogImage = entity.getOgImage();
         this.displayOrder = entity.getDisplayOrder();
         this.regDate = entity.getRegDate();
     }

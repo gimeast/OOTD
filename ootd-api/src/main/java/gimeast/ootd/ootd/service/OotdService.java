@@ -1,6 +1,7 @@
 package gimeast.ootd.ootd.service;
 
 import gimeast.ootd.common.dto.PageRequestDTO;
+import gimeast.ootd.common.util.OgImageExtractor;
 import gimeast.ootd.hashtag.entity.HashtagEntity;
 import gimeast.ootd.hashtag.repository.HashtagRepository;
 import gimeast.ootd.member.entity.MemberEntity;
@@ -29,6 +30,7 @@ public class OotdService {
     private final OotdRepository ootdRepository;
     private final MemberRepository memberRepository;
     private final HashtagRepository hashtagRepository;
+    private final OgImageExtractor ogImageExtractor;
 
     @Transactional
     public OotdDTO saveOotd(OotdDTO ootdDTO, Long memberIdx) {
@@ -85,12 +87,21 @@ public class OotdService {
         // 착용 상품 추가
         if (ootdDTO.getProducts() != null && !ootdDTO.getProducts().isEmpty()) {
             List<OotdProductEntity> products = ootdDTO.getProducts().stream()
-                    .map(productDTO -> OotdProductEntity.builder()
-                            .ootdEntity(ootdEntity)
-                            .productName(productDTO.getProductName())
-                            .productLink(productDTO.getProductLink())
-                            .displayOrder(productDTO.getDisplayOrder())
-                            .build())
+                    .map(productDTO -> {
+                        // 상품 링크가 있으면 og:image 추출
+                        String ogImage = null;
+                        if (productDTO.getProductLink() != null && !productDTO.getProductLink().trim().isEmpty()) {
+                            ogImage = ogImageExtractor.extractOgImage(productDTO.getProductLink());
+                        }
+
+                        return OotdProductEntity.builder()
+                                .ootdEntity(ootdEntity)
+                                .productName(productDTO.getProductName())
+                                .productLink(productDTO.getProductLink())
+                                .ogImage(ogImage)
+                                .displayOrder(productDTO.getDisplayOrder())
+                                .build();
+                    })
                     .toList();
 
             products.forEach(ootdEntity::addProduct);

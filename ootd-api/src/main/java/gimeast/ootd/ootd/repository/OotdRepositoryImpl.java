@@ -69,6 +69,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
                             .map(product -> ProductDTO.builder()
                                     .productName(product.getProductName())
                                     .productLink(product.getProductLink())
+                                    .ogImage(product.getOgImage())
                                     .build())
                             .collect(Collectors.toList());
 

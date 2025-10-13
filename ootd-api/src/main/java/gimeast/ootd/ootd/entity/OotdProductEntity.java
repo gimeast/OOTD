@@ -36,6 +36,9 @@ public class OotdProductEntity extends BaseEntity {
     @Column(length = 500)
     private String productLink;
 
+    @Column(length = 500)
+    private String ogImage;
+
     @Column(nullable = false)
     private Integer displayOrder;
 
@@ -46,5 +49,9 @@ public class OotdProductEntity extends BaseEntity {
     public void changeProductInfo(String productName, String productLink) {
         this.productName = productName;
         this.productLink = productLink;
+    }
+
+    public void changeOgImage(String ogImage) {
+        this.ogImage = ogImage;
     }
 }
