@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 
 export type User = {
     id: number;
@@ -16,19 +16,12 @@ type UserStore = {
 };
 
 const useUserStore = create<UserStore>()(
-    devtools(
-        persist(
-            set => ({
-                isLoggedIn: false,
-                user: null,
-                login: user => set({ isLoggedIn: true, user }),
-                logout: () => set({ isLoggedIn: false, user: null }),
-            }),
-            {
-                name: 'user-store',
-            }
-        )
-    )
+    devtools(set => ({
+        isLoggedIn: false,
+        user: null,
+        login: user => set({ isLoggedIn: true, user }),
+        logout: () => set({ isLoggedIn: false, user: null }),
+    }))
 );
 
 export default useUserStore;

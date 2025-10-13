@@ -7,6 +7,7 @@ export const API_ENDPOINTS = {
         JOIN: '/api/v1/auth/join',
         CHECK_EMAIL: '/api/v1/auth/join/check/email',
         CHECK_NICKNAME: '/api/v1/auth/join/check/nickname',
+        ME: '/api/v1/auth/me',
     },
     OOTD: {
         CREATE: '/api/v1/ootd',

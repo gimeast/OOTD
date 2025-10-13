@@ -9,15 +9,17 @@ type RequestOptions = {
     skipTokenRefresh?: boolean; // 무한 루프 방지용
 };
 
-let isRefreshing = false;
-let refreshSubscribers: Array<() => void> = [];
+let isRefreshing = false; //토큰 갱신중인지 여부를 컨트롤하기 위한 용도
+let refreshSubscribers: Array<() => void> = []; //토큰 갱신 중 들어온 요청건에 대해 큐에 적재하는 용도
 
 function onTokenRefreshed() {
+    //요청건 순차 실행
     refreshSubscribers.forEach(callback => callback());
     refreshSubscribers = [];
 }
 
 function addRefreshSubscriber(callback: () => void) {
+    //요청건 적재
     refreshSubscribers.push(callback);
 }
 
@@ -32,7 +34,7 @@ async function refreshAccessToken(): Promise<boolean> {
             return false;
         }
 
-        onTokenRefreshed();
+        onTokenRefreshed(); //실제로 토큰 갱신중 동시에 여러 API가 호출되는 경우 콜백 함수들 실행됨
         return true;
     } catch (error) {
         console.error('토큰 갱신 실패:', error);
@@ -48,7 +50,7 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
     const config: RequestInit = {
         method,
         headers: isFormData
-            ? headers // FormData일 때는 Content-Type을 자동으로 설정되게 함
+            ? headers // FormData일 때는 Content-Type을 자동으로 설정
             : {
                   'Content-Type': 'application/json',
                   ...headers,
@@ -75,6 +77,7 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
         const result = await response.json();
 
         if (!response.ok) {
+            // 토큰 만료시 (리프레시 시도)
             if (response.status === 403 && !skipTokenRefresh) {
                 if (!isRefreshing) {
                     isRefreshing = true;
@@ -82,13 +85,17 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
                     isRefreshing = false;
 
                     if (refreshSuccess) {
-                        return apiClient<T>(endpoint, { ...options, skipTokenRefresh: true });
+                        return apiClient<T>(endpoint, { ...options, skipTokenRefresh: true }); //원래 요청 재시도
                     } else {
-                        useUserStore.getState().logout();
-                        window.location.href = '/login';
+                        useUserStore.getState().logout(); //전역상태 변경
+                        if (!endpoint.includes('/auth/me')) {
+                            window.location.href = '/login';
+                            console.log('??');
+                        }
                         throw new Error('인증이 만료되었습니다. 다시 로그인해주세요.');
                     }
                 } else {
+                    // 토큰갱신중이면 토큰 갱신 후 다시 호출 할수있도록 동시 호출된 함수들은 적재한다.
                     return new Promise((resolve, reject) => {
                         addRefreshSubscriber(() => {
                             apiClient<T>(endpoint, { ...options, skipTokenRefresh: true })
