@@ -1,14 +1,14 @@
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import type { LayoutContextType } from '../types/context.ts';
+import type { LayoutContextType } from '../../types/context.ts';
 import styles from './join.module.scss';
-import LogoSection from '../components/common/LogoSection.tsx';
-import AuthInput from '../components/common/auth/AuthInput.tsx';
-import BasicButton from '../components/common/BasicButton.tsx';
-import useDebounce from '../hooks/useDebounce';
-import { API_ENDPOINTS, apiClient } from '../api';
-import { validateEmail, validatePassword } from '../utils/validation.ts';
-import BasicModal from '../components/common/BasicModal.tsx';
+import LogoSection from '../../components/common/LogoSection.tsx';
+import AuthInput from '../../components/common/auth/AuthInput.tsx';
+import BasicButton from '../../components/common/BasicButton.tsx';
+import useDebounce from '../../hooks/useDebounce.ts';
+import { API_ENDPOINTS, apiClient } from '../../api';
+import { validateEmail, validatePassword } from '../../utils/validation.ts';
+import BasicModal from '../../components/common/BasicModal.tsx';
 
 type JoinResponse = {
     isSuccess: boolean;

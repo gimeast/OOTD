@@ -1,0 +1,126 @@
+.profile {
+    .profile_header_section {
+        padding: 1.5rem;
+
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+
+        border-bottom: 1px solid $gray-200;
+
+        .profile_content {
+            h3 {
+                font-weight: 700;
+                font-size: fluid-width(1.6rem, 2rem);
+                line-height: 100%;
+            }
+            p {
+                margin-top: 0.5rem;
+                font-weight: 400;
+                font-size: fluid-width(1.2rem, 1.6rem);
+                line-height: 100%;
+                color: $gray-500;
+            }
+        }
+    }
+
+    .profile_numbers_section {
+        border-bottom: 1px solid $gray-200;
+        padding: 1.5rem;
+
+        .profile_numbers {
+            display: flex;
+            justify-content: center;
+            gap: 5.6rem;
+            text-align: center;
+
+            div {
+                display: flex;
+                flex-direction: column-reverse;
+                gap: 0.5rem;
+
+                dd {
+                    font-weight: 700;
+                    font-size: fluid-width(1.4rem, 1.8rem);
+                    line-height: 100%;
+                }
+                dt {
+                    font-weight: 400;
+                    font-size: fluid-width(1.2rem, 1.6rem);
+                    line-height: 100%;
+                    color: $gray-500;
+                }
+            }
+        }
+    }
+
+    .profile_settings_section {
+        padding: 1.5rem;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+
+        font-weight: 400;
+        line-height: 100%;
+        border-bottom: 1px solid $gray-200;
+
+        .profile_edit {
+            width: 100%;
+            height: fluid-width(3rem, 5rem);
+
+            background-color: $gray-200;
+            font-size: fluid-width(1.2rem, 1.6rem);
+            border-radius: 0.5rem;
+        }
+
+        .profile_share {
+            width: 100%;
+            height: fluid-width(3rem, 5rem);
+
+            background-color: $gray-200;
+            font-size: fluid-width(1.2rem, 1.6rem);
+            border-radius: 0.5rem;
+        }
+
+        .logout {
+            padding: 0 1rem;
+
+            background-color: $gray-200;
+            border-radius: 0.5rem;
+
+            svg {
+                width: fluid-width(1.2rem, 3.2rem);
+                height: fluid-width(1.2rem, 2.2rem);
+            }
+        }
+
+        button:hover {
+            background-color: $black;
+            color: $white;
+        }
+    }
+
+    .profile_ootd_group_section {
+        .profile_tabs {
+            display: flex;
+
+            a {
+                flex: 1;
+                text-align: center;
+                padding: 0.8rem 0;
+
+                font-weight: 400;
+                font-size: fluid-width(1.2rem, 1.6rem);
+                line-height: 100%;
+                color: $gray-500;
+
+                &.active {
+                    border-bottom: 2px solid $black;
+                    color: $black;
+                    font-weight: 700;
+                    line-height: 100%;
+                }
+            }
+        }
+    }
+}

@@ -32,7 +32,7 @@ const BottomNav = () => {
                     {({ isActive }) => <LikeIcon className={isLoggedIn && isActive ? '' : styles.likeIcon} />}
                 </NavLink>
                 <NavLink
-                    to={isLoggedIn ? '/mypage' : '/login'}
+                    to={isLoggedIn ? '/profile' : '/login'}
                     className={({ isActive }) => (isActive ? styles.active : '')}
                 >
                     {({ isActive }) => <UserIcon className={isActive ? '' : styles.userIcon} />}

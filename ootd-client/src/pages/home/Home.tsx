@@ -1,14 +1,14 @@
 import { useState, useRef } from 'react';
 import styles from './home.module.scss';
-import ProfileIcon from '../components/icons/ProfileIcon.tsx';
-import LikeIcon from '../components/icons/LikeIcon.tsx';
-import ShareIcon from '../components/icons/ShareIcon.tsx';
-import CommentIcon from '../components/icons/CommentIcon.tsx';
-import BookmarkIcon from '../components/icons/BookmarkIcon.tsx';
-import ImageNavIcon from '../components/icons/ImageNavIcon.tsx';
-import { API_ENDPOINTS, apiClient } from '../api';
+import ProfileIcon from '../../components/icons/ProfileIcon.tsx';
+import LikeIcon from '../../components/icons/LikeIcon.tsx';
+import ShareIcon from '../../components/icons/ShareIcon.tsx';
+import CommentIcon from '../../components/icons/CommentIcon.tsx';
+import BookmarkIcon from '../../components/icons/BookmarkIcon.tsx';
+import ImageNavIcon from '../../components/icons/ImageNavIcon.tsx';
+import { API_ENDPOINTS, apiClient } from '../../api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import ProductOgIcon from '../components/icons/ProductOgIcon.tsx';
+import ProductOgIcon from '../../components/icons/ProductOgIcon.tsx';
 
 type ProductType = {
     productName: string;

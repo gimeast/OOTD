@@ -62,7 +62,7 @@
                     img {
                         width: 100%;
                         aspect-ratio: 1 / 1;
-                        object-fit: cover;
+                        object-fit: contain;
                         display: block;
                     }
                 }
@@ -73,6 +73,11 @@
                 display: flex;
                 justify-content: center;
                 gap: 0.4rem;
+
+                svg {
+                    width: fluid-width(0.5rem, 0.8rem);
+                    height: fluid-width(0.5rem, 0.8rem);
+                }
             }
         }
 

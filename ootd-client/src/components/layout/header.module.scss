@@ -50,7 +50,7 @@ header {
         }
 
         & .page_name {
-            font-size: 1.6rem;
+            font-size: fluid-width(1.6rem, 2rem);
             font-style: normal;
             font-weight: 700;
             line-height: normal;

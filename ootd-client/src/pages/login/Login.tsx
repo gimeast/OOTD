@@ -1,13 +1,13 @@
 import styles from './login.module.scss';
 import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import { useActionState, useEffect, useRef, useState } from 'react';
-import { apiClient, API_ENDPOINTS } from '../api';
-import { validateEmail, validatePassword } from '../utils/validation';
-import useUserStore, { type User } from '../stores/useUserStore';
-import type { LayoutContextType } from '../types/context';
-import LogoSection from '../components/common/LogoSection.tsx';
-import AuthInput from '../components/common/auth/AuthInput.tsx';
-import BasicButton from '../components/common/BasicButton.tsx';
+import { apiClient, API_ENDPOINTS } from '../../api';
+import { validateEmail, validatePassword } from '../../utils/validation.ts';
+import useUserStore, { type User } from '../../stores/useUserStore.ts';
+import type { LayoutContextType } from '../../types/context.ts';
+import LogoSection from '../../components/common/LogoSection.tsx';
+import AuthInput from '../../components/common/auth/AuthInput.tsx';
+import BasicButton from '../../components/common/BasicButton.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 
 type LoginState = {

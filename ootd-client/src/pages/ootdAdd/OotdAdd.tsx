@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { LayoutContextType } from '../types/context.ts';
-import ImageBox from '../components/common/ImageBox.tsx';
+import type { LayoutContextType } from '../../types/context.ts';
+import ImageBox from '../../components/common/ImageBox.tsx';
 import styles from './ootdAdd.module.scss';
-import BasicButton from '../components/common/BasicButton.tsx';
-import DeleteIcon from '../components/icons/DeleteIcon.tsx';
-import { API_ENDPOINTS, apiClient } from '../api';
-import BasicModal from '../components/common/BasicModal.tsx';
+import BasicButton from '../../components/common/BasicButton.tsx';
+import DeleteIcon from '../../components/icons/DeleteIcon.tsx';
+import { API_ENDPOINTS, apiClient } from '../../api';
+import BasicModal from '../../components/common/BasicModal.tsx';
 
 type Product = { productName: string; productLink: string };
 
