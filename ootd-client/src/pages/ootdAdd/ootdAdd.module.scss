@@ -75,9 +75,17 @@
                 line-height: 100%;
             }
             & button {
-                font-weight: 400;
-                font-size: 1.2rem;
+                font-weight: 700;
+                font-size: 1.4rem;
                 line-height: 100%;
+
+                &:before {
+                    content: '+';
+                    margin-right: 0.5rem;
+                }
+                &:hover {
+                    color: $red-100;
+                }
             }
         }
 
@@ -100,6 +108,9 @@
                         font-weight: 400;
                         font-size: 1.2rem;
                         line-height: 100%;
+                    }
+                    svg:hover {
+                        cursor: pointer;
                     }
                 }
 

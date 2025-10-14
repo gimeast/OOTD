@@ -171,7 +171,7 @@ const OotdAdd = () => {
                         <h2>착용 상품 정보</h2>
                         {products.length < 3 && (
                             <button type='button' onClick={handleProductAdd}>
-                                + 상품 추가
+                                상품 추가
                             </button>
                         )}
                     </div>
