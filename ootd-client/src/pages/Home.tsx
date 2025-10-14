@@ -86,7 +86,16 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
         mutationFn: (ootdId: number) =>
             apiClient(API_ENDPOINTS.OOTD.LIKE.replace('{ootdId}', String(ootdId)), {
                 method: 'POST',
-                body: { ootdId },
+            }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['ootd', 'list'] });
+        },
+    });
+
+    const bookmarkMutation = useMutation({
+        mutationFn: (ootdId: number) =>
+            apiClient(API_ENDPOINTS.OOTD.BOOKMARK.replace('{ootdId}', String(ootdId)), {
+                method: 'POST',
             }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['ootd', 'list'] });
@@ -95,6 +104,9 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
 
     const handleLike = (ootdId: number) => {
         likeMutation.mutate(ootdId);
+    };
+    const handleBookmark = (ootdId: number) => {
+        bookmarkMutation.mutate(ootdId);
     };
 
     return (
@@ -134,7 +146,7 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
                 <button>
                     <ShareIcon />
                 </button>
-                <button>
+                <button onClick={() => handleBookmark(item.ootdId)} disabled={bookmarkMutation.isPending}>
                     <BookmarkIcon isActive={item.isBookmarked} />
                 </button>
             </div>
