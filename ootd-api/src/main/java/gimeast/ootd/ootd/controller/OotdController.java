@@ -3,6 +3,7 @@ package gimeast.ootd.ootd.controller;
 import gimeast.ootd.common.dto.PageRequestDTO;
 import gimeast.ootd.ootd.dto.OotdDTO;
 import gimeast.ootd.ootd.dto.OotdListResponseDTO;
+import gimeast.ootd.ootd.service.OotdBookmarkService;
 import gimeast.ootd.ootd.service.OotdLikeService;
 import gimeast.ootd.ootd.service.OotdService;
 import gimeast.ootd.security.auth.CustomUserPrincipal;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -28,6 +28,7 @@ import java.util.Map;
 public class OotdController {
     private final OotdService ootdService;
     private final OotdLikeService ootdLikeService;
+    private final OotdBookmarkService ootdBookmarkService;
 
     @PostMapping
     public ResponseEntity<OotdDTO> createOotd(
@@ -58,6 +59,19 @@ public class OotdController {
         return ResponseEntity.ok(Map.of(
                 "message", isLiked ? "좋아요가 추가되었습니다." : "좋아요가 취소되었습니다.",
                 "isLiked", isLiked
+        ));
+    }
+
+    @PostMapping("/{ootdId}/bookmark")
+    public ResponseEntity<Map<String, Object>> toggleBookmark(
+            @PathVariable Long ootdId,
+            @AuthenticationPrincipal CustomUserPrincipal principal
+    ) {
+        boolean isLiked = ootdBookmarkService.toggleBookmark(ootdId, principal.getIdx());
+
+        return ResponseEntity.ok(Map.of(
+                "message", isLiked ? "찜하기가 추가되었습니다." : "찜하기가 취소되었습니다.",
+                "isBookmarked", isLiked
         ));
     }
 

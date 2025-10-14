@@ -57,12 +57,4 @@ public class OotdLikeService {
             return true;
         }
     }
-
-    /**
-     * 좋아요 여부 확인
-     */
-    @Transactional(readOnly = true)
-    public boolean isLiked(Long ootdId, Long memberIdx) {
-        return ootdLikeRepository.existsByOotdEntityIdAndMemberIdx(ootdId, memberIdx);
-    }
 }

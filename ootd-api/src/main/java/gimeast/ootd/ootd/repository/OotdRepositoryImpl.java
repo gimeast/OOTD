@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import static gimeast.ootd.ootd.entity.QOotdEntity.ootdEntity;
 import static gimeast.ootd.ootd.entity.QOotdImageEntity.ootdImageEntity;
 import static gimeast.ootd.ootd.entity.QOotdLikeEntity.ootdLikeEntity;
-import static gimeast.ootd.ootd.entity.QOotdBookmark.ootdBookmark;
+import static gimeast.ootd.ootd.entity.QOotdBookmarkEntity.ootdBookmarkEntity;
 import static gimeast.ootd.ootd.entity.QOotdHashtagEntity.ootdHashtagEntity;
 import static gimeast.ootd.ootd.entity.QOotdProductEntity.ootdProductEntity;
 import static gimeast.ootd.member.entity.QMemberEntity.memberEntity;
@@ -73,11 +73,11 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
         // 현재 사용자의 북마크 정보 일괄 조회
         List<Long> bookmarkedOotdIds = List.of();
         if (currentMemberIdx != null && !ootdEntities.isEmpty()) {
-            bookmarkedOotdIds = from(ootdBookmark)
-                    .where(ootdBookmark.ootdEntity.id.in(
+            bookmarkedOotdIds = from(ootdBookmarkEntity)
+                    .where(ootdBookmarkEntity.ootdEntity.id.in(
                             ootdEntities.stream().map(gimeast.ootd.ootd.entity.OotdEntity::getId).toList()
-                    ).and(ootdBookmark.member.idx.eq(currentMemberIdx)))
-                    .select(ootdBookmark.ootdEntity.id)
+                    ).and(ootdBookmarkEntity.member.idx.eq(currentMemberIdx)))
+                    .select(ootdBookmarkEntity.ootdEntity.id)
                     .fetch();
         }
         final List<Long> finalBookmarkedOotdIds = bookmarkedOotdIds;
