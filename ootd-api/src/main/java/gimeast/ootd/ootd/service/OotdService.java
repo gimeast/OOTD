@@ -131,15 +131,14 @@ public class OotdService {
         // 썸네일이 없으면 원본 URL로 변경
         List<OotdListResponseDTO> adjustedContent = result.getContent().stream()
                 .map(dto -> {
-                    List<String> adjustedImages = dto.getOotdImages().stream()
-                            .map(this::adjustThumbnailUrl)
-                            .collect(Collectors.toList());
+                    String adjustedImage = dto.getOotdImage() != null ?
+                            adjustThumbnailUrl(dto.getOotdImage()) : null;
 
                     return OotdListResponseDTO.builder()
                             .ootdId(dto.getOotdId())
                             .profileImageUrl(dto.getProfileImageUrl())
                             .nickname(dto.getNickname())
-                            .ootdImages(adjustedImages)
+                            .ootdImage(adjustedImage)
                             .isLiked(dto.getIsLiked())
                             .likeCount(dto.getLikeCount())
                             .isBookmarked(dto.getIsBookmarked())
@@ -190,5 +189,63 @@ public class OotdService {
         }
 
         return path + "s_" + fileName;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OotdListResponseDTO> getLikedOotdList(PageRequestDTO pageRequestDTO, Long memberIdx) {
+        Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
+        Page<OotdListResponseDTO> result = ootdRepository.findLikedOotdList(memberIdx, pageable);
+
+        // 썸네일이 없으면 원본 URL로 변경
+        List<OotdListResponseDTO> adjustedContent = result.getContent().stream()
+                .map(dto -> {
+                    String adjustedImage = dto.getOotdImage() != null ?
+                            adjustThumbnailUrl(dto.getOotdImage()) : null;
+
+                    return OotdListResponseDTO.builder()
+                            .ootdId(dto.getOotdId())
+                            .profileImageUrl(dto.getProfileImageUrl())
+                            .nickname(dto.getNickname())
+                            .ootdImage(adjustedImage)
+                            .isLiked(dto.getIsLiked())
+                            .likeCount(dto.getLikeCount())
+                            .isBookmarked(dto.getIsBookmarked())
+                            .content(dto.getContent())
+                            .hashtags(dto.getHashtags())
+                            .products(dto.getProducts())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(adjustedContent, pageable, result.getTotalElements());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OotdListResponseDTO> getBookmarkedOotdList(PageRequestDTO pageRequestDTO, Long memberIdx) {
+        Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
+        Page<OotdListResponseDTO> result = ootdRepository.findBookmarkedOotdList(memberIdx, pageable);
+
+        // 썸네일이 없으면 원본 URL로 변경
+        List<OotdListResponseDTO> adjustedContent = result.getContent().stream()
+                .map(dto -> {
+                    String adjustedImage = dto.getOotdImage() != null ?
+                            adjustThumbnailUrl(dto.getOotdImage()) : null;
+
+                    return OotdListResponseDTO.builder()
+                            .ootdId(dto.getOotdId())
+                            .profileImageUrl(dto.getProfileImageUrl())
+                            .nickname(dto.getNickname())
+                            .ootdImage(adjustedImage)
+                            .isLiked(dto.getIsLiked())
+                            .likeCount(dto.getLikeCount())
+                            .isBookmarked(dto.getIsBookmarked())
+                            .content(dto.getContent())
+                            .hashtags(dto.getHashtags())
+                            .products(dto.getProducts())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(adjustedContent, pageable, result.getTotalElements());
     }
 }

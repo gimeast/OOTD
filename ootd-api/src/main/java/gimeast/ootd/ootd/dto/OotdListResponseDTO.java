@@ -15,7 +15,8 @@ public class OotdListResponseDTO {
     private Long ootdId;
     private String profileImageUrl;
     private String nickname;
-    private List<String> ootdImages;
+    private List<String> ootdImages;  // 전체 목록 조회 시 사용
+    private String ootdImage;  // my/liked/bookmarked 조회 시 사용 (단건)
     private Boolean isLiked;
     private Integer likeCount;
     private Boolean isBookmarked;
