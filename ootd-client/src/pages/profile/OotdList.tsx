@@ -12,7 +12,6 @@ const OotdList = () => {
         queryFn: () =>
             apiClient<PageResponseType<OotdItemType>>(API_ENDPOINTS.OOTD.MY, { method: 'GET', params: { page: 1 } }),
     });
-    console.log('data', data);
 
     return (
         <>

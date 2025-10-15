@@ -16,8 +16,6 @@ const BookmarkedList = () => {
             }),
     });
 
-    console.log(data);
-
     return (
         <div>
             {data?.content?.length ? (

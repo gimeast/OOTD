@@ -46,7 +46,7 @@ const Profile = () => {
                 <h2 className='sr-only'>프로필 설정</h2>
                 <button className={styles.profile_edit}>프로필 편집</button>
                 <button className={styles.profile_share}>프로필 공유</button>
-                <button className={styles.logout}>
+                <button className={styles.logout} aria-label='로그아웃'>
                     <LogoutIcon />
                 </button>
             </section>
@@ -54,13 +54,26 @@ const Profile = () => {
             <section className={styles.profile_ootd_group_section}>
                 <h2 className='sr-only'>내 게시물, 저장, 태그 목록</h2>
                 <div className={styles.profile_tabs}>
-                    <NavLink to='/profile' end className={({ isActive }) => (isActive ? styles.active : '')}>
+                    <NavLink
+                        to='/profile'
+                        replace={true}
+                        end
+                        className={({ isActive }) => (isActive ? styles.active : '')}
+                    >
                         게시물
                     </NavLink>
-                    <NavLink to='/profile/bookmarked' className={({ isActive }) => (isActive ? styles.active : '')}>
+                    <NavLink
+                        to='/profile/bookmarked'
+                        replace={true}
+                        className={({ isActive }) => (isActive ? styles.active : '')}
+                    >
                         저장
                     </NavLink>
-                    <NavLink to='/profile/tagged' className={({ isActive }) => (isActive ? styles.active : '')}>
+                    <NavLink
+                        to='/profile/tagged'
+                        replace={true}
+                        className={({ isActive }) => (isActive ? styles.active : '')}
+                    >
                         태그
                     </NavLink>
                 </div>
