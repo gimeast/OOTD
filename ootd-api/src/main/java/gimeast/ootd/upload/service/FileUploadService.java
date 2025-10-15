@@ -72,9 +72,9 @@ public class FileUploadService {
 
                     log.info("이미지 최적화 완료: {} -> {} bytes ({})", originalFilename, saveFile.length(), optimizedExtension);
 
-                    // 썸네일 생성
-                    String thumbnailSaveName = uploadPath + File.separator + folderPath + File.separator
-                            + "s_" + optimizedFilename;
+                    // 썸네일 생성 (확장자를 .jpg로 변경)
+                    String thumbnailFilename = "s_" + replaceExtension(optimizedFilename, OUTPUT_FORMAT);
+                    String thumbnailSaveName = uploadPath + File.separator + folderPath + File.separator + thumbnailFilename;
                     File thumbnailFile = new File(thumbnailSaveName);
 
                     Thumbnails.of(saveFile)
@@ -130,6 +130,13 @@ public class FileUploadService {
         return filename.substring(0, filename.lastIndexOf("."));
     }
 
+    private String replaceExtension(String filename, String newExtension) {
+        if (filename == null || !filename.contains(".")) {
+            return filename + "." + newExtension;
+        }
+        return filename.substring(0, filename.lastIndexOf(".")) + "." + newExtension;
+    }
+
     private String makeFolder() {
         String str = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
         String folderPath = str.replace("/", File.separator);
@@ -143,6 +150,16 @@ public class FileUploadService {
         return folderPath;
     }
 
+    public boolean fileExists(String fileName) {
+        try {
+            Path filePath = Paths.get(uploadPath + File.separator + fileName.replace("/", File.separator));
+            return Files.exists(filePath);
+        } catch (Exception e) {
+            log.error("파일 존재 확인 실패: " + e.getMessage());
+            return false;
+        }
+    }
+
     public void deleteFile(String fileName) {
         try {
             // 원본 파일 삭제
@@ -153,9 +170,10 @@ public class FileUploadService {
                 log.info("파일 삭제 완료: {}", fileName);
             }
 
-            // 썸네일도 삭제
+            // 썸네일도 삭제 (확장자를 .jpg로 변경)
+            String originalFileName = fileName.substring(fileName.lastIndexOf("/") + 1);
             String thumbnailFileName = fileName.substring(0, fileName.lastIndexOf("/") + 1)
-                    + "s_" + fileName.substring(fileName.lastIndexOf("/") + 1);
+                    + "s_" + replaceExtension(originalFileName, OUTPUT_FORMAT);
             Path thumbnailPath = Paths.get(uploadPath + File.separator + thumbnailFileName.replace("/", File.separator));
             boolean thumbnailDeleted = Files.deleteIfExists(thumbnailPath);
 

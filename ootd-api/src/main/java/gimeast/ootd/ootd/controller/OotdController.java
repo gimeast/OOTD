@@ -75,4 +75,13 @@ public class OotdController {
         ));
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<Page<OotdListResponseDTO>> getMyOotdList(
+            PageRequestDTO pageRequestDTO,
+            @AuthenticationPrincipal CustomUserPrincipal principal
+    ) {
+        Page<OotdListResponseDTO> myOotdList = ootdService.getMyOotdList(pageRequestDTO, principal.getIdx());
+        return ResponseEntity.ok(myOotdList);
+    }
+
 }

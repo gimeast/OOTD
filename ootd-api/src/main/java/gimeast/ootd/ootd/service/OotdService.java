@@ -13,15 +13,18 @@ import gimeast.ootd.ootd.entity.OotdHashtagEntity;
 import gimeast.ootd.ootd.entity.OotdImageEntity;
 import gimeast.ootd.ootd.entity.OotdProductEntity;
 import gimeast.ootd.ootd.repository.OotdRepository;
+import gimeast.ootd.upload.service.FileUploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +34,7 @@ public class OotdService {
     private final MemberRepository memberRepository;
     private final HashtagRepository hashtagRepository;
     private final OgImageExtractor ogImageExtractor;
+    private final FileUploadService fileUploadService;
 
     @Transactional
     public OotdDTO saveOotd(OotdDTO ootdDTO, Long memberIdx) {
@@ -117,5 +121,74 @@ public class OotdService {
     public Page<OotdListResponseDTO> getOotdList(PageRequestDTO pageRequestDTO, Long currentMemberIdx) {
         Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
         return ootdRepository.findOotdList(currentMemberIdx, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OotdListResponseDTO> getMyOotdList(PageRequestDTO pageRequestDTO, Long memberIdx) {
+        Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
+        Page<OotdListResponseDTO> result = ootdRepository.findMyOotdList(memberIdx, pageable);
+
+        // 썸네일이 없으면 원본 URL로 변경
+        List<OotdListResponseDTO> adjustedContent = result.getContent().stream()
+                .map(dto -> {
+                    List<String> adjustedImages = dto.getOotdImages().stream()
+                            .map(this::adjustThumbnailUrl)
+                            .collect(Collectors.toList());
+
+                    return OotdListResponseDTO.builder()
+                            .ootdId(dto.getOotdId())
+                            .profileImageUrl(dto.getProfileImageUrl())
+                            .nickname(dto.getNickname())
+                            .ootdImages(adjustedImages)
+                            .isLiked(dto.getIsLiked())
+                            .likeCount(dto.getLikeCount())
+                            .isBookmarked(dto.getIsBookmarked())
+                            .content(dto.getContent())
+                            .hashtags(dto.getHashtags())
+                            .products(dto.getProducts())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(adjustedContent, pageable, result.getTotalElements());
+    }
+
+    private String adjustThumbnailUrl(String originalUrl) {
+        // 원본 URL에서 썸네일 URL 생성
+        String thumbnailUrl = convertToThumbnailUrl(originalUrl);
+
+        // 썸네일 파일이 존재하는지 확인
+        if (fileUploadService.fileExists(thumbnailUrl)) {
+            return thumbnailUrl;
+        }
+
+        // 썸네일이 없으면 원본 URL 반환
+        return originalUrl;
+    }
+
+    private String convertToThumbnailUrl(String imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            return imageUrl;
+        }
+
+        int lastSlashIndex = imageUrl.lastIndexOf("/");
+        String fileName;
+        String path;
+
+        if (lastSlashIndex == -1) {
+            fileName = imageUrl;
+            path = "";
+        } else {
+            fileName = imageUrl.substring(lastSlashIndex + 1);
+            path = imageUrl.substring(0, lastSlashIndex + 1);
+        }
+
+        // 확장자를 .jpg로 변경 (썸네일은 항상 jpg로 생성됨)
+        int lastDotIndex = fileName.lastIndexOf(".");
+        if (lastDotIndex != -1) {
+            fileName = fileName.substring(0, lastDotIndex) + ".jpg";
+        }
+
+        return path + "s_" + fileName;
     }
 }
