@@ -15,5 +15,6 @@ export const API_ENDPOINTS = {
         IMAGE: { UPLOAD: '/api/v1/upload/images' },
         LIKE: '/api/v1/ootd/{ootdId}/like',
         BOOKMARK: '/api/v1/ootd/{ootdId}/bookmark',
+        MY: '/api/v1/ootd/my',
     },
 } as const;

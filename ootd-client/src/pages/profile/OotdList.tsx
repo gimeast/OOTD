@@ -1,21 +1,26 @@
 import styles from './ootdList.module.scss';
-import testImg1 from '../../assets/test.png';
-import testImg2 from '../../assets/test2.png';
-import testImg3 from '../../assets/test3.jpg';
-import testImg4 from '../../assets/test4.jpg';
+import { useQuery } from '@tanstack/react-query';
+import { API_ENDPOINTS, apiClient } from '../../api';
+import type { PageResponseType } from '../../types/common.ts';
+import type { OotdItemType } from '../../types/ootd.ts';
 import ProfileOotdAddIcon from '../../components/icons/ProfileOotdAddIcon.tsx';
 
 const OotdList = () => {
-    const imgList = [testImg1, testImg2, testImg3, testImg4];
+    const { data } = useQuery({
+        queryKey: ['ootd', 'my'],
+        queryFn: () =>
+            apiClient<PageResponseType<OotdItemType>>(API_ENDPOINTS.OOTD.MY, { method: 'GET', params: { page: 1 } }),
+    });
+    console.log('data', data);
 
     return (
         <>
             <h2 className='sr-only'>내가 올린 게시물 조회</h2>
-            {imgList?.length ? (
+            {data?.content?.length ? (
                 <ul className={styles.ootd_grid}>
-                    {imgList.map((testImg, index) => (
-                        <li key={index} className={styles.ootd_item}>
-                            <img src={testImg} alt='' />
+                    {data.content.map(item => (
+                        <li key={item.ootdId} className={styles.ootd_item}>
+                            <img src={`${import.meta.env.VITE_API_BASE_URL}${item.ootdImages[0]}`} alt='' />
                         </li>
                     ))}
                 </ul>

@@ -9,54 +9,8 @@ import ImageNavIcon from '../../components/icons/ImageNavIcon.tsx';
 import { API_ENDPOINTS, apiClient } from '../../api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import ProductOgIcon from '../../components/icons/ProductOgIcon.tsx';
-
-type ProductType = {
-    productName: string;
-    productLink: string;
-    ogImage: string;
-};
-
-type OotdItemType = {
-    ootdId: number;
-    profileImageUrl: string;
-    nickname: string;
-    ootdImages: string[];
-    isLiked: boolean;
-    likeCount: number;
-    isBookmarked: boolean;
-    content: string;
-    hashtags: string[];
-    products: ProductType[];
-};
-
-type OotdDataType = {
-    content: OotdItemType[];
-    pageable: {
-        pageNumber: number;
-        pageSize: number;
-        sort: {
-            empty: boolean;
-            unsorted: boolean;
-            sorted: boolean;
-        };
-        offset: number;
-        unpaged: boolean;
-        paged: boolean;
-    };
-    last: boolean;
-    totalElements: number;
-    totalPages: number;
-    first: boolean;
-    size: number;
-    number: number;
-    sort: {
-        empty: boolean;
-        unsorted: boolean;
-        sorted: boolean;
-    };
-    numberOfElements: number;
-    empty: boolean;
-};
+import type { PageResponseType } from '../../types/common.ts';
+import type { OotdItemType } from '../../types/ootd.ts';
 
 const OotdItem = ({ item }: { item: OotdItemType }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -180,7 +134,7 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
 };
 
 const Home = () => {
-    const { data, isLoading, error } = useQuery<OotdDataType>({
+    const { data } = useQuery<PageResponseType<OotdItemType>>({
         queryKey: ['ootd', 'list'],
         queryFn: () =>
             apiClient(API_ENDPOINTS.OOTD.LIST, {
@@ -188,11 +142,6 @@ const Home = () => {
                 params: { page: 1 },
             }),
     });
-
-    if (isLoading) return <div>로딩 중...</div>;
-    if (error) return <div>에러 발생: {error.message}</div>;
-
-    console.log(data?.content);
 
     return (
         <div className={styles.home}>
