@@ -7,10 +7,11 @@ import CommentIcon from '../../components/icons/CommentIcon.tsx';
 import BookmarkIcon from '../../components/icons/BookmarkIcon.tsx';
 import ImageNavIcon from '../../components/icons/ImageNavIcon.tsx';
 import { API_ENDPOINTS, apiClient } from '../../api';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import ProductOgIcon from '../../components/icons/ProductOgIcon.tsx';
 import type { PageResponseType } from '../../types/common.ts';
 import type { OotdItemType } from '../../types/ootd.ts';
+import { useScrollObserver } from '../../hooks/useScrollObserver.ts';
 
 const OotdItem = ({ item }: { item: OotdItemType }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -134,13 +135,23 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
 };
 
 const Home = () => {
-    const { data } = useQuery<PageResponseType<OotdItemType>>({
+    const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
         queryKey: ['ootd', 'list'],
-        queryFn: () =>
+        queryFn: ({ pageParam }: { pageParam: number }): Promise<PageResponseType<OotdItemType>> =>
             apiClient(API_ENDPOINTS.OOTD.LIST, {
                 method: 'GET',
-                params: { page: 1 },
+                params: { page: pageParam },
             }),
+        getNextPageParam: (lastPage: PageResponseType<OotdItemType>, allPages) => {
+            return lastPage.last ? undefined : allPages.length + 1;
+        },
+        initialPageParam: 1,
+    });
+
+    useScrollObserver(() => {
+        if (hasNextPage && !isFetchingNextPage) {
+            void fetchNextPage();
+        }
     });
 
     return (
@@ -150,9 +161,9 @@ const Home = () => {
                 <button>인기순</button>
             </div>
 
-            {data?.content?.map(item => (
-                <OotdItem key={item.ootdId} item={item} />
-            ))}
+            {data?.pages.map((page: PageResponseType<OotdItemType>) =>
+                page.content.map((item: OotdItemType) => <OotdItem key={item.ootdId} item={item} />)
+            )}
         </div>
     );
 };
