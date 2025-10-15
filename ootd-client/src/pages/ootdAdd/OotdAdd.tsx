@@ -51,7 +51,14 @@ const OotdAdd = () => {
         },
     });
 
+    const FILE_MAX_SIZE = 10 * 1024 * 1024; // 10MB
+
     const handleFileSelect = (file: File) => {
+        if (file.size > FILE_MAX_SIZE) {
+            alert('파일 크기가 너무 큽니다. 최대 용량은 10MB입니다.');
+            return;
+        }
+
         setImageFiles(prev => [...prev, file]);
     };
 
@@ -78,6 +85,11 @@ const OotdAdd = () => {
         e.preventDefault();
 
         try {
+            if (imageFiles[0].size > FILE_MAX_SIZE) {
+                alert('파일 크기가 너무 큽니다. 최대 용량은 10MB입니다.');
+                return;
+            }
+
             const imageResult = await uploadImageMutation.mutateAsync(imageFiles);
 
             const imagesWithOrder = (imageResult as Array<Record<string, unknown>>).map((image, index) => ({
