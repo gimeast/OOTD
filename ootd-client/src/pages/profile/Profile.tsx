@@ -57,7 +57,7 @@ const Profile = () => {
                     <NavLink to='/profile' end className={({ isActive }) => (isActive ? styles.active : '')}>
                         게시물
                     </NavLink>
-                    <NavLink to='/profile/saved' className={({ isActive }) => (isActive ? styles.active : '')}>
+                    <NavLink to='/profile/bookmarked' className={({ isActive }) => (isActive ? styles.active : '')}>
                         저장
                     </NavLink>
                     <NavLink to='/profile/tagged' className={({ isActive }) => (isActive ? styles.active : '')}>

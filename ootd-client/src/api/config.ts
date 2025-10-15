@@ -16,5 +16,7 @@ export const API_ENDPOINTS = {
         LIKE: '/api/v1/ootd/{ootdId}/like',
         BOOKMARK: '/api/v1/ootd/{ootdId}/bookmark',
         MY: '/api/v1/ootd/my',
+        BOOKMARKED: '/api/v1/ootd/bookmarked',
+        LIKED: '/api/v1/ootd/liked',
     },
 } as const;

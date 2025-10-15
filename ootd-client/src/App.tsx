@@ -10,7 +10,7 @@ import Join from './pages/join/Join.tsx';
 import ProtectedRoute from './components/ProtectedRoute.tsx';
 import { useAuthCheck } from './hooks/useAuthCheck';
 import OotdList from './pages/profile/OotdList.tsx';
-import SavedList from './pages/profile/SavedList.tsx';
+import BookmarkedList from './pages/profile/BookmarkedList.tsx';
 import TaggedList from './pages/profile/TaggedList.tsx';
 
 function AppContent() {
@@ -51,7 +51,7 @@ function AppContent() {
                     }
                 >
                     <Route index element={<OotdList />} />
-                    <Route path='saved' element={<SavedList />} />
+                    <Route path='bookmarked' element={<BookmarkedList />} />
                     <Route path='tagged' element={<TaggedList />} />
                 </Route>
                 <Route path='login' element={<Login />} />

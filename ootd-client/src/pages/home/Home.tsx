@@ -42,7 +42,7 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
                 method: 'POST',
             }),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['ootd', 'list'] });
+            queryClient.invalidateQueries({ queryKey: ['ootd'] });
         },
     });
 
@@ -52,7 +52,7 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
                 method: 'POST',
             }),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['ootd', 'list'] });
+            queryClient.invalidateQueries({ queryKey: ['ootd'] });
         },
     });
 
@@ -72,7 +72,7 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
 
             <div className={styles.ootd_img_box}>
                 <ul ref={imgListRef} className={styles.ootd_img_list} onScroll={handleScroll}>
-                    {item.ootdImages.map((ootdImage, index) => (
+                    {item.ootdImages?.map((ootdImage, index) => (
                         <li key={index}>
                             <img src={`${import.meta.env.VITE_API_BASE_URL}${ootdImage}`} alt='OOTD 이미지' />
                         </li>
@@ -80,7 +80,7 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
                 </ul>
 
                 <ul className={styles.ootd_img_nav}>
-                    {item.ootdImages.map((_, index) => (
+                    {item.ootdImages?.map((_, index) => (
                         <li key={index}>
                             <button onClick={() => handleImageIndexClick(index)}>
                                 <ImageNavIcon isActive={currentIndex === index} />

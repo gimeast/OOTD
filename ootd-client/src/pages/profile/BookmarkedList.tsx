@@ -1,22 +1,25 @@
-import styles from './ootdList.module.scss';
 import { useQuery } from '@tanstack/react-query';
 import { API_ENDPOINTS, apiClient } from '../../api';
+import NoResult from '../../components/common/NoResult.tsx';
+import ProfileBookmarkIcon from '../../components/icons/ProfileBookmarkIcon.tsx';
 import type { PageResponseType } from '../../types/common.ts';
 import type { OotdItemType } from '../../types/ootd.ts';
-import ProfileOotdAddIcon from '../../components/icons/ProfileOotdAddIcon.tsx';
-import NoResult from '../../components/common/NoResult.tsx';
+import styles from './ootdList.module.scss';
 
-const OotdList = () => {
+const BookmarkedList = () => {
     const { data } = useQuery({
-        queryKey: ['ootd', 'my'],
+        queryKey: ['ootd', 'bookmarked'],
         queryFn: () =>
-            apiClient<PageResponseType<OotdItemType>>(API_ENDPOINTS.OOTD.MY, { method: 'GET', params: { page: 1 } }),
+            apiClient<PageResponseType<OotdItemType>>(API_ENDPOINTS.OOTD.BOOKMARKED, {
+                method: 'GET',
+                params: { page: 1 },
+            }),
     });
-    console.log('data', data);
+
+    console.log(data);
 
     return (
-        <>
-            <h2 className='sr-only'>내가 올린 게시물 조회</h2>
+        <div>
             {data?.content?.length ? (
                 <ul className={styles.ootd_grid}>
                     {data.content.map(item => (
@@ -27,13 +30,13 @@ const OotdList = () => {
                 </ul>
             ) : (
                 <NoResult
-                    icon={<ProfileOotdAddIcon />}
-                    content1='업로드한 게시물이 없어요'
-                    content2='OOTD를 업로드해보세요!'
+                    icon={<ProfileBookmarkIcon />}
+                    content1='저장된 게시물이 없어요'
+                    content2='마음에 드는 OOTD를 저장해보세요!'
                 />
             )}
-        </>
+        </div>
     );
 };
 
-export default OotdList;
+export default BookmarkedList;

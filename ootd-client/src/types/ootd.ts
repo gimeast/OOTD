@@ -8,7 +8,8 @@ export type OotdItemType = {
     ootdId: number;
     profileImageUrl: string;
     nickname: string;
-    ootdImages: string[];
+    ootdImages?: string[];
+    ootdImage?: string;
     isLiked: boolean;
     likeCount: number;
     isBookmarked: boolean;
