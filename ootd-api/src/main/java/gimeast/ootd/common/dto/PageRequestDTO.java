@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 public class PageRequestDTO {
     private int page; //1부터 시작
     private int size;
+    private String sort;
 
     public PageRequestDTO() {
         this.page = 1;

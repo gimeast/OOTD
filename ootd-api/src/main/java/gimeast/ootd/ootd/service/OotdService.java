@@ -119,7 +119,21 @@ public class OotdService {
 
     @Transactional(readOnly = true)
     public Page<OotdListResponseDTO> getOotdList(PageRequestDTO pageRequestDTO, Long currentMemberIdx) {
-        Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
+        Sort sort;
+
+        // sort 파라미터에 따라 정렬 조건 설정
+        if ("like".equals(pageRequestDTO.getSort())) {
+            // 인기순: 좋아요 많은순(likeCount), 같으면 최신순(id)
+            sort = Sort.by(
+                Sort.Order.desc("likeCount"),
+                Sort.Order.desc("id")
+            );
+        } else {
+            // 최신순 (기본값)
+            sort = Sort.by(Sort.Direction.DESC, "id");
+        }
+
+        Pageable pageable = pageRequestDTO.getPageable(sort);
         return ootdRepository.findOotdList(currentMemberIdx, pageable);
     }
 
