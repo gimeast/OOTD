@@ -1,0 +1,133 @@
+article.ootd_box {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+
+    border: 0.1rem solid $gray-200;
+    border-radius: 1rem;
+
+    & .ootd_header {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+
+        font-weight: 700;
+        font-size: 1.4rem;
+        line-height: 100%;
+    }
+
+    & .ootd_img_box {
+        margin-top: 1.5rem;
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+
+        & .ootd_img_list {
+            display: flex;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+
+            li {
+                flex: 0 0 100%;
+                scroll-snap-align: start;
+
+                img {
+                    width: 100%;
+                    aspect-ratio: 1 / 1;
+                    object-fit: contain;
+                    display: block;
+                }
+            }
+        }
+
+        .ootd_img_nav {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.4rem;
+
+            svg {
+                width: fluid-width(0.5rem, 0.8rem);
+                height: fluid-width(0.5rem, 0.8rem);
+            }
+        }
+    }
+
+    .ootd_btn_group {
+        margin-top: 1rem;
+        display: flex;
+        gap: 2rem;
+
+        button:last-child {
+            margin-left: auto;
+        }
+    }
+
+    .ootd_like {
+        display: block;
+        margin-top: 1rem;
+
+        font-weight: 700;
+        font-size: 1.4rem;
+        line-height: 100%;
+    }
+
+    .product_list {
+        display: flex;
+        gap: 1rem;
+        overflow-x: scroll;
+        scroll-behavior: smooth;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        .product_box {
+            margin-top: 1rem;
+            width: 20rem;
+            flex-shrink: 0;
+            padding: 1rem;
+            background-color: $gray-200;
+            border-radius: 0.5rem;
+
+            display: flex;
+
+            a {
+                display: flex;
+                align-items: center;
+                gap: 1.5rem;
+
+                .product_image {
+                    width: 3.2rem;
+                }
+                .product_name {
+                    font-weight: 400;
+                    font-size: 1.4rem;
+                    line-height: 100%;
+                }
+            }
+        }
+    }
+
+    .ootd_content {
+        margin-top: 1.5rem;
+        font-weight: 400;
+        font-size: 1.4rem;
+        line-height: 100%;
+    }
+
+    .ootd_hashtags {
+        margin-top: 1.5rem;
+        font-weight: 400;
+        font-size: 1.4rem;
+        line-height: 100%;
+        color: $blue;
+        display: flex;
+        column-gap: 1rem;
+        flex-wrap: wrap;
+    }
+}
