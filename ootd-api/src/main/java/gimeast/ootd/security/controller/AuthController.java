@@ -137,6 +137,48 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, Object>> logout(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        log.info("logout request..........");
+
+        // 쿠키에서 Access Token 추출
+        String accessToken = getCookieValue(request, "accessToken");
+
+        if (accessToken != null) {
+            try {
+                // Access Token에서 idx 추출
+                Map<String, Object> claims = jwtUtil.getClaims(accessToken);
+                Long memberIdx = Long.valueOf(claims.get("idx").toString());
+
+                // DB에서 Refresh Token 삭제
+                refreshTokenService.deleteRefreshToken(memberIdx);
+
+                log.info("Logout successful for memberIdx: {}", memberIdx);
+            } catch (Exception e) {
+                log.warn("Failed to extract memberIdx from token during logout: {}", e.getMessage());
+            }
+        }
+
+        // HttpOnly 쿠키 삭제 (maxAge=0)
+        ResponseCookie deleteCookie = ResponseCookie.from("accessToken", "")
+                .httpOnly(true)
+                .secure(cookieSecure)
+                .path("/")
+                .maxAge(0)
+                .sameSite(cookieSameSite)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Logout successful",
+                "isSuccess", true
+        ));
+    }
+
     private void setTokenCookies(HttpServletResponse response, Map<String, String> tokenMap) {
         // Access Token만 HttpOnly 쿠키로 설정 (Refresh Token은 서버 DB에만 저장)
         // 쿠키 만료시간은 Refresh Token과 동일하게 설정하여 자동 갱신 가능하도록 함

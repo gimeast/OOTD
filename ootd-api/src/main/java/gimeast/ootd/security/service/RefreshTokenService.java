@@ -92,4 +92,15 @@ public class RefreshTokenService {
         return Map.of("accessToken", newAccessToken);
     }
 
+    /**
+     * 로그아웃 - DB에서 Refresh Token 삭제
+     * @param memberIdx
+     */
+    @Transactional
+    public void deleteRefreshToken(Long memberIdx) {
+        refreshTokenRepository.findByMemberIdx(memberIdx)
+                .ifPresent(refreshTokenRepository::delete);
+        log.info("Refresh Token deleted for memberIdx: {}", memberIdx);
+    }
+
 }

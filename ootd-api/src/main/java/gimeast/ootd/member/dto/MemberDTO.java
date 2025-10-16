@@ -33,7 +33,7 @@ public class MemberDTO {
         Map<String, Object> map = new HashMap<>();
         map.put("idx", idx);
         map.put("email", email);
-        map.put("name", name);
+        map.put("nickname", nickname);
         map.put("roleSet", roleSet);
         return map;
     }
