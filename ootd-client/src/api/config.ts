@@ -16,8 +16,12 @@ export const API_ENDPOINTS = {
         IMAGE: { UPLOAD: '/api/v1/upload/images' },
         LIKE: '/api/v1/ootd/{ootdId}/like',
         BOOKMARK: '/api/v1/ootd/{ootdId}/bookmark',
-        MY: '/api/v1/ootd/my',
-        BOOKMARKED: '/api/v1/ootd/bookmarked',
-        LIKED: '/api/v1/ootd/liked',
+    },
+    MEMBER: {
+        OOTD: {
+            LIST: '/api/v1/member/{nickname}/posts',
+            BOOKMARKED: '/api/v1/member/{nickname}/liked-posts',
+            LIKED: '/api/v1/member/{nickname}/bookmarked-posts',
+        },
     },
 } as const;

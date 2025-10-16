@@ -5,12 +5,20 @@ import type { PageResponseType } from '../../types/common.ts';
 import type { OotdItemType } from '../../types/ootd.ts';
 import ProfileOotdAddIcon from '../../components/icons/ProfileOotdAddIcon.tsx';
 import NoResult from '../../components/common/NoResult.tsx';
+import useUserStore from '../../stores/useUserStore.ts';
 
 const OotdList = () => {
+    const { user } = useUserStore();
     const { data } = useQuery({
         queryKey: ['ootd', 'my'],
         queryFn: () =>
-            apiClient<PageResponseType<OotdItemType>>(API_ENDPOINTS.OOTD.MY, { method: 'GET', params: { page: 1 } }),
+            apiClient<PageResponseType<OotdItemType>>(
+                API_ENDPOINTS.MEMBER.OOTD.LIST.replace('{nickname}', String(user?.nickname)),
+                {
+                    method: 'GET',
+                    params: { page: 1 },
+                }
+            ),
     });
 
     return (

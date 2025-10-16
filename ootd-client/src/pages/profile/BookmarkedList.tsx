@@ -5,15 +5,20 @@ import ProfileBookmarkIcon from '../../components/icons/ProfileBookmarkIcon.tsx'
 import type { PageResponseType } from '../../types/common.ts';
 import type { OotdItemType } from '../../types/ootd.ts';
 import styles from './ootdList.module.scss';
+import useUserStore from '../../stores/useUserStore.ts';
 
 const BookmarkedList = () => {
+    const { user } = useUserStore();
     const { data } = useQuery({
         queryKey: ['ootd', 'bookmarked'],
         queryFn: () =>
-            apiClient<PageResponseType<OotdItemType>>(API_ENDPOINTS.OOTD.BOOKMARKED, {
-                method: 'GET',
-                params: { page: 1 },
-            }),
+            apiClient<PageResponseType<OotdItemType>>(
+                API_ENDPOINTS.MEMBER.OOTD.BOOKMARKED.replace('{nickname}', String(user?.nickname)),
+                {
+                    method: 'GET',
+                    params: { page: 1 },
+                }
+            ),
     });
 
     return (
