@@ -37,7 +37,7 @@ async function refreshAccessToken(): Promise<boolean> {
         onTokenRefreshed(); //토큰 갱신중 동시에 여러 API가 호출된 경우 콜백 함수들 실행됨
         return true;
     } catch (error) {
-        console.error('토큰 갱신 실패:', error);
+        // 토큰 갱신 실패는 조용히 처리
         return false;
     }
 }
@@ -88,9 +88,13 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
                         return apiClient<T>(endpoint, { ...options, skipTokenRefresh: true }); //원래 요청 재시도
                     } else {
                         useUserStore.getState().logout(); //전역상태 변경
-                        if (!endpoint.includes('/auth/me')) {
-                            window.location.href = '/login';
+
+                        // /auth/me는 조용히 실패 처리 (useAuthCheck에서 사용)
+                        if (endpoint.includes('/auth/me')) {
+                            throw new Error('Not authenticated');
                         }
+
+                        window.location.href = '/login';
                         throw new Error('인증이 만료되었습니다. 다시 로그인해주세요.');
                     }
                 } else {
@@ -105,13 +109,19 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
                 }
             }
 
-            console.error('API 요청 실패:', result);
+            // /auth/me는 에러 로그 출력 안 함
+            if (!endpoint.includes('/auth/me')) {
+                console.error('API 요청 실패:', result);
+            }
             throw new Error(result.message || result.error || 'API 요청에 실패했습니다.');
         }
 
         return result;
     } catch (error) {
-        console.error('API 에러:', error);
+        // /auth/me는 에러 로그 출력 안 함
+        if (!endpoint.includes('/auth/me')) {
+            console.error('API 에러:', error);
+        }
         throw error;
     }
 }

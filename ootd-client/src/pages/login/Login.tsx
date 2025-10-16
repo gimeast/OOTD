@@ -21,7 +21,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const msgRef = useRef<HTMLSpanElement>(null);
     const navigate = useNavigate();
-    const login = useUserStore(state => state.login);
+    const { login, isLoggedIn } = useUserStore();
     const { setPageTitle } = useOutletContext<LayoutContextType>();
     const queryClient = useQueryClient();
 
@@ -85,6 +85,10 @@ const Login = () => {
             navigate('/', { replace: true });
         }
     }, [state.success, state.user, navigate, login, queryClient]);
+
+    useEffect(() => {
+        if (isLoggedIn) navigate('/', { replace: true });
+    }, [navigate, isLoggedIn]);
 
     return (
         <div className={styles.login}>

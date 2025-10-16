@@ -17,7 +17,6 @@ export function useAuthCheck() {
                 });
                 login(user);
             } catch (error) {
-                console.log('Not logged in', error);
                 logout();
             } finally {
                 setIsChecking(false);

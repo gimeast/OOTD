@@ -4,7 +4,7 @@ import { devtools } from 'zustand/middleware';
 export type User = {
     id: number;
     email: string;
-    name: string;
+    nickname: string;
     roleSet: [];
 };
 
@@ -19,7 +19,7 @@ const useUserStore = create<UserStore>()(
     devtools(set => ({
         isLoggedIn: false,
         user: null,
-        login: user => set({ isLoggedIn: true, user }),
+        login: (user: User) => set({ isLoggedIn: true, user }),
         logout: () => set({ isLoggedIn: false, user: null }),
     }))
 );

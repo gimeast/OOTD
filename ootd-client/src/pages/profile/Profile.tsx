@@ -5,9 +5,22 @@ import type { LayoutContextType } from '../../types/context.ts';
 import styles from './profile.module.scss';
 import ProfileIcon from '../../components/icons/ProfileIcon.tsx';
 import LogoutIcon from '../../components/icons/LogoutIcon.tsx';
+import useUserStore from '../../stores/useUserStore.ts';
+import { API_ENDPOINTS, apiClient } from '../../api';
 
 const Profile = () => {
     const { setPageTitle } = useOutletContext<LayoutContextType>();
+    const { user, logout } = useUserStore();
+
+    const handleLogout = async () => {
+        const result: { message: string; isSuccess: boolean } = await apiClient(API_ENDPOINTS.AUTH.LOGOUT, {
+            method: 'POST',
+        });
+        console.log('result', result);
+        if (result?.isSuccess) {
+            logout();
+        }
+    };
 
     useEffect(() => {
         setPageTitle('프로필');
@@ -19,8 +32,8 @@ const Profile = () => {
                 <h2 className='sr-only'>프로필 정보</h2>
                 <ProfileIcon width='60' height='60' />
                 <div className={styles.profile_content}>
-                    <h3>배우 수지</h3>
-                    <p>국민 첫사랑 배우✨</p>
+                    <h3>{user?.nickname}</h3>
+                    <p></p>
                 </div>
             </section>
 
@@ -46,7 +59,7 @@ const Profile = () => {
                 <h2 className='sr-only'>프로필 설정</h2>
                 <button className={styles.profile_edit}>프로필 편집</button>
                 <button className={styles.profile_share}>프로필 공유</button>
-                <button className={styles.logout} aria-label='로그아웃'>
+                <button className={styles.logout} aria-label='로그아웃' onClick={handleLogout}>
                     <LogoutIcon />
                 </button>
             </section>

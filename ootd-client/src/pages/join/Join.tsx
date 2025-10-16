@@ -9,6 +9,7 @@ import useDebounce from '../../hooks/useDebounce.ts';
 import { API_ENDPOINTS, apiClient } from '../../api';
 import { validateEmail, validatePassword } from '../../utils/validation.ts';
 import BasicModal from '../../components/common/BasicModal.tsx';
+import useUserStore from '../../stores/useUserStore.ts';
 
 type JoinResponse = {
     isSuccess: boolean;
@@ -16,6 +17,7 @@ type JoinResponse = {
 };
 
 const Join = () => {
+    const { isLoggedIn } = useUserStore();
     const { setPageTitle } = useOutletContext<LayoutContextType>();
 
     const [name, setName] = useState('');
@@ -175,6 +177,10 @@ const Join = () => {
                 isAgree
         );
     }, [name, isNicknameAvailable, isEmailAvailable, isPasswordAvailable, isAgree]);
+
+    useEffect(() => {
+        if (isLoggedIn) navigate('/', { replace: true });
+    }, [navigate, isLoggedIn]);
 
     return (
         <div className={styles.join}>
