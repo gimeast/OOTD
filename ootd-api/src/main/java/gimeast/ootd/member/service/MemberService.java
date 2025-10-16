@@ -1,10 +1,12 @@
 package gimeast.ootd.member.service;
 
 import gimeast.ootd.member.dto.MemberDTO;
+import gimeast.ootd.member.dto.MemberStatsDTO;
 import gimeast.ootd.member.entity.MemberEntity;
 import gimeast.ootd.member.entity.MemberRole;
 import gimeast.ootd.member.exception.MemberExceptions;
 import gimeast.ootd.member.repository.MemberRepository;
+import gimeast.ootd.ootd.repository.OotdRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +23,7 @@ import java.util.Set;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final OotdRepository ootdRepository;
 
     public MemberDTO read(String email, String password) {
         Optional<MemberEntity> result = memberRepository.findByEmail(email);
@@ -41,6 +44,12 @@ public class MemberService {
 
     public MemberDTO getByIdx(Long idx) {
         Optional<MemberEntity> result = memberRepository.findById(idx);
+        MemberEntity memberEntity = result.orElseThrow(MemberExceptions.NOT_FOUND::get);
+        return new MemberDTO(memberEntity);
+    }
+
+    public MemberDTO getByNickname(String nickname) {
+        Optional<MemberEntity> result = memberRepository.findByNickname(nickname);
         MemberEntity memberEntity = result.orElseThrow(MemberExceptions.NOT_FOUND::get);
         return new MemberDTO(memberEntity);
     }
@@ -106,5 +115,17 @@ public class MemberService {
     public boolean isNicknameAvailable(String nickname) {
         Optional<MemberEntity> byNickname = memberRepository.findByNickname(nickname);
         return byNickname.isEmpty();
+    }
+
+    public MemberStatsDTO getMemberStats(Long memberIdx) {
+        // 게시물 수 조회
+        long postCount = ootdRepository.countMyOotd(memberIdx);
+
+        // 추후 팔로워/팔로잉 기능 구현 시 추가
+        return MemberStatsDTO.builder()
+                .postCount(postCount)
+                .followerCount(0L)  // 추후 구현
+                .followingCount(0L) // 추후 구현
+                .build();
     }
 }

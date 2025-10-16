@@ -9,4 +9,5 @@ public interface OotdRepositoryCustom {
     Page<OotdListResponseDTO> findMyOotdList(Long memberIdx, Pageable pageable);
     Page<OotdListResponseDTO> findLikedOotdList(Long memberIdx, Pageable pageable);
     Page<OotdListResponseDTO> findBookmarkedOotdList(Long memberIdx, Pageable pageable);
+    long countMyOotd(Long memberIdx);
 }

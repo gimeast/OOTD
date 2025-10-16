@@ -428,4 +428,12 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
 
         return new PageImpl<>(dtoList, pageable, total);
     }
+
+    @Override
+    public long countMyOotd(Long memberIdx) {
+        return from(ootdEntity)
+                .where(ootdEntity.member.idx.eq(memberIdx)
+                        .and(ootdEntity.status.eq(OotdStatus.ACTIVE)))
+                .fetchCount();
+    }
 }

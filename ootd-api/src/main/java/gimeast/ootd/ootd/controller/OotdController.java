@@ -75,31 +75,4 @@ public class OotdController {
         ));
     }
 
-    @GetMapping("/my")
-    public ResponseEntity<Page<OotdListResponseDTO>> getMyOotdList(
-            PageRequestDTO pageRequestDTO,
-            @AuthenticationPrincipal CustomUserPrincipal principal
-    ) {
-        Page<OotdListResponseDTO> myOotdList = ootdService.getMyOotdList(pageRequestDTO, principal.getIdx());
-        return ResponseEntity.ok(myOotdList);
-    }
-
-    @GetMapping("/liked")
-    public ResponseEntity<Page<OotdListResponseDTO>> getLikedOotdList(
-            PageRequestDTO pageRequestDTO,
-            @AuthenticationPrincipal CustomUserPrincipal principal
-    ) {
-        Page<OotdListResponseDTO> likedOotdList = ootdService.getLikedOotdList(pageRequestDTO, principal.getIdx());
-        return ResponseEntity.ok(likedOotdList);
-    }
-
-    @GetMapping("/bookmarked")
-    public ResponseEntity<Page<OotdListResponseDTO>> getBookmarkedOotdList(
-            PageRequestDTO pageRequestDTO,
-            @AuthenticationPrincipal CustomUserPrincipal principal
-    ) {
-        Page<OotdListResponseDTO> bookmarkedOotdList = ootdService.getBookmarkedOotdList(pageRequestDTO, principal.getIdx());
-        return ResponseEntity.ok(bookmarkedOotdList);
-    }
-
 }

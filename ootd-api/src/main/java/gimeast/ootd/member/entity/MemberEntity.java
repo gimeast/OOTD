@@ -47,6 +47,9 @@ public class MemberEntity extends BaseEntity {
     @Column(length = 500)
     private String profileImageUrl;
 
+    @Column(length = 200)
+    private String bio;
+
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private MemberStatus status = MemberStatus.ACTIVE;
@@ -82,6 +85,10 @@ public class MemberEntity extends BaseEntity {
 
     public void changeProfileImage(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
+    }
+
+    public void changeBio(String bio) {
+        this.bio = bio;
     }
 
 }

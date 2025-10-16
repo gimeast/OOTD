@@ -24,6 +24,8 @@ public class MemberDTO {
     private String name;
     private String nickname;
     private String email;
+    private String profileImageUrl;
+    private String bio;
     private Boolean allAgreed;
     private LocalDateTime regDate;
     private LocalDateTime modDate;
@@ -34,6 +36,8 @@ public class MemberDTO {
         map.put("idx", idx);
         map.put("email", email);
         map.put("nickname", nickname);
+        map.put("profileImageUrl", profileImageUrl);
+        map.put("bio", bio);
         map.put("roleSet", roleSet);
         return map;
     }
@@ -44,6 +48,8 @@ public class MemberDTO {
         this.name = memberEntity.getName();
         this.nickname = memberEntity.getNickname();
         this.email = memberEntity.getEmail();
+        this.profileImageUrl = memberEntity.getProfileImageUrl();
+        this.bio = memberEntity.getBio();
         this.allAgreed = memberEntity.getAllAgreed();
         this.regDate = memberEntity.getRegDate();
         this.modDate = memberEntity.getModDate();
