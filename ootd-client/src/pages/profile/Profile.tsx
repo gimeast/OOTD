@@ -8,7 +8,8 @@ import LogoutIcon from '../../components/icons/LogoutIcon.tsx';
 import useUserStore from '../../stores/useUserStore.ts';
 import { API_ENDPOINTS, apiClient } from '../../api';
 import { useQuery } from '@tanstack/react-query';
-import type { Stats } from '../../types/profileStats.ts';
+
+type Stats = { followerCount: number; followingCount: number; postCount: number };
 
 const Profile = () => {
     const { setPageTitle } = useOutletContext<LayoutContextType>();

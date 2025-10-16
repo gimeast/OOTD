@@ -176,7 +176,12 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
                     <li key={index} className={styles.product_box}>
                         <a href={product.productLink} target='_blank' rel='noopener noreferrer'>
                             {product.ogImage ? (
-                                <img src={product.ogImage} alt={product.productName} className={styles.product_image} />
+                                <img
+                                    src={product.ogImage}
+                                    alt={product.productName}
+                                    className={styles.product_image}
+                                    referrerPolicy='no-referrer'
+                                />
                             ) : (
                                 <ProductOgIcon />
                             )}
