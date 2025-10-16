@@ -23,7 +23,6 @@ const OotdList = () => {
         },
         initialPageParam: 1,
     });
-    console.log('data', data);
 
     useScrollObserver(() => {
         if (hasNextPage && !isFetchingNextPage) {
@@ -33,7 +32,7 @@ const OotdList = () => {
 
     return (
         <>
-            <h2 className='sr-only'>내가 올린 게시물 조회</h2>
+            <h2 className='sr-only'>내가 올린 게시물 목록</h2>
             {data?.pages?.length ? (
                 <ul className={styles.ootd_grid}>
                     {data.pages.map((page: PageResponseType<OotdItemType>) =>

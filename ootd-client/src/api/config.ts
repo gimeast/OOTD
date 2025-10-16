@@ -21,8 +21,8 @@ export const API_ENDPOINTS = {
         STATS: '/api/v1/member/{nickname}/stats',
         OOTD: {
             LIST: '/api/v1/member/{nickname}/posts',
-            BOOKMARKED: '/api/v1/member/{nickname}/liked-posts',
-            LIKED: '/api/v1/member/{nickname}/bookmarked-posts',
+            LIKED: '/api/v1/member/{nickname}/liked-posts',
+            BOOKMARKED: '/api/v1/member/{nickname}/bookmarked-posts',
         },
     },
 } as const;
