@@ -10,6 +10,7 @@ import { API_ENDPOINTS, apiClient } from '../../api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import ProductOgIcon from '../../components/icons/ProductOgIcon.tsx';
 import type { OotdItemType } from '../../types/ootd.ts';
+import type { PageResponseType } from '../../types/common.ts';
 
 const OotdItem = ({ item }: { item: OotdItemType }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -40,8 +41,41 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
             apiClient(API_ENDPOINTS.OOTD.LIKE.replace('{ootdId}', String(ootdId)), {
                 method: 'POST',
             }),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['ootd'] });
+        onMutate: async (ootdId: number) => {
+            await queryClient.cancelQueries({ queryKey: ['ootd'] });
+            const previousData = queryClient.getQueriesData({ queryKey: ['ootd'] });
+
+            queryClient.setQueriesData({ queryKey: ['ootd'] }, (old: any) => {
+                if (!old?.pages) return old;
+
+                return {
+                    ...old,
+                    pages: old.pages.map((page: PageResponseType<OotdItemType>) => ({
+                        ...page,
+                        content: page.content.map((ootdItem: OotdItemType) =>
+                            ootdItem.ootdId === ootdId
+                                ? {
+                                      ...ootdItem,
+                                      isLiked: !ootdItem.isLiked,
+                                      likeCount: ootdItem.isLiked ? ootdItem.likeCount - 1 : ootdItem.likeCount + 1,
+                                  }
+                                : ootdItem
+                        ),
+                    })),
+                };
+            });
+
+            return { previousData };
+        },
+        onError: (_error, _variables, context) => {
+            if (context?.previousData) {
+                context.previousData.forEach(([queryKey, data]) => {
+                    queryClient.setQueryData(queryKey, data);
+                });
+            }
+        },
+        onSettled: () => {
+            void queryClient.invalidateQueries({ queryKey: ['ootd'] });
         },
     });
 
@@ -50,8 +84,40 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
             apiClient(API_ENDPOINTS.OOTD.BOOKMARK.replace('{ootdId}', String(ootdId)), {
                 method: 'POST',
             }),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['ootd'] });
+        onMutate: async (ootdId: number) => {
+            await queryClient.cancelQueries({ queryKey: ['ootd'] });
+            const previousData = queryClient.getQueriesData({ queryKey: ['ootd'] });
+
+            queryClient.setQueriesData({ queryKey: ['ootd'] }, (old: any) => {
+                if (!old?.pages) return old;
+
+                return {
+                    ...old,
+                    pages: old.pages.map((page: PageResponseType<OotdItemType>) => ({
+                        ...page,
+                        content: page.content.map((ootdItem: OotdItemType) =>
+                            ootdItem.ootdId === ootdId
+                                ? {
+                                      ...ootdItem,
+                                      isBookmarked: !ootdItem.isBookmarked,
+                                  }
+                                : ootdItem
+                        ),
+                    })),
+                };
+            });
+
+            return { previousData };
+        },
+        onError: (_error, _variables, context) => {
+            if (context?.previousData) {
+                context.previousData.forEach(([queryKey, data]) => {
+                    queryClient.setQueryData(queryKey, data);
+                });
+            }
+        },
+        onSettled: () => {
+            void queryClient.invalidateQueries({ queryKey: ['ootd'] });
         },
     });
 
