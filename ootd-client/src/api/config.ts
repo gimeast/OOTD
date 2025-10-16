@@ -18,6 +18,7 @@ export const API_ENDPOINTS = {
         BOOKMARK: '/api/v1/ootd/{ootdId}/bookmark',
     },
     MEMBER: {
+        STATS: '/api/v1/member/{nickname}/stats',
         OOTD: {
             LIST: '/api/v1/member/{nickname}/posts',
             BOOKMARKED: '/api/v1/member/{nickname}/liked-posts',

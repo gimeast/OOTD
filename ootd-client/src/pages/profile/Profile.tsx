@@ -7,10 +7,17 @@ import ProfileIcon from '../../components/icons/ProfileIcon.tsx';
 import LogoutIcon from '../../components/icons/LogoutIcon.tsx';
 import useUserStore from '../../stores/useUserStore.ts';
 import { API_ENDPOINTS, apiClient } from '../../api';
+import { useQuery } from '@tanstack/react-query';
+import type { Stats } from '../../types/profileStats.ts';
 
 const Profile = () => {
     const { setPageTitle } = useOutletContext<LayoutContextType>();
     const { user, logout } = useUserStore();
+
+    const { data } = useQuery({
+        queryKey: ['ootd', 'stats'],
+        queryFn: () => apiClient<Stats>(API_ENDPOINTS.MEMBER.STATS.replace('{nickname}', String(user?.nickname))),
+    });
 
     const handleLogout = async () => {
         const result: { message: string; isSuccess: boolean } = await apiClient(API_ENDPOINTS.AUTH.LOGOUT, {
@@ -42,15 +49,15 @@ const Profile = () => {
                 <dl className={styles.profile_numbers}>
                     <div>
                         <dt>게시물</dt>
-                        <dd>24</dd>
+                        <dd>{data?.postCount}</dd>
                     </div>
                     <div>
                         <dt>팔로워</dt>
-                        <dd>2.4k</dd>
+                        <dd>{data?.followerCount}</dd>
                     </div>
                     <div>
                         <dt>팔로잉</dt>
-                        <dd>240</dd>
+                        <dd>{data?.followingCount}</dd>
                     </div>
                 </dl>
             </section>
