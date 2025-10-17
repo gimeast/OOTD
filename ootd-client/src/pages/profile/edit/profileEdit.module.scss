@@ -5,7 +5,7 @@
         display: flex;
         gap: 1rem;
 
-        .profile_image_label {
+        .profile_image_change_btn {
             width: fluid-width(12rem, 30rem);
             height: fluid-width(3rem, 5rem);
             border-radius: 0.5rem;
@@ -81,6 +81,58 @@
                         background-image: url('../../../assets/icon/next_icon.svg');
                         background-repeat: no-repeat;
                     }
+                }
+            }
+        }
+    }
+
+    .profile_image_change_modal {
+        width: 30rem;
+        padding: 1.5rem;
+        border-radius: 1rem;
+        border: none;
+
+        &::backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal_header {
+            display: flex;
+            justify-content: space-between;
+
+            h3 {
+                font-weight: 700;
+                font-size: 1.6rem;
+                line-height: 100%;
+            }
+
+            svg {
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+        }
+
+        ul {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+
+            li {
+                .profile_image_upload_btn {
+                    font-weight: 400;
+                    font-size: 1.2rem;
+                    line-height: 100%;
+                    color: $gray-500;
+                    input {
+                        display: none;
+                    }
+                }
+                button {
+                    font-weight: 400;
+                    font-size: 1.2rem;
+                    line-height: 100%;
+                    color: $gray-500;
                 }
             }
         }

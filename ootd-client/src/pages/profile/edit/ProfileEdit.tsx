@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import type { LayoutContextType } from '../../../types/context.ts';
 import BottomNav from '../../../components/layout/BottomNav.tsx';
@@ -7,10 +7,24 @@ import styles from './profileEdit.module.scss';
 import { API_ENDPOINTS, apiClient } from '../../../api';
 import { useMutation } from '@tanstack/react-query';
 import useUserStore from '../../../stores/useUserStore.ts';
+import DeleteIcon from '../../../components/icons/DeleteIcon.tsx';
 
 const ProfileEdit = () => {
     const { setPageTitle } = useOutletContext<LayoutContextType>();
     const { updateProfileImageUrl } = useUserStore();
+    const modalRef = useRef<HTMLDialogElement>(null);
+
+    const handleModalOpen = () => {
+        if (modalRef.current) {
+            modalRef.current.showModal();
+        }
+    };
+
+    const handleModalClose = () => {
+        if (modalRef.current) {
+            modalRef.current.close();
+        }
+    };
 
     const imageMutation = useMutation({
         mutationFn: async (images: File[]) => {
@@ -20,11 +34,24 @@ const ProfileEdit = () => {
             });
             return await apiClient<{ profileImageUrl: string }>(API_ENDPOINTS.MEMBER.PROFILE_IMG, {
                 method: 'PATCH',
-                body: formData
+                body: formData,
             });
         },
-        onSuccess: (data) => {
+        onSuccess: data => {
             updateProfileImageUrl(data.profileImageUrl);
+            handleModalClose();
+        },
+    });
+
+    const imageResetMutation = useMutation({
+        mutationFn: async () => {
+            return await apiClient<{ profileImageUrl: string }>(API_ENDPOINTS.MEMBER.PROFILE_IMG_RESET, {
+                method: 'PATCH',
+            });
+        },
+        onSuccess: data => {
+            updateProfileImageUrl(data.profileImageUrl);
+            handleModalClose();
         },
     });
 
@@ -36,6 +63,10 @@ const ProfileEdit = () => {
         }
     };
 
+    const handleProfileImageReset = () => {
+        imageResetMutation.mutate();
+    };
+
     useEffect(() => {
         setPageTitle('프로필 편집');
     }, [setPageTitle]);
@@ -44,17 +75,11 @@ const ProfileEdit = () => {
         <div className={styles.profile_edit}>
             <ProfileHeaderSection />
             <section className={styles.button_group_section}>
-                <h2 className='sr-only'>프로필 변경 버튼</h2>
-                <label htmlFor='profileImage' className={styles.profile_image_label}>
+                <h2 className='sr-only'>프로필 편집 버튼</h2>
+                <button className={styles.profile_image_change_btn} onClick={handleModalOpen}>
                     프로필 이미지 변경
-                    <input
-                        className={styles.profile_image_input}
-                        type='file'
-                        id='profileImage'
-                        accept='image/*'
-                        onChange={handleProfileImageChange}
-                    />
-                </label>
+                </button>
+
                 <Link to='bio' className={styles.bio_btn}>
                     소개 변경
                 </Link>
@@ -78,6 +103,32 @@ const ProfileEdit = () => {
                     </li>
                 </ul>
             </section>
+
+            <dialog ref={modalRef} className={styles.profile_image_change_modal}>
+                <div className={styles.modal_header}>
+                    <h3>프로필 이미지 변경</h3>
+                    <button onClick={handleModalClose}>
+                        <DeleteIcon color={'#767676'} />
+                    </button>
+                </div>
+                <ul>
+                    <li>
+                        <label htmlFor='profileImage' className={styles.profile_image_upload_btn}>
+                            사진 올리기
+                            <input
+                                className={styles.profile_image_input}
+                                type='file'
+                                id='profileImage'
+                                accept='image/*'
+                                onChange={handleProfileImageChange}
+                            />
+                        </label>
+                    </li>
+                    <li>
+                        <button onClick={handleProfileImageReset}>기본 이미지로 변경</button>
+                    </li>
+                </ul>
+            </dialog>
             <BottomNav />
         </div>
     );

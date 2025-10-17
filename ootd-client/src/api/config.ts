@@ -25,5 +25,6 @@ export const API_ENDPOINTS = {
             BOOKMARKED: '/api/v1/member/{nickname}/bookmarked-posts',
         },
         PROFILE_IMG: '/api/v1/member/profile-img',
+        PROFILE_IMG_RESET: '/api/v1/member/profile-img/reset',
     },
 } as const;
