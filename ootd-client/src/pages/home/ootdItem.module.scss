@@ -13,6 +13,13 @@ article.ootd_box {
         font-weight: 700;
         font-size: 1.4rem;
         line-height: 100%;
+
+        img {
+            width: 6rem;
+            height: 6rem;
+            border-radius: 50%;
+            object-fit: cover;
+        }
     }
 
     & .ootd_img_box {
@@ -102,7 +109,10 @@ article.ootd_box {
                 gap: 1.5rem;
 
                 .product_image {
-                    width: 3.2rem;
+                    width: 4rem;
+                }
+                svg {
+                    width: 7rem;
                 }
                 .product_name {
                     font-weight: 400;

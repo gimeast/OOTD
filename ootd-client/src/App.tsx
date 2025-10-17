@@ -13,6 +13,8 @@ import { useScrollToTop } from './hooks/useScrollToTop';
 import OotdList from './pages/profile/OotdList.tsx';
 import BookmarkedList from './pages/profile/BookmarkedList.tsx';
 import TaggedList from './pages/profile/TaggedList.tsx';
+import ProfileEdit from './pages/profile/edit/ProfileEdit.tsx';
+import ProfileEditBio from './pages/profile/edit/ProfileEditBio.tsx';
 
 function AppContent() {
     const { isChecking } = useAuthCheck();
@@ -56,6 +58,23 @@ function AppContent() {
                     <Route path='bookmarked' element={<BookmarkedList />} />
                     <Route path='tagged' element={<TaggedList />} />
                 </Route>
+                <Route
+                    path='profile/edit'
+                    element={
+                        <ProtectedRoute>
+                            <ProfileEdit />
+                        </ProtectedRoute>
+                    }
+                ></Route>
+
+                <Route
+                    path='profile/edit/bio'
+                    element={
+                        <ProtectedRoute>
+                            <ProfileEditBio />
+                        </ProtectedRoute>
+                    }
+                ></Route>
                 <Route path='login' element={<Login />} />
                 <Route path='join' element={<Join />} />
             </Route>

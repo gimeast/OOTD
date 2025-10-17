@@ -81,7 +81,7 @@ const Login = () => {
     useEffect(() => {
         if (state.success && state.user) {
             login(state.user);
-            queryClient.invalidateQueries({ queryKey: ['ootd'] });
+            void queryClient.invalidateQueries({ queryKey: ['ootd'] });
             navigate('/', { replace: true });
         }
     }, [state.success, state.user, navigate, login, queryClient]);

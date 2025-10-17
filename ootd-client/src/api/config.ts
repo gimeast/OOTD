@@ -24,5 +24,6 @@ export const API_ENDPOINTS = {
             LIKED: '/api/v1/member/{nickname}/liked-posts',
             BOOKMARKED: '/api/v1/member/{nickname}/bookmarked-posts',
         },
+        PROFILE_IMG: '/api/v1/member/profile-img',
     },
 } as const;

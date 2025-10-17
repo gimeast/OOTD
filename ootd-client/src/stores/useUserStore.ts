@@ -5,6 +5,8 @@ export type User = {
     id: number;
     email: string;
     nickname: string;
+    profileImageUrl: string;
+    bio: string;
     roleSet: [];
 };
 
@@ -13,6 +15,7 @@ type UserStore = {
     user: User | null;
     login: (user: User) => void;
     logout: () => void;
+    updateProfileImageUrl: (profileImageUrl: string) => void;
 };
 
 const useUserStore = create<UserStore>()(
@@ -21,6 +24,10 @@ const useUserStore = create<UserStore>()(
         user: null,
         login: (user: User) => set({ isLoggedIn: true, user }),
         logout: () => set({ isLoggedIn: false, user: null }),
+        updateProfileImageUrl: (profileImageUrl: string) =>
+            set(state => ({
+                user: state.user ? { ...state.user, profileImageUrl } : null,
+            })),
     }))
 );
 

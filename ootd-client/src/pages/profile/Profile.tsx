@@ -1,13 +1,13 @@
 import BottomNav from '../../components/layout/BottomNav.tsx';
 import { useEffect } from 'react';
-import { NavLink, Outlet, useOutletContext } from 'react-router-dom';
+import { Link, NavLink, Outlet, useOutletContext } from 'react-router-dom';
 import type { LayoutContextType } from '../../types/context.ts';
 import styles from './profile.module.scss';
-import ProfileIcon from '../../components/icons/ProfileIcon.tsx';
 import LogoutIcon from '../../components/icons/LogoutIcon.tsx';
 import useUserStore from '../../stores/useUserStore.ts';
 import { API_ENDPOINTS, apiClient } from '../../api';
 import { useQuery } from '@tanstack/react-query';
+import ProfileHeaderSection from './ProfileHeaderSection.tsx';
 
 type Stats = { followerCount: number; followingCount: number; postCount: number };
 
@@ -24,7 +24,7 @@ const Profile = () => {
         const result: { message: string; isSuccess: boolean } = await apiClient(API_ENDPOINTS.AUTH.LOGOUT, {
             method: 'POST',
         });
-        console.log('result', result);
+
         if (result?.isSuccess) {
             logout();
         }
@@ -36,14 +36,7 @@ const Profile = () => {
 
     return (
         <div className={styles.profile}>
-            <section className={styles.profile_header_section}>
-                <h2 className='sr-only'>프로필 정보</h2>
-                <ProfileIcon width='60' height='60' />
-                <div className={styles.profile_content}>
-                    <h3>{user?.nickname}</h3>
-                    <p></p>
-                </div>
-            </section>
+            <ProfileHeaderSection />
 
             <section className={styles.profile_numbers_section}>
                 <h2 className='sr-only'>게시물 수, 팔로워 수, 팔로잉 수 현황</h2>
@@ -65,7 +58,9 @@ const Profile = () => {
 
             <section className={styles.profile_settings_section}>
                 <h2 className='sr-only'>프로필 설정</h2>
-                <button className={styles.profile_edit}>프로필 편집</button>
+                <Link to='/profile/edit' className={styles.profile_edit}>
+                    프로필 편집
+                </Link>
                 <button className={styles.profile_share}>프로필 공유</button>
                 <button className={styles.logout} aria-label='로그아웃' onClick={handleLogout}>
                     <LogoutIcon />

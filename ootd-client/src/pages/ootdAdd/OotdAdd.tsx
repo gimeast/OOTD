@@ -112,7 +112,7 @@ const OotdAdd = () => {
                 products: productsWithOrder,
             });
 
-            queryClient.invalidateQueries({ queryKey: ['ootd'] });
+            void queryClient.invalidateQueries({ queryKey: ['ootd'] });
             setIsModalOpen(true);
         } catch (error) {
             console.error('업로드 실패:', error);
