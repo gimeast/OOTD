@@ -9,10 +9,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -60,4 +66,18 @@ public class MemberController {
         Page<OotdListResponseDTO> bookmarkedOotdList = ootdService.getBookmarkedOotdList(pageRequestDTO, memberIdx);
         return ResponseEntity.ok(bookmarkedOotdList);
     }
+
+    @PatchMapping("/profile-img")
+    public ResponseEntity<Map<String, Object>> updateProfileImage(
+            @RequestParam("images") MultipartFile[] files,
+            @AuthenticationPrincipal gimeast.ootd.security.auth.CustomUserPrincipal principal
+    ) {
+        String profileImageUrl = memberService.updateProfileImage(principal.getIdx(), files);
+
+        return ResponseEntity.ok(Map.of(
+                "message", "프로필 이미지가 변경되었습니다.",
+                "profileImageUrl", profileImageUrl
+        ));
+    }
+
 }

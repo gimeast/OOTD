@@ -60,7 +60,7 @@ public class SecurityConfig {
         // 콤마로 구분된 문자열을 List로 변환
         List<String> origins = List.of(allowedOrigins.split(","));
         corsConfiguration.setAllowedOrigins(origins); //접근 허락 할 주소
-        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
+        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PATCH", "PUT", "DELETE", "HEAD", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("*")); // 모든 헤더 허용
         corsConfiguration.setAllowCredentials(true); // 쿠키를 포함한 요청 허용
         corsConfiguration.setExposedHeaders(List.of("Set-Cookie", "Authorization")); // Set-Cookie 헤더 노출

@@ -7,13 +7,19 @@ import gimeast.ootd.member.entity.MemberRole;
 import gimeast.ootd.member.exception.MemberExceptions;
 import gimeast.ootd.member.repository.MemberRepository;
 import gimeast.ootd.ootd.repository.OotdRepository;
+import gimeast.ootd.upload.service.FileUploadService;
+import gimeast.ootd.upload.service.ImageUploadResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Base64;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,6 +30,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final OotdRepository ootdRepository;
+    private final FileUploadService fileUploadService;
 
     public MemberDTO read(String email, String password) {
         Optional<MemberEntity> result = memberRepository.findByEmail(email);
@@ -127,5 +134,43 @@ public class MemberService {
                 .followerCount(0L)  // 추후 구현
                 .followingCount(0L) // 추후 구현
                 .build();
+    }
+
+    @Transactional
+    public String updateProfileImage(Long memberIdx, MultipartFile[] files) {
+        try {
+            // 파일이 없거나 비어있는 경우
+            if (files == null || files.length == 0) {
+                throw new RuntimeException("업로드할 파일이 없습니다.");
+            }
+
+            // 파일 업로드 (첫 번째 파일만 사용)
+            List<ImageUploadResult> results = fileUploadService.uploadImages(files);
+
+            if (results.isEmpty()) {
+                throw new RuntimeException("파일 업로드에 실패했습니다.");
+            }
+
+            String profileImageUrl = results.get(0).getImageUrl();
+
+            // DB 업데이트
+            MemberEntity member = memberRepository.findById(memberIdx)
+                    .orElseThrow(MemberExceptions.NOT_FOUND::get);
+
+            // 기존 프로필 이미지가 있으면 삭제
+            if (member.getProfileImageUrl() != null && !member.getProfileImageUrl().isEmpty()) {
+                fileUploadService.deleteFile(member.getProfileImageUrl());
+            }
+
+            member.changeProfileImage(profileImageUrl);
+            memberRepository.save(member);
+
+            log.info("Profile image updated for member idx: {}, url: {}", memberIdx, profileImageUrl);
+
+            return profileImageUrl;
+        } catch (IOException e) {
+            log.error("Profile image upload failed: {}", e.getMessage());
+            throw new RuntimeException("프로필 이미지 업로드에 실패했습니다.", e);
+        }
     }
 }
