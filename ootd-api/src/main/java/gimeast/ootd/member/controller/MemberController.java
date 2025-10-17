@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -78,6 +79,19 @@ public class MemberController {
                 "message", "프로필 이미지가 변경되었습니다.",
                 "profileImageUrl", profileImageUrl
         ));
+    }
+
+    @PatchMapping("/profile-img/reset")
+    public ResponseEntity<Map<String, Object>> resetProfileImage(
+            @AuthenticationPrincipal gimeast.ootd.security.auth.CustomUserPrincipal principal
+    ) {
+        memberService.resetProfileImage(principal.getIdx());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "프로필 이미지가 기본 이미지로 변경되었습니다.");
+        response.put("profileImageUrl", null);
+
+        return ResponseEntity.ok(response);
     }
 
 }

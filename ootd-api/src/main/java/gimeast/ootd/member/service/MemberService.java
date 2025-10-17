@@ -173,4 +173,27 @@ public class MemberService {
             throw new RuntimeException("프로필 이미지 업로드에 실패했습니다.", e);
         }
     }
+
+    @Transactional
+    public void resetProfileImage(Long memberIdx) {
+        // 회원 조회
+        MemberEntity member = memberRepository.findById(memberIdx)
+                .orElseThrow(MemberExceptions.NOT_FOUND::get);
+
+        // 기존 프로필 이미지가 있으면 삭제
+        if (member.getProfileImageUrl() != null && !member.getProfileImageUrl().isEmpty()) {
+            try {
+                fileUploadService.deleteFile(member.getProfileImageUrl());
+            } catch (Exception e) {
+                log.error("Failed to delete existing profile image: {}", e.getMessage());
+                // 파일 삭제 실패해도 계속 진행
+            }
+        }
+
+        // 프로필 이미지를 null로 설정 (기본 이미지로 되돌림)
+        member.changeProfileImage(null);
+        memberRepository.save(member);
+
+        log.info("Profile image reset to default for member idx: {}", memberIdx);
+    }
 }
