@@ -12,12 +12,14 @@ import ProductOgIcon from '../../components/icons/ProductOgIcon.tsx';
 import type { OotdItemType } from '../../types/ootd.ts';
 import type { PageResponseType } from '../../types/common.ts';
 import useUserStore from '../../stores/useUserStore.ts';
+import useModalStore from '../../stores/useModalStore.ts';
 
 const OotdItem = ({ item }: { item: OotdItemType }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const imgListRef = useRef<HTMLUListElement>(null);
     const queryClient = useQueryClient();
     const { user } = useUserStore();
+    const { showComingSoonModal } = useModalStore();
 
     const handleScroll = () => {
         if (imgListRef.current) {
@@ -167,10 +169,10 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
                 <button onClick={() => handleLike(item.ootdId)} disabled={likeMutation.isPending}>
                     <LikeIcon isActive={item.isLiked} />
                 </button>
-                <button>
+                <button onClick={showComingSoonModal}>
                     <CommentIcon />
                 </button>
-                <button>
+                <button onClick={showComingSoonModal}>
                     <ShareIcon />
                 </button>
                 <button onClick={() => handleBookmark(item.ootdId)} disabled={bookmarkMutation.isPending}>

@@ -8,12 +8,14 @@ import useUserStore from '../../stores/useUserStore.ts';
 import { API_ENDPOINTS, apiClient } from '../../api';
 import { useQuery } from '@tanstack/react-query';
 import ProfileHeaderSection from './ProfileHeaderSection.tsx';
+import useModalStore from '../../stores/useModalStore.ts';
 
 type Stats = { followerCount: number; followingCount: number; postCount: number };
 
 const Profile = () => {
     const { setPageTitle } = useOutletContext<LayoutContextType>();
     const { user, logout } = useUserStore();
+    const { showComingSoonModal } = useModalStore();
 
     const { data } = useQuery({
         queryKey: ['ootd', 'stats'],
@@ -61,7 +63,9 @@ const Profile = () => {
                 <Link to='/profile/edit' className={styles.profile_edit}>
                     프로필 편집
                 </Link>
-                <button className={styles.profile_share}>프로필 공유</button>
+                <button className={styles.profile_share} onClick={showComingSoonModal}>
+                    프로필 공유
+                </button>
                 <button className={styles.logout} aria-label='로그아웃' onClick={handleLogout}>
                     <LogoutIcon />
                 </button>

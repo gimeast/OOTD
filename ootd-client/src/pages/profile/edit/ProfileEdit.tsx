@@ -8,11 +8,13 @@ import { API_ENDPOINTS, apiClient } from '../../../api';
 import { useMutation } from '@tanstack/react-query';
 import useUserStore from '../../../stores/useUserStore.ts';
 import DeleteIcon from '../../../components/icons/DeleteIcon.tsx';
+import useModalStore from '../../../stores/useModalStore.ts';
 
 const ProfileEdit = () => {
     const { setPageTitle } = useOutletContext<LayoutContextType>();
     const { updateProfileImageUrl } = useUserStore();
     const modalRef = useRef<HTMLDialogElement>(null);
+    const { showComingSoonModal } = useModalStore();
 
     const handleModalOpen = () => {
         if (modalRef.current) {
@@ -89,7 +91,7 @@ const ProfileEdit = () => {
                 <h2 className='sr-only'>편집 목록</h2>
                 <ul>
                     <li>
-                        <button>
+                        <button onClick={showComingSoonModal}>
                             <div>
                                 <h3>회원정보 변경</h3>
                                 <p>이름, 이메일, 닉네임</p>
@@ -97,7 +99,7 @@ const ProfileEdit = () => {
                         </button>
                     </li>
                     <li>
-                        <button>
+                        <button onClick={showComingSoonModal}>
                             <h3>비밀번호 변경</h3>
                         </button>
                     </li>
@@ -129,6 +131,7 @@ const ProfileEdit = () => {
                     </li>
                 </ul>
             </dialog>
+
             <BottomNav />
         </div>
     );
