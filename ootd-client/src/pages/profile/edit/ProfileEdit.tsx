@@ -119,7 +119,7 @@ const ProfileEdit = () => {
                                 className={styles.profile_image_input}
                                 type='file'
                                 id='profileImage'
-                                accept='image/*'
+                                accept='image/png,image/jpeg,image/jpg,image/gif,image/webp'
                                 onChange={handleProfileImageChange}
                             />
                         </label>

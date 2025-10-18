@@ -29,7 +29,7 @@ const ImageBox = ({ imageUrl, onFileSelect, onDelete }: ImageBoxProps) => {
                         type='file'
                         id='fileInput'
                         name='fileInput'
-                        accept='image/*'
+                        accept='image/png,image/jpeg,image/jpg,image/gif,image/webp'
                         onChange={handleFileChange}
                         className={styles.file_input}
                     />

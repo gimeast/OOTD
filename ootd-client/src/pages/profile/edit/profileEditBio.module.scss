@@ -1,0 +1,25 @@
+.profile_edit_bio {
+    padding: 1.5rem;
+
+    .profile_edit_bio_form {
+        display: flex;
+        flex-direction: column;
+
+        label {
+            font-weight: 400;
+            font-size: 1.2rem;
+            line-height: 100%;
+        }
+        input {
+            margin-top: 1rem;
+            background-color: $gray-100;
+            border: none;
+            border-radius: 5px;
+
+            padding: 1.4rem 1.5rem;
+        }
+        button {
+            margin-top: 2rem;
+        }
+    }
+}

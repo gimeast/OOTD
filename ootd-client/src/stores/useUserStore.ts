@@ -16,6 +16,7 @@ type UserStore = {
     login: (user: User) => void;
     logout: () => void;
     updateProfileImageUrl: (profileImageUrl: string) => void;
+    updateBio: (bio: string) => void;
 };
 
 const useUserStore = create<UserStore>()(
@@ -28,6 +29,7 @@ const useUserStore = create<UserStore>()(
             set(state => ({
                 user: state.user ? { ...state.user, profileImageUrl } : null,
             })),
+        updateBio: (bio: string) => set(state => ({ user: state.user ? { ...state.user, bio } : null })),
     }))
 );
 

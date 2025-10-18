@@ -26,5 +26,6 @@ export const API_ENDPOINTS = {
         },
         PROFILE_IMG: '/api/v1/member/profile-img',
         PROFILE_IMG_RESET: '/api/v1/member/profile-img/reset',
+        BIO: '/api/v1/member/bio',
     },
 } as const;
