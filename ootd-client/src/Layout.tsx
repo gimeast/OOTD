@@ -10,7 +10,7 @@ const Layout = () => {
     const [pageTitle, setPageTitle] = useState('');
     const { pathname } = useLocation();
     const bottomNav = ['/', '/search', '/ootd/add', '/likes', '/login'].includes(pathname);
-    const { isOpen, closeModal, title, subTitle, confirmText, cancelText, onConfirm, onCancel, closeOnBackdropClick } =
+    const { isOpen, onClose, title, subTitle, confirmText, cancelText, onConfirm, closeOnBackdropClick } =
         useModalStore();
     return (
         <>
@@ -19,13 +19,12 @@ const Layout = () => {
                 <Outlet context={{ setPageTitle }} />
                 <BasicModal
                     isOpen={isOpen}
-                    onClose={closeModal}
+                    onClose={onClose}
                     title={title}
                     subTitle={subTitle}
                     confirmText={confirmText}
                     cancelText={cancelText}
                     onConfirm={onConfirm}
-                    onCancel={onCancel}
                     closeOnBackdropClick={closeOnBackdropClick}
                 />
             </main>

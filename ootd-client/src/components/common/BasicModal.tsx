@@ -10,7 +10,6 @@ type BasicModalProps = {
     confirmText?: string;
     cancelText?: string;
     onConfirm?: () => void;
-    onCancel?: () => void;
     closeOnBackdropClick?: boolean;
 };
 
@@ -22,7 +21,6 @@ const BasicModal = ({
     confirmText = '확인',
     cancelText,
     onConfirm,
-    onCancel,
     closeOnBackdropClick = true,
 }: BasicModalProps) => {
     if (!isOpen) return null;
@@ -41,21 +39,13 @@ const BasicModal = ({
         }
     };
 
-    const handleCancel = () => {
-        if (onCancel) {
-            onCancel();
-        } else {
-            onClose();
-        }
-    };
-
     return (
         <div className={styles.modal_backdrop} onClick={handleBackdropClick}>
             <div className={styles.modal} onClick={e => e.stopPropagation()}>
                 {<LogoSection h2={title} p={subTitle} />}
                 <div className={styles.modal_buttons}>
                     {cancelText && (
-                        <BasicButton type='button' onClick={handleCancel}>
+                        <BasicButton type='button' onClick={onClose}>
                             {cancelText}
                         </BasicButton>
                     )}

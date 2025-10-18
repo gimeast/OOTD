@@ -7,13 +7,12 @@ type ModalState = {
     confirmText?: string;
     cancelText?: string;
     onConfirm?: () => void;
-    onCancel?: () => void;
     closeOnBackdropClick?: boolean;
 };
 
 type ModalStore = ModalState & {
     openModal: (config: Omit<ModalState, 'isOpen'>) => void;
-    closeModal: () => void;
+    onClose: () => void;
     showComingSoonModal: () => void;
 };
 
@@ -24,7 +23,6 @@ const initialState: ModalState = {
     confirmText: undefined,
     cancelText: undefined,
     onConfirm: undefined,
-    onCancel: undefined,
     closeOnBackdropClick: true,
 };
 
@@ -37,7 +35,7 @@ const useModalStore = create<ModalStore>(set => ({
             ...config,
         }),
 
-    closeModal: () => set(initialState),
+    onClose: () => set(initialState),
 
     showComingSoonModal: () =>
         set({
