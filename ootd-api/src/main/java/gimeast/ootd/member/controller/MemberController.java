@@ -94,4 +94,17 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
+    @PatchMapping("/bio")
+    public ResponseEntity<Map<String, Object>> updateBio(
+            @RequestParam String bio,
+            @AuthenticationPrincipal gimeast.ootd.security.auth.CustomUserPrincipal principal
+    ) {
+        String updatedBio = memberService.updateBio(principal.getIdx(), bio);
+
+        return ResponseEntity.ok(Map.of(
+                "message", "자기소개가 변경되었습니다.",
+                "bio", updatedBio != null ? updatedBio : ""
+        ));
+    }
+
 }

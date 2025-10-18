@@ -196,4 +196,24 @@ public class MemberService {
 
         log.info("Profile image reset to default for member idx: {}", memberIdx);
     }
+
+    @Transactional
+    public String updateBio(Long memberIdx, String bio) {
+        // 회원 조회
+        MemberEntity member = memberRepository.findById(memberIdx)
+                .orElseThrow(MemberExceptions.NOT_FOUND::get);
+
+        // bio 길이 검증 (200자 제한)
+        if (bio != null && bio.length() > 200) {
+            throw new RuntimeException("자기소개는 200자를 초과할 수 없습니다.");
+        }
+
+        // bio 업데이트
+        member.changeBio(bio);
+        memberRepository.save(member);
+
+        log.info("Bio updated for member idx: {}", memberIdx);
+
+        return member.getBio();
+    }
 }
