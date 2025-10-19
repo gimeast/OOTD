@@ -7,19 +7,19 @@ import styles from './ootdAdd.module.scss';
 import BasicButton from '../../components/common/BasicButton.tsx';
 import DeleteIcon from '../../components/icons/DeleteIcon.tsx';
 import { API_ENDPOINTS, apiClient } from '../../api';
-import BasicModal from '../../components/common/BasicModal.tsx';
+import useModalStore from '../../stores/useModalStore.ts';
 
 type Product = { productName: string; productLink: string };
 
 const OotdAdd = () => {
     const { setPageTitle } = useOutletContext<LayoutContextType>();
+    const { openModal, onClose } = useModalStore();
 
     const [imageFiles, setImageFiles] = useState<File[]>([]);
     const [content, setContent] = useState('');
     const [hashtags, setHashtags] = useState('');
     const [products, setProducts] = useState<Product[]>([]);
     const [isActive, setIsActive] = useState<boolean>(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const navigate = useNavigate();
     const queryClient = useQueryClient();
@@ -47,6 +47,20 @@ const OotdAdd = () => {
             return await apiClient(API_ENDPOINTS.OOTD.CREATE, {
                 method: 'POST',
                 body: data,
+            });
+        },
+        onSuccess: () => {
+            void queryClient.invalidateQueries({ queryKey: ['ootd'] });
+
+            openModal({
+                title: 'Outfit Of The Day',
+                subTitle: '업로드를 완료 하였습니다!',
+                confirmText: '확인',
+                closeOnBackdropClick: false,
+                onConfirm: () => {
+                    navigate('/', { replace: true });
+                    onClose();
+                },
             });
         },
     });
@@ -111,9 +125,6 @@ const OotdAdd = () => {
                     .map(tag => tag.trim()),
                 products: productsWithOrder,
             });
-
-            void queryClient.invalidateQueries({ queryKey: ['ootd'] });
-            setIsModalOpen(true);
         } catch (error) {
             console.error('업로드 실패:', error);
             alert('업로드 중 오류가 발생했습니다.');
@@ -233,18 +244,6 @@ const OotdAdd = () => {
                     </BasicButton>
                 </div>
             </form>
-
-            <BasicModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                title='Outfit Of The Day'
-                subTitle='업로드를 완료 하였습니다!'
-                confirmText='확인'
-                onConfirm={() => {
-                    setIsModalOpen(false);
-                    navigate('/', { replace: true });
-                }}
-            />
         </div>
     );
 };

@@ -8,8 +8,8 @@ import BasicButton from '../../components/common/BasicButton.tsx';
 import useDebounce from '../../hooks/useDebounce.ts';
 import { API_ENDPOINTS, apiClient } from '../../api';
 import { validateEmail, validatePassword } from '../../utils/validation.ts';
-import BasicModal from '../../components/common/BasicModal.tsx';
 import useUserStore from '../../stores/useUserStore.ts';
+import useModalStore from '../../stores/useModalStore.ts';
 
 type JoinResponse = {
     isSuccess: boolean;
@@ -17,8 +17,9 @@ type JoinResponse = {
 };
 
 const Join = () => {
-    const { isLoggedIn } = useUserStore();
     const { setPageTitle } = useOutletContext<LayoutContextType>();
+    const { isLoggedIn } = useUserStore();
+    const { openModal, onClose } = useModalStore();
 
     const [name, setName] = useState('');
 
@@ -42,7 +43,6 @@ const Join = () => {
     const [isAgree, setIsAgree] = useState(false);
     const [isActive, setIsActive] = useState(false);
     const [isPending, setIsPending] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
 
     const handleTermsClick = () => {
@@ -103,7 +103,16 @@ const Join = () => {
             });
 
             if (result.isSuccess) {
-                setIsModalOpen(true);
+                openModal({
+                    title: '환영합니다!',
+                    subTitle: 'OOTD 회원가입이 완료되었습니다!',
+                    confirmText: '시작하기',
+                    closeOnBackdropClick: false,
+                    onConfirm: () => {
+                        navigate('/', { replace: true });
+                        onClose();
+                    },
+                });
             }
         } catch (error) {
             console.error(error);
@@ -283,18 +292,6 @@ const Join = () => {
                     </BasicButton>
                 </form>
             </section>
-
-            <BasicModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                title='환영합니다!'
-                subTitle='OOTD 회원가입이 완료되었습니다!'
-                confirmText='시작하기'
-                onConfirm={() => {
-                    setIsModalOpen(false);
-                    navigate('/login', { replace: true });
-                }}
-            />
         </div>
     );
 };

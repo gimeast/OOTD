@@ -1,5 +1,5 @@
 const TaggedList = () => {
-    return <div>tagged list</div>;
+    return <div></div>;
 };
 
 export default TaggedList;

@@ -6,7 +6,7 @@ import styles from './profile.module.scss';
 import LogoutIcon from '../../components/icons/LogoutIcon.tsx';
 import useUserStore from '../../stores/useUserStore.ts';
 import { API_ENDPOINTS, apiClient } from '../../api';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import ProfileHeaderSection from './ProfileHeaderSection.tsx';
 import useModalStore from '../../stores/useModalStore.ts';
 
@@ -15,21 +15,37 @@ type Stats = { followerCount: number; followingCount: number; postCount: number 
 const Profile = () => {
     const { setPageTitle } = useOutletContext<LayoutContextType>();
     const { user, logout } = useUserStore();
-    const { showComingSoonModal } = useModalStore();
+    const { showComingSoonModal, openModal, onClose } = useModalStore();
+    const queryClient = useQueryClient();
 
     const { data } = useQuery({
         queryKey: ['ootd', 'stats'],
         queryFn: () => apiClient<Stats>(API_ENDPOINTS.MEMBER.STATS.replace('{nickname}', String(user?.nickname))),
     });
 
-    const handleLogout = async () => {
-        const result: { message: string; isSuccess: boolean } = await apiClient(API_ENDPOINTS.AUTH.LOGOUT, {
-            method: 'POST',
-        });
-
-        if (result?.isSuccess) {
+    const logoutMutation = useMutation({
+        mutationFn: async () => {
+            await apiClient(API_ENDPOINTS.AUTH.LOGOUT, {
+                method: 'POST',
+            });
+        },
+        onSuccess: () => {
+            void queryClient.invalidateQueries({ queryKey: ['ootd'] });
+            onClose();
             logout();
-        }
+        },
+    });
+
+    const handleLogout = () => {
+        openModal({
+            title: 'Goodbye',
+            subTitle: '로그아웃 하시겠습니까?',
+            cancelText: '취소',
+            confirmText: '확인',
+            onConfirm: async () => {
+                await logoutMutation.mutateAsync();
+            },
+        });
     };
 
     useEffect(() => {
@@ -91,6 +107,7 @@ const Profile = () => {
                     </NavLink>
                     <NavLink
                         to='/profile/tagged'
+                        onClick={() => showComingSoonModal()}
                         replace={true}
                         className={({ isActive }) => (isActive ? styles.active : '')}
                     >
