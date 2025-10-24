@@ -49,6 +49,15 @@ public class OotdController {
         return ResponseEntity.ok(ootdList);
     }
 
+    @GetMapping("/liked")
+    public ResponseEntity<Page<OotdListResponseDTO>> getLikedOotdList(
+            PageRequestDTO pageRequestDTO,
+            @AuthenticationPrincipal CustomUserPrincipal principal
+    ) {
+        Page<OotdListResponseDTO> likedOotdList = ootdService.getLikedOotdList(pageRequestDTO, principal.getIdx());
+        return ResponseEntity.ok(likedOotdList);
+    }
+
     @PostMapping("/{ootdId}/like")
     public ResponseEntity<Map<String, Object>> toggleLike(
             @PathVariable Long ootdId,

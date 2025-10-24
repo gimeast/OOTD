@@ -207,31 +207,9 @@ public class OotdService {
 
     @Transactional(readOnly = true)
     public Page<OotdListResponseDTO> getLikedOotdList(PageRequestDTO pageRequestDTO, Long memberIdx) {
-        Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
-        Page<OotdListResponseDTO> result = ootdRepository.findLikedOotdList(memberIdx, pageable);
-
-        // 썸네일이 없으면 원본 URL로 변경
-        List<OotdListResponseDTO> adjustedContent = result.getContent().stream()
-                .map(dto -> {
-                    String adjustedImage = dto.getOotdImage() != null ?
-                            adjustThumbnailUrl(dto.getOotdImage()) : null;
-
-                    return OotdListResponseDTO.builder()
-                            .ootdId(dto.getOotdId())
-                            .profileImageUrl(dto.getProfileImageUrl())
-                            .nickname(dto.getNickname())
-                            .ootdImage(adjustedImage)
-                            .isLiked(dto.getIsLiked())
-                            .likeCount(dto.getLikeCount())
-                            .isBookmarked(dto.getIsBookmarked())
-                            .content(dto.getContent())
-                            .hashtags(dto.getHashtags())
-                            .products(dto.getProducts())
-                            .build();
-                })
-                .collect(Collectors.toList());
-
-        return new PageImpl<>(adjustedContent, pageable, result.getTotalElements());
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Pageable pageable = pageRequestDTO.getPageable(sort);
+        return ootdRepository.findLikedOotdList(memberIdx, pageable);
     }
 
     @Transactional(readOnly = true)

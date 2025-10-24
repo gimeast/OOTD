@@ -259,6 +259,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
 
         JPQLQuery<gimeast.ootd.ootd.entity.OotdEntity> query = from(ootdEntity)
                 .leftJoin(ootdEntity.member, memberEntity).fetchJoin()
+                .leftJoin(ootdEntity.images, ootdImageEntity)
                 .leftJoin(ootdEntity.hashtags, ootdHashtagEntity)
                 .leftJoin(ootdHashtagEntity.hashtagEntity, hashtagEntity)
                 .leftJoin(ootdEntity.products, ootdProductEntity)
@@ -281,12 +282,6 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
 
         List<Long> ootdIds = ootdEntities.stream().map(gimeast.ootd.ootd.entity.OotdEntity::getId).toList();
 
-        // 각 OOTD의 첫 번째 이미지 조회
-        List<gimeast.ootd.ootd.entity.OotdImageEntity> firstImages = from(ootdImageEntity)
-                .where(ootdImageEntity.ootdEntity.id.in(ootdIds))
-                .orderBy(ootdImageEntity.imageOrder.asc())
-                .fetch();
-
         // 북마크 정보 일괄 조회
         List<Long> bookmarkedOotdIds = from(ootdBookmarkEntity)
                 .where(ootdBookmarkEntity.ootdEntity.id.in(ootdIds)
@@ -297,12 +292,11 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
         // DTO 변환
         List<OotdListResponseDTO> dtoList = ootdEntities.stream()
                 .map(entity -> {
-                    // 이미지 조회 (이미 조회한 첫 번째 이미지에서 찾기)
-                    String image = firstImages.stream()
-                            .filter(img -> img.getOotdEntity().getId().equals(entity.getId()))
-                            .findFirst()
+                    // 이미지 리스트 조회
+                    List<String> images = entity.getImages().stream()
+                            .sorted((img1, img2) -> img1.getImageOrder().compareTo(img2.getImageOrder()))
                             .map(gimeast.ootd.ootd.entity.OotdImageEntity::getImageUrl)
-                            .orElse(null);
+                            .collect(Collectors.toList());
 
                     // 해시태그 리스트 조회
                     List<String> hashtags = entity.getHashtags().stream()
@@ -323,7 +317,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
                             .ootdId(entity.getId())
                             .profileImageUrl(entity.getMember().getProfileImageUrl())
                             .nickname(entity.getMember().getNickname())
-                            .ootdImage(image)
+                            .ootdImages(images)
                             .isLiked(likedOotdIds.contains(entity.getId()))
                             .likeCount(entity.getLikeCount())
                             .isBookmarked(bookmarkedOotdIds.contains(entity.getId()))
