@@ -7,8 +7,13 @@ import { useScrollObserver } from '../hooks/useScrollObserver.ts';
 import HeartIcon from '../components/icons/HeartIcon.tsx';
 import NoResult from '../components/common/NoResult.tsx';
 import styles from './likes.module.scss';
+import { useOutletContext } from 'react-router-dom';
+import type { LayoutContextType } from '../types/context.ts';
+import { useEffect } from 'react';
 
 const Likes = () => {
+    const { setPageTitle } = useOutletContext<LayoutContextType>();
+
     const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
         queryKey: ['ootd', 'list'],
         queryFn: ({ pageParam }: { pageParam: number }): Promise<PageResponseType<OotdItemType>> =>
@@ -22,13 +27,15 @@ const Likes = () => {
         initialPageParam: 1,
     });
 
-    console.log('data', data);
-
     useScrollObserver(() => {
         if (hasNextPage && !isFetchingNextPage) {
             void fetchNextPage();
         }
     });
+
+    useEffect(() => {
+        setPageTitle('좋아요 게시물');
+    }, [setPageTitle]);
 
     return (
         <div className={styles.likes}>
