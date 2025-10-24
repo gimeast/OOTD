@@ -37,7 +37,6 @@ async function refreshAccessToken(): Promise<boolean> {
         onTokenRefreshed(); //토큰 갱신중 동시에 여러 API가 호출된 경우 콜백 함수들 실행됨
         return true;
     } catch (error) {
-        // 토큰 갱신 실패는 조용히 처리
         return false;
     }
 }

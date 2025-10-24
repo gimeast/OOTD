@@ -33,7 +33,6 @@ const BottomNav = () => {
                 </NavLink>
                 <NavLink
                     to={isLoggedIn ? '/likes' : '/login'}
-                    onClick={showComingSoonModal}
                     className={({ isActive }) => (isLoggedIn && isActive ? styles.active : '')}
                 >
                     {({ isActive }) => <LikeIcon className={isLoggedIn && isActive ? '' : styles.likeIcon} />}

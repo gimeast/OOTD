@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
         LIST: '/api/v1/ootd',
         IMAGE: { UPLOAD: '/api/v1/upload/images' },
         LIKE: '/api/v1/ootd/{ootdId}/like',
+        LIKED: '/api/v1/ootd/liked',
         BOOKMARK: '/api/v1/ootd/{ootdId}/bookmark',
     },
     MEMBER: {
