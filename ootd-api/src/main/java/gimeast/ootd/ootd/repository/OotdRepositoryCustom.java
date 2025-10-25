@@ -9,5 +9,7 @@ public interface OotdRepositoryCustom {
     Page<OotdListResponseDTO> findMyOotdList(Long memberIdx, Pageable pageable);
     Page<OotdListResponseDTO> findLikedOotdList(Long memberIdx, Pageable pageable);
     Page<OotdListResponseDTO> findBookmarkedOotdList(Long memberIdx, Pageable pageable);
+    Page<OotdListResponseDTO> findByHashtag(String hashtag, Long currentMemberIdx, Pageable pageable);
+    Page<OotdListResponseDTO> findByNickname(String nickname, Long currentMemberIdx, Pageable pageable);
     long countMyOotd(Long memberIdx);
 }

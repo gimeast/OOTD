@@ -213,6 +213,20 @@ public class OotdService {
     }
 
     @Transactional(readOnly = true)
+    public Page<OotdListResponseDTO> searchOotd(String keyword, String type, PageRequestDTO pageRequestDTO, Long currentMemberIdx) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Pageable pageable = pageRequestDTO.getPageable(sort);
+
+        if ("hashtag".equalsIgnoreCase(type)) {
+            return ootdRepository.findByHashtag(keyword, currentMemberIdx, pageable);
+        } else if ("nickname".equalsIgnoreCase(type)) {
+            return ootdRepository.findByNickname(keyword, currentMemberIdx, pageable);
+        } else {
+            throw new IllegalArgumentException("Invalid search type: " + type + ". Must be 'hashtag' or 'nickname'");
+        }
+    }
+
+    @Transactional(readOnly = true)
     public Page<OotdListResponseDTO> getBookmarkedOotdList(PageRequestDTO pageRequestDTO, Long memberIdx) {
         Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
         Page<OotdListResponseDTO> result = ootdRepository.findBookmarkedOotdList(memberIdx, pageable);

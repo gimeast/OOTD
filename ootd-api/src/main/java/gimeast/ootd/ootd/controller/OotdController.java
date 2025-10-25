@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -56,6 +57,18 @@ public class OotdController {
     ) {
         Page<OotdListResponseDTO> likedOotdList = ootdService.getLikedOotdList(pageRequestDTO, principal.getIdx());
         return ResponseEntity.ok(likedOotdList);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<OotdListResponseDTO>> searchOotd(
+            @RequestParam String keyword,
+            @RequestParam String type,
+            PageRequestDTO pageRequestDTO,
+            @AuthenticationPrincipal CustomUserPrincipal principal
+    ) {
+        Long currentMemberIdx = principal != null ? principal.getIdx() : null;
+        Page<OotdListResponseDTO> searchResult = ootdService.searchOotd(keyword, type, pageRequestDTO, currentMemberIdx);
+        return ResponseEntity.ok(searchResult);
     }
 
     @PostMapping("/{ootdId}/like")
