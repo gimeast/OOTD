@@ -60,14 +60,13 @@ public class OotdController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<OotdListResponseDTO>> searchOotd(
+    public ResponseEntity<Page<OotdListResponseDTO>> searchOotdByHashtag(
             @RequestParam String keyword,
-            @RequestParam String type,
             PageRequestDTO pageRequestDTO,
             @AuthenticationPrincipal CustomUserPrincipal principal
     ) {
         Long currentMemberIdx = principal != null ? principal.getIdx() : null;
-        Page<OotdListResponseDTO> searchResult = ootdService.searchOotd(keyword, type, pageRequestDTO, currentMemberIdx);
+        Page<OotdListResponseDTO> searchResult = ootdService.searchOotdByHashtag(keyword, pageRequestDTO, currentMemberIdx);
         return ResponseEntity.ok(searchResult);
     }
 

@@ -1,6 +1,7 @@
 package gimeast.ootd.member.service;
 
 import gimeast.ootd.member.dto.MemberDTO;
+import gimeast.ootd.member.dto.MemberSearchDTO;
 import gimeast.ootd.member.dto.MemberStatsDTO;
 import gimeast.ootd.member.entity.MemberEntity;
 import gimeast.ootd.member.entity.MemberRole;
@@ -11,6 +12,8 @@ import gimeast.ootd.upload.service.FileUploadService;
 import gimeast.ootd.upload.service.ImageUploadResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -215,5 +218,11 @@ public class MemberService {
         log.info("Bio updated for member idx: {}", memberIdx);
 
         return member.getBio();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<MemberSearchDTO> searchByNickname(String keyword, Pageable pageable) {
+        Page<MemberEntity> members = memberRepository.searchByNickname(keyword, pageable);
+        return members.map(MemberSearchDTO::new);
     }
 }

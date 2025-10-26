@@ -1,6 +1,7 @@
 package gimeast.ootd.member.controller;
 
 import gimeast.ootd.common.dto.PageRequestDTO;
+import gimeast.ootd.member.dto.MemberSearchDTO;
 import gimeast.ootd.member.dto.MemberStatsDTO;
 import gimeast.ootd.member.service.MemberService;
 import gimeast.ootd.ootd.dto.OotdListResponseDTO;
@@ -105,6 +106,15 @@ public class MemberController {
                 "message", "자기소개가 변경되었습니다.",
                 "bio", updatedBio != null ? updatedBio : ""
         ));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<MemberSearchDTO>> searchByNickname(
+            @RequestParam String keyword,
+            PageRequestDTO pageRequestDTO
+    ) {
+        Page<MemberSearchDTO> searchResult = memberService.searchByNickname(keyword, pageRequestDTO.getPageable());
+        return ResponseEntity.ok(searchResult);
     }
 
 }

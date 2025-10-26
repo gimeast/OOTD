@@ -62,6 +62,11 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             return true;
         }
 
+        // /api/v1/member/search API는 모두 허용 (인증 불필요)
+        if (path.startsWith("/api/v1/member/search")) {
+            return true;
+        }
+
         // API가 아닌 경로는 필터링하지 않음
         if (!path.startsWith("/api/")) {
             return true;
