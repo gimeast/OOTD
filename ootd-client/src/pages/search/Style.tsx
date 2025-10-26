@@ -1,5 +1,5 @@
 const Style = () => {
-    return <div>style</div>;
+    return <div></div>;
 };
 
 export default Style;

@@ -37,7 +37,7 @@ const Hashtag = () => {
         queryFn: ({ pageParam }: { pageParam: number }): Promise<PageResponseType<OotdItemType>> =>
             apiClient(API_ENDPOINTS.OOTD.SEARCH, {
                 method: 'GET',
-                params: { page: pageParam, size: 20, type: 'hashtag', keyword: debouncedSearchInput },
+                params: { page: pageParam, size: 20, keyword: debouncedSearchInput },
             }),
         getNextPageParam: (lastPage: PageResponseType<OotdItemType>, allPages) => {
             return lastPage.last ? undefined : allPages.length + 1;
@@ -51,8 +51,6 @@ const Hashtag = () => {
             void fetchNextPage();
         }
     });
-
-    console.log('ootdData', ootdData);
 
     return (
         <>

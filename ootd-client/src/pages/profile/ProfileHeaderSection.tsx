@@ -9,9 +9,7 @@ const ProfileHeaderSection = () => {
         <section className={styles.profile_header_section}>
             <h2 className='sr-only'>프로필 정보</h2>
             {user?.profileImageUrl ? (
-                <div>
-                    <img src={`${import.meta.env.VITE_API_BASE_URL}${user.profileImageUrl}`} alt='프로필 이미지' />
-                </div>
+                <img src={`${import.meta.env.VITE_API_BASE_URL}${user.profileImageUrl}`} alt='프로필 이미지' />
             ) : (
                 <ProfileIcon width='60' height='60' />
             )}

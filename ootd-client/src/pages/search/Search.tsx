@@ -4,11 +4,13 @@ import type { LayoutContextType } from '../../types/context.ts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './search.module.scss';
 import useDebounce from '../../hooks/useDebounce.ts';
+import useModalStore from '../../stores/useModalStore.ts';
 
 const Search = () => {
     const { setPageTitle } = useOutletContext<LayoutContextType>();
     const [searchInput, setSearchInput] = useState('');
     const debouncedSearchInput = useDebounce(searchInput, 500);
+    const { showComingSoonModal } = useModalStore();
 
     const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchInput(e.target.value);
@@ -43,6 +45,7 @@ const Search = () => {
                     사용자
                 </NavLink>
                 <NavLink
+                    onClick={showComingSoonModal}
                     to='/search/style'
                     replace={true}
                     className={({ isActive }) => (isActive ? styles.active : '')}
@@ -50,7 +53,7 @@ const Search = () => {
                     스타일
                 </NavLink>
             </section>
-            <section className={styles.search_content}>
+            <section>
                 <Outlet context={contextValue} />
             </section>
         </div>

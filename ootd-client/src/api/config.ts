@@ -29,6 +29,7 @@ export const API_ENDPOINTS = {
         PROFILE_IMG: '/api/v1/member/profile-img',
         PROFILE_IMG_RESET: '/api/v1/member/profile-img/reset',
         BIO: '/api/v1/member/bio',
+        SEARCH: '/api/v1/member/search',
     },
     HASHTAG: {
         POPULAR: '/api/v1/hashtag/popular',

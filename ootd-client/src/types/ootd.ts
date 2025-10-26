@@ -17,3 +17,10 @@ export type OotdItemType = {
     hashtags: string[];
     products: ProductType[];
 };
+
+export type nicknameSearchType = {
+    idx: number;
+    nickname: string;
+    profileImageUrl: string;
+    bio: string;
+};

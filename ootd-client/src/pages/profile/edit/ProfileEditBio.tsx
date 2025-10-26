@@ -3,7 +3,7 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 import type { LayoutContextType } from '../../../types/context.ts';
 import styles from './profileEditBio.module.scss';
 import BasicButton from '../../../components/common/button/BasicButton.tsx';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { API_ENDPOINTS, apiClient } from '../../../api';
 import useUserStore from '../../../stores/useUserStore.ts';
 
@@ -12,12 +12,14 @@ const ProfileEditBio = () => {
     const navigate = useNavigate();
     const { updateBio } = useUserStore();
     const [bio, setBio] = useState('');
+    const queryClient = useQueryClient();
 
     const bioMutation = useMutation({
         mutationFn: async (bio: string) =>
             await apiClient(API_ENDPOINTS.MEMBER.BIO, { method: 'PATCH', params: { bio } }),
         onSuccess: () => {
             updateBio(bio);
+            void queryClient.invalidateQueries({ queryKey: ['profile'] });
             navigate('/profile/edit', { replace: true });
         },
     });

@@ -4,7 +4,7 @@ import type { LayoutContextType } from '../../../types/context.ts';
 import ProfileHeaderSection from '../ProfileHeaderSection.tsx';
 import styles from './profileEdit.module.scss';
 import { API_ENDPOINTS, apiClient } from '../../../api';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useUserStore from '../../../stores/useUserStore.ts';
 import DeleteIcon from '../../../components/icons/DeleteIcon.tsx';
 import useModalStore from '../../../stores/useModalStore.ts';
@@ -14,6 +14,7 @@ const ProfileEdit = () => {
     const { updateProfileImageUrl } = useUserStore();
     const modalRef = useRef<HTMLDialogElement>(null);
     const { showComingSoonModal } = useModalStore();
+    const queryClient = useQueryClient();
 
     const handleModalOpen = () => {
         if (modalRef.current) {
@@ -40,6 +41,7 @@ const ProfileEdit = () => {
         },
         onSuccess: data => {
             updateProfileImageUrl(data.profileImageUrl);
+            void queryClient.invalidateQueries({ queryKey: ['profile'] });
             handleModalClose();
         },
     });
