@@ -430,7 +430,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
                 .leftJoin(ootdEntity.hashtags, ootdHashtagEntity)
                 .leftJoin(ootdHashtagEntity.hashtagEntity, hashtagEntity)
                 .leftJoin(ootdEntity.products, ootdProductEntity)
-                .where(hashtagEntity.tagName.eq(hashtag)
+                .where(hashtagEntity.tagName.like("%" + hashtag + "%")
                         .and(ootdEntity.status.eq(OotdStatus.ACTIVE)))
                 .distinct();
 
