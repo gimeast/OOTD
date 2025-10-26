@@ -1,6 +1,6 @@
-import DeleteIcon from '../icons/DeleteIcon.tsx';
+import DeleteIcon from '../../icons/DeleteIcon.tsx';
 import styles from './imageBox.module.scss';
-import PlusIcon from '../icons/PlusIcon.tsx';
+import PlusIcon from '../../icons/PlusIcon.tsx';
 
 type ImageBoxProps = {
     imageUrl?: string;

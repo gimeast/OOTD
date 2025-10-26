@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import type { LayoutContextType } from '../../../types/context.ts';
 import styles from './profileEditBio.module.scss';
-import BasicButton from '../../../components/common/BasicButton.tsx';
-import BottomNav from '../../../components/layout/BottomNav.tsx';
+import BasicButton from '../../../components/common/button/BasicButton.tsx';
 import { useMutation } from '@tanstack/react-query';
 import { API_ENDPOINTS, apiClient } from '../../../api';
 import useUserStore from '../../../stores/useUserStore.ts';
@@ -39,8 +38,6 @@ const ProfileEditBio = () => {
                 <input type='text' id='bio' placeholder='소개' onChange={e => setBio(e.target.value)} value={bio} />
                 <BasicButton type='submit' children='변경하기' isActive={true} />
             </form>
-
-            <BottomNav />
         </div>
     );
 };

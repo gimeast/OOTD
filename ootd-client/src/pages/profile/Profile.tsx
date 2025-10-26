@@ -1,4 +1,3 @@
-import BottomNav from '../../components/layout/BottomNav.tsx';
 import { useEffect } from 'react';
 import { Link, NavLink, Outlet, useOutletContext } from 'react-router-dom';
 import type { LayoutContextType } from '../../types/context.ts';
@@ -119,8 +118,6 @@ const Profile = () => {
             <section className={styles.profile_content_section}>
                 <Outlet />
             </section>
-
-            <BottomNav />
         </div>
     );
 };

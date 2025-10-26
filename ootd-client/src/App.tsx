@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Layout from './Layout.tsx';
-import Search from './pages/Search.tsx';
+import Search from './pages/search/Search.tsx';
 import OotdAdd from './pages/ootdAdd/OotdAdd.tsx';
 import Likes from './pages/Likes.tsx';
 import Profile from './pages/profile/Profile.tsx';
@@ -15,6 +15,9 @@ import BookmarkedList from './pages/profile/BookmarkedList.tsx';
 import TaggedList from './pages/profile/TaggedList.tsx';
 import ProfileEdit from './pages/profile/edit/ProfileEdit.tsx';
 import ProfileEditBio from './pages/profile/edit/ProfileEditBio.tsx';
+import Hashtag from './pages/search/Hashtag.tsx';
+import Nickname from './pages/search/Nickname.tsx';
+import Style from './pages/search/Style.tsx';
 
 function AppContent() {
     const { isChecking } = useAuthCheck();
@@ -29,7 +32,12 @@ function AppContent() {
         <Routes>
             <Route path='/' element={<Layout />}>
                 <Route index element={<Home />} />
-                <Route path='search' element={<Search />} />
+                <Route path='search' element={<Search />}>
+                    <Route index element={<Hashtag />} />
+                    <Route path='nickname' element={<Nickname />} />
+                    <Route path='style' element={<Style />} />
+                </Route>
+
                 <Route
                     path='ootd/add'
                     element={

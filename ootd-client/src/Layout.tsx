@@ -3,15 +3,19 @@ import Header from './components/layout/Header.tsx';
 import Footer from './components/layout/Footer.tsx';
 import BottomNav from './components/layout/BottomNav.tsx';
 import { useState } from 'react';
-import BasicModal from './components/common/BasicModal.tsx';
+import BasicModal from './components/common/modal/BasicModal.tsx';
 import useModalStore from './stores/useModalStore.ts';
 
 const Layout = () => {
     const [pageTitle, setPageTitle] = useState('');
     const { pathname } = useLocation();
-    const bottomNav = ['/', '/search', '/ootd/add', '/likes', '/login'].includes(pathname);
     const { isOpen, onClose, title, subTitle, confirmText, cancelText, onConfirm, closeOnBackdropClick } =
         useModalStore();
+
+    const exactPaths = ['/', '/ootd/add', '/likes', '/login'];
+    const prefixPaths = ['/search', '/profile'];
+    const bottomNav = exactPaths.includes(pathname) || prefixPaths.some(prefix => pathname.startsWith(prefix));
+
     return (
         <>
             <Header pageTitle={pageTitle} />

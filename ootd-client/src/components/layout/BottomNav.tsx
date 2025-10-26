@@ -6,11 +6,9 @@ import LikeIcon from '../icons/HeartIcon.tsx';
 import UserIcon from '../icons/UserIcon.tsx';
 import { NavLink } from 'react-router-dom';
 import useUserStore from '../../stores/useUserStore';
-import useModalStore from '../../stores/useModalStore.ts';
 
 const BottomNav = () => {
     const isLoggedIn = useUserStore(state => state.isLoggedIn);
-    const { showComingSoonModal } = useModalStore();
 
     return (
         <nav>
@@ -18,11 +16,7 @@ const BottomNav = () => {
                 <NavLink to='/' className={({ isActive }) => (isActive ? styles.active : '')}>
                     {({ isActive }) => <HomeIcon className={isActive ? '' : styles.homeIcon} />}
                 </NavLink>
-                <NavLink
-                    to='/search'
-                    onClick={showComingSoonModal}
-                    className={({ isActive }) => (isActive ? styles.active : '')}
-                >
+                <NavLink to='/search' className={({ isActive }) => (isActive ? styles.active : '')}>
                     {({ isActive }) => <SearchIcon className={isActive ? '' : styles.searchIcon} />}
                 </NavLink>
                 <NavLink

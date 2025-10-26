@@ -1,0 +1,31 @@
+.search {
+    padding: 1.5rem;
+
+    .search_type_section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 2rem;
+        padding: 0.5rem 2rem;
+        width: 100%;
+        height: fluid-width(3.5rem, 5rem);
+        border-radius: 2rem;
+        background-color: $gray-100;
+
+        a {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            height: 100%;
+            border-radius: 2rem;
+
+            font-size: 1.2rem;
+        }
+        .active {
+            background-color: $white;
+            font-weight: bold;
+        }
+    }
+}

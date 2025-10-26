@@ -1,6 +1,6 @@
-import BasicButton from './BasicButton.tsx';
+import BasicButton from '../button/BasicButton.tsx';
 import styles from './basicModal.module.scss';
-import LogoSection from './LogoSection.tsx';
+import LogoSection from '../LogoSection.tsx';
 
 type BasicModalProps = {
     isOpen: boolean;

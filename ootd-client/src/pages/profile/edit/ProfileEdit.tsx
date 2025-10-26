@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import type { LayoutContextType } from '../../../types/context.ts';
-import BottomNav from '../../../components/layout/BottomNav.tsx';
 import ProfileHeaderSection from '../ProfileHeaderSection.tsx';
 import styles from './profileEdit.module.scss';
 import { API_ENDPOINTS, apiClient } from '../../../api';
@@ -131,8 +130,6 @@ const ProfileEdit = () => {
                     </li>
                 </ul>
             </dialog>
-
-            <BottomNav />
         </div>
     );
 };

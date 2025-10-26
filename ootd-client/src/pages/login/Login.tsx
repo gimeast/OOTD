@@ -7,7 +7,7 @@ import useUserStore, { type User } from '../../stores/useUserStore.ts';
 import type { LayoutContextType } from '../../types/context.ts';
 import LogoSection from '../../components/common/LogoSection.tsx';
 import AuthInput from '../../components/common/auth/AuthInput.tsx';
-import BasicButton from '../../components/common/BasicButton.tsx';
+import BasicButton from '../../components/common/button/BasicButton.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 
 type LoginState = {

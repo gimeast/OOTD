@@ -17,6 +17,7 @@ export const API_ENDPOINTS = {
         LIKE: '/api/v1/ootd/{ootdId}/like',
         LIKED: '/api/v1/ootd/liked',
         BOOKMARK: '/api/v1/ootd/{ootdId}/bookmark',
+        SEARCH: '/api/v1/ootd/search',
     },
     MEMBER: {
         STATS: '/api/v1/member/{nickname}/stats',
@@ -28,5 +29,8 @@ export const API_ENDPOINTS = {
         PROFILE_IMG: '/api/v1/member/profile-img',
         PROFILE_IMG_RESET: '/api/v1/member/profile-img/reset',
         BIO: '/api/v1/member/bio',
+    },
+    HASHTAG: {
+        POPULAR: '/api/v1/hashtag/popular',
     },
 } as const;
