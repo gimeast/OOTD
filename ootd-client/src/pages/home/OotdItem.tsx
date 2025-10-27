@@ -11,14 +11,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import ProductOgIcon from '../../components/icons/ProductOgIcon.tsx';
 import type { OotdItemType } from '../../types/ootd.ts';
 import type { PageResponseType } from '../../types/common.ts';
-import useUserStore from '../../stores/useUserStore.ts';
 import useModalStore from '../../stores/useModalStore.ts';
 
 const OotdItem = ({ item }: { item: OotdItemType }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const imgListRef = useRef<HTMLUListElement>(null);
     const queryClient = useQueryClient();
-    const { user } = useUserStore();
     const { showComingSoonModal } = useModalStore();
 
     const handleScroll = () => {
@@ -135,9 +133,9 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
     return (
         <article className={styles.ootd_box}>
             <div className={styles.ootd_header}>
-                {user?.profileImageUrl ? (
+                {item.profileImageUrl ? (
                     <div>
-                        <img src={`${import.meta.env.VITE_API_BASE_URL}${user.profileImageUrl}`} alt='프로필 이미지' />
+                        <img src={`${import.meta.env.VITE_API_BASE_URL}${item.profileImageUrl}`} alt='프로필 이미지' />
                     </div>
                 ) : (
                     <ProfileIcon />
