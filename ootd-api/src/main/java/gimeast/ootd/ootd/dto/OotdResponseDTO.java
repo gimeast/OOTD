@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OotdListResponseDTO {
+public class OotdResponseDTO {
     private Long ootdId;
     private String profileImageUrl;
     private String nickname;

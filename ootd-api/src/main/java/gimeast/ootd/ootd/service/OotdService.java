@@ -7,7 +7,7 @@ import gimeast.ootd.hashtag.repository.HashtagRepository;
 import gimeast.ootd.member.entity.MemberEntity;
 import gimeast.ootd.member.repository.MemberRepository;
 import gimeast.ootd.ootd.dto.OotdDTO;
-import gimeast.ootd.ootd.dto.OotdListResponseDTO;
+import gimeast.ootd.ootd.dto.OotdResponseDTO;
 import gimeast.ootd.ootd.entity.OotdEntity;
 import gimeast.ootd.ootd.entity.OotdHashtagEntity;
 import gimeast.ootd.ootd.entity.OotdImageEntity;
@@ -118,7 +118,7 @@ public class OotdService {
     }
 
     @Transactional(readOnly = true)
-    public Page<OotdListResponseDTO> getOotdList(PageRequestDTO pageRequestDTO, Long currentMemberIdx) {
+    public Page<OotdResponseDTO> getOotdList(PageRequestDTO pageRequestDTO, Long currentMemberIdx) {
         Sort sort;
 
         // sort 파라미터에 따라 정렬 조건 설정
@@ -138,17 +138,22 @@ public class OotdService {
     }
 
     @Transactional(readOnly = true)
-    public Page<OotdListResponseDTO> getMyOotdList(PageRequestDTO pageRequestDTO, Long memberIdx) {
+    public OotdResponseDTO getOotd(Long ootdId, Long currentMemberIdx) {
+        return ootdRepository.findOotd(currentMemberIdx, ootdId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OotdResponseDTO> getMyOotdList(PageRequestDTO pageRequestDTO, Long memberIdx) {
         Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
-        Page<OotdListResponseDTO> result = ootdRepository.findMyOotdList(memberIdx, pageable);
+        Page<OotdResponseDTO> result = ootdRepository.findMyOotdList(memberIdx, pageable);
 
         // 썸네일이 없으면 원본 URL로 변경
-        List<OotdListResponseDTO> adjustedContent = result.getContent().stream()
+        List<OotdResponseDTO> adjustedContent = result.getContent().stream()
                 .map(dto -> {
                     String adjustedImage = dto.getOotdImage() != null ?
                             adjustThumbnailUrl(dto.getOotdImage()) : null;
 
-                    return OotdListResponseDTO.builder()
+                    return OotdResponseDTO.builder()
                             .ootdId(dto.getOotdId())
                             .profileImageUrl(dto.getProfileImageUrl())
                             .nickname(dto.getNickname())
@@ -206,31 +211,31 @@ public class OotdService {
     }
 
     @Transactional(readOnly = true)
-    public Page<OotdListResponseDTO> getLikedOotdList(PageRequestDTO pageRequestDTO, Long memberIdx) {
+    public Page<OotdResponseDTO> getLikedOotdList(PageRequestDTO pageRequestDTO, Long memberIdx) {
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         Pageable pageable = pageRequestDTO.getPageable(sort);
         return ootdRepository.findLikedOotdList(memberIdx, pageable);
     }
 
     @Transactional(readOnly = true)
-    public Page<OotdListResponseDTO> searchOotdByHashtag(String keyword, PageRequestDTO pageRequestDTO, Long currentMemberIdx) {
+    public Page<OotdResponseDTO> searchOotdByHashtag(String keyword, PageRequestDTO pageRequestDTO, Long currentMemberIdx) {
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         Pageable pageable = pageRequestDTO.getPageable(sort);
         return ootdRepository.findByHashtag(keyword, currentMemberIdx, pageable);
     }
 
     @Transactional(readOnly = true)
-    public Page<OotdListResponseDTO> getBookmarkedOotdList(PageRequestDTO pageRequestDTO, Long memberIdx) {
+    public Page<OotdResponseDTO> getBookmarkedOotdList(PageRequestDTO pageRequestDTO, Long memberIdx) {
         Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
-        Page<OotdListResponseDTO> result = ootdRepository.findBookmarkedOotdList(memberIdx, pageable);
+        Page<OotdResponseDTO> result = ootdRepository.findBookmarkedOotdList(memberIdx, pageable);
 
         // 썸네일이 없으면 원본 URL로 변경
-        List<OotdListResponseDTO> adjustedContent = result.getContent().stream()
+        List<OotdResponseDTO> adjustedContent = result.getContent().stream()
                 .map(dto -> {
                     String adjustedImage = dto.getOotdImage() != null ?
                             adjustThumbnailUrl(dto.getOotdImage()) : null;
 
-                    return OotdListResponseDTO.builder()
+                    return OotdResponseDTO.builder()
                             .ootdId(dto.getOotdId())
                             .profileImageUrl(dto.getProfileImageUrl())
                             .nickname(dto.getNickname())

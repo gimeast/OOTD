@@ -57,11 +57,6 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             return true;
         }
 
-        // /api/v1/ootd/search API는 모두 허용 (인증 불필요)
-        if (path.startsWith("/api/v1/ootd/search")) {
-            return true;
-        }
-
         // /api/v1/member/search API는 모두 허용 (인증 불필요)
         if (path.startsWith("/api/v1/member/search")) {
             return true;
@@ -86,13 +81,29 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
         //Access Token이 없는 경우
         if (accessToken == null) {
-            // GET /api/v1/ootd는 토큰 없이도 허용 (비로그인 사용자도 조회 가능)
             String path = request.getRequestURI();
             String method = request.getMethod();
-            if ("GET".equals(method) && path.equals("/api/v1/ootd")) {
-                log.info("Allowing unauthenticated access to GET /api/v1/ootd");
-                filterChain.doFilter(request, response);
-                return;
+
+            // OOTD 조회 API는 토큰 없이도 허용 (비로그인 사용자도 조회 가능)
+            if ("GET".equals(method)) {
+                // GET /api/v1/ootd - 목록 조회
+                if (path.equals("/api/v1/ootd")) {
+                    log.info("Allowing unauthenticated access to GET /api/v1/ootd");
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+                // GET /api/v1/ootd/{id} - 단건 조회
+                if (path.matches("/api/v1/ootd/\\d+")) {
+                    log.info("Allowing unauthenticated access to GET /api/v1/ootd/{id}");
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+                // GET /api/v1/ootd/search - 검색
+                if (path.startsWith("/api/v1/ootd/search")) {
+                    log.info("Allowing unauthenticated access to GET /api/v1/ootd/search");
+                    filterChain.doFilter(request, response);
+                    return;
+                }
             }
 
             handleException(response, new Exception("ACCESS TOKEN NOT FOUND"));

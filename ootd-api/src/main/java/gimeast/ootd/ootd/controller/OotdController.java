@@ -2,7 +2,7 @@ package gimeast.ootd.ootd.controller;
 
 import gimeast.ootd.common.dto.PageRequestDTO;
 import gimeast.ootd.ootd.dto.OotdDTO;
-import gimeast.ootd.ootd.dto.OotdListResponseDTO;
+import gimeast.ootd.ootd.dto.OotdResponseDTO;
 import gimeast.ootd.ootd.service.OotdBookmarkService;
 import gimeast.ootd.ootd.service.OotdLikeService;
 import gimeast.ootd.ootd.service.OotdService;
@@ -41,32 +41,42 @@ public class OotdController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<OotdListResponseDTO>> getOotdList(
+    public ResponseEntity<Page<OotdResponseDTO>> getOotdList(
             PageRequestDTO pageRequestDTO,
             @AuthenticationPrincipal CustomUserPrincipal principal
     ) {
         Long currentMemberIdx = principal != null ? principal.getIdx() : null;
-        Page<OotdListResponseDTO> ootdList = ootdService.getOotdList(pageRequestDTO, currentMemberIdx);
+        Page<OotdResponseDTO> ootdList = ootdService.getOotdList(pageRequestDTO, currentMemberIdx);
         return ResponseEntity.ok(ootdList);
     }
 
+    @GetMapping("/{ootdId}")
+    public ResponseEntity<OotdResponseDTO> getOotd(
+            @PathVariable Long ootdId,
+            @AuthenticationPrincipal CustomUserPrincipal principal
+    ) {
+        Long currentMemberIdx = principal != null ? principal.getIdx() : null;
+        OotdResponseDTO ootd = ootdService.getOotd(ootdId, currentMemberIdx);
+        return ResponseEntity.ok(ootd);
+    }
+
     @GetMapping("/liked")
-    public ResponseEntity<Page<OotdListResponseDTO>> getLikedOotdList(
+    public ResponseEntity<Page<OotdResponseDTO>> getLikedOotdList(
             PageRequestDTO pageRequestDTO,
             @AuthenticationPrincipal CustomUserPrincipal principal
     ) {
-        Page<OotdListResponseDTO> likedOotdList = ootdService.getLikedOotdList(pageRequestDTO, principal.getIdx());
+        Page<OotdResponseDTO> likedOotdList = ootdService.getLikedOotdList(pageRequestDTO, principal.getIdx());
         return ResponseEntity.ok(likedOotdList);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<OotdListResponseDTO>> searchOotdByHashtag(
+    public ResponseEntity<Page<OotdResponseDTO>> searchOotdByHashtag(
             @RequestParam String keyword,
             PageRequestDTO pageRequestDTO,
             @AuthenticationPrincipal CustomUserPrincipal principal
     ) {
         Long currentMemberIdx = principal != null ? principal.getIdx() : null;
-        Page<OotdListResponseDTO> searchResult = ootdService.searchOotdByHashtag(keyword, pageRequestDTO, currentMemberIdx);
+        Page<OotdResponseDTO> searchResult = ootdService.searchOotdByHashtag(keyword, pageRequestDTO, currentMemberIdx);
         return ResponseEntity.ok(searchResult);
     }
 

@@ -1,9 +1,7 @@
 package gimeast.ootd.ootd.repository;
 
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
-import gimeast.ootd.ootd.dto.OotdListResponseDTO;
+import gimeast.ootd.ootd.dto.OotdResponseDTO;
 import gimeast.ootd.ootd.dto.ProductDTO;
 import gimeast.ootd.ootd.entity.OotdStatus;
 import lombok.extern.log4j.Log4j2;
@@ -32,7 +30,80 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
     }
 
     @Override
-    public Page<OotdListResponseDTO> findOotdList(Long currentMemberIdx, Pageable pageable) {
+    public OotdResponseDTO findOotd(Long currentMemberIdx, Long ootdId) {
+        // OOTD 엔티티 조회
+        gimeast.ootd.ootd.entity.OotdEntity entity = from(ootdEntity)
+                .leftJoin(ootdEntity.member, memberEntity).fetchJoin()
+                .leftJoin(ootdEntity.images, ootdImageEntity)
+                .leftJoin(ootdEntity.hashtags, ootdHashtagEntity)
+                .leftJoin(ootdHashtagEntity.hashtagEntity, hashtagEntity)
+                .leftJoin(ootdEntity.products, ootdProductEntity)
+                .where(ootdEntity.id.eq(ootdId)
+                        .and(ootdEntity.status.eq(OotdStatus.ACTIVE)))
+                .distinct()
+                .fetchOne();
+
+        if (entity == null) {
+            throw new RuntimeException("OOTD not found");
+        }
+
+        // 이미지 리스트 조회
+        List<String> images = entity.getImages().stream()
+                .sorted((img1, img2) -> img1.getImageOrder().compareTo(img2.getImageOrder()))
+                .map(gimeast.ootd.ootd.entity.OotdImageEntity::getImageUrl)
+                .collect(Collectors.toList());
+
+        // 해시태그 리스트 조회
+        List<String> hashtags = entity.getHashtags().stream()
+                .map(h -> h.getHashtagEntity().getTagName())
+                .collect(Collectors.toList());
+
+        // 제품 리스트 조회
+        List<ProductDTO> products = entity.getProducts().stream()
+                .sorted((p1, p2) -> p1.getDisplayOrder().compareTo(p2.getDisplayOrder()))
+                .map(product -> ProductDTO.builder()
+                        .productName(product.getProductName())
+                        .productLink(product.getProductLink())
+                        .ogImage(product.getOgImage())
+                        .build())
+                .collect(Collectors.toList());
+
+        // 현재 사용자의 좋아요 여부 확인
+        Boolean isLiked = false;
+        if (currentMemberIdx != null) {
+            Long likeCount = from(ootdLikeEntity)
+                    .where(ootdLikeEntity.ootdEntity.id.eq(ootdId)
+                            .and(ootdLikeEntity.member.idx.eq(currentMemberIdx)))
+                    .fetchCount();
+            isLiked = likeCount > 0;
+        }
+
+        // 현재 사용자의 북마크 여부 확인
+        Boolean isBookmarked = false;
+        if (currentMemberIdx != null) {
+            Long bookmarkCount = from(ootdBookmarkEntity)
+                    .where(ootdBookmarkEntity.ootdEntity.id.eq(ootdId)
+                            .and(ootdBookmarkEntity.member.idx.eq(currentMemberIdx)))
+                    .fetchCount();
+            isBookmarked = bookmarkCount > 0;
+        }
+
+        return OotdResponseDTO.builder()
+                .ootdId(entity.getId())
+                .profileImageUrl(entity.getMember().getProfileImageUrl())
+                .nickname(entity.getMember().getNickname())
+                .ootdImages(images)
+                .isLiked(isLiked)
+                .likeCount(entity.getLikeCount())
+                .isBookmarked(isBookmarked)
+                .content(entity.getContent())
+                .hashtags(hashtags)
+                .products(products)
+                .build();
+    }
+
+    @Override
+    public Page<OotdResponseDTO> findOotdList(Long currentMemberIdx, Pageable pageable) {
         JPQLQuery<gimeast.ootd.ootd.entity.OotdEntity> query = from(ootdEntity)
                 .leftJoin(ootdEntity.member, memberEntity).fetchJoin()
                 .leftJoin(ootdEntity.images, ootdImageEntity)
@@ -83,7 +154,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
         final List<Long> finalBookmarkedOotdIds = bookmarkedOotdIds;
 
         // DTO 변환
-        List<OotdListResponseDTO> dtoList = ootdEntities.stream()
+        List<OotdResponseDTO> dtoList = ootdEntities.stream()
                 .map(entity -> {
                     // 이미지 리스트 조회
                     List<String> images = entity.getImages().stream()
@@ -112,7 +183,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
                     // 북마크 여부 확인 (일괄 조회한 데이터에서 확인)
                     Boolean isBookmarked = finalBookmarkedOotdIds.contains(entity.getId());
 
-                    return OotdListResponseDTO.builder()
+                    return OotdResponseDTO.builder()
                             .ootdId(entity.getId())
                             .profileImageUrl(entity.getMember().getProfileImageUrl())
                             .nickname(entity.getMember().getNickname())
@@ -131,7 +202,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
     }
 
     @Override
-    public Page<OotdListResponseDTO> findMyOotdList(Long memberIdx, Pageable pageable) {
+    public Page<OotdResponseDTO> findMyOotdList(Long memberIdx, Pageable pageable) {
         JPQLQuery<gimeast.ootd.ootd.entity.OotdEntity> query = from(ootdEntity)
                 .leftJoin(ootdEntity.member, memberEntity).fetchJoin()
                 .leftJoin(ootdEntity.hashtags, ootdHashtagEntity)
@@ -177,7 +248,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
                 .fetch();
 
         // DTO 변환
-        List<OotdListResponseDTO> dtoList = ootdEntities.stream()
+        List<OotdResponseDTO> dtoList = ootdEntities.stream()
                 .map(entity -> {
                     // 이미지 조회 (이미 조회한 첫 번째 이미지에서 찾기)
                     String image = firstImages.stream()
@@ -201,7 +272,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
                                     .build())
                             .collect(Collectors.toList());
 
-                    return OotdListResponseDTO.builder()
+                    return OotdResponseDTO.builder()
                             .ootdId(entity.getId())
                             .profileImageUrl(entity.getMember().getProfileImageUrl())
                             .nickname(entity.getMember().getNickname())
@@ -246,7 +317,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
     }
 
     @Override
-    public Page<OotdListResponseDTO> findLikedOotdList(Long memberIdx, Pageable pageable) {
+    public Page<OotdResponseDTO> findLikedOotdList(Long memberIdx, Pageable pageable) {
         // 좋아요한 OOTD ID 조회
         List<Long> likedOotdIds = from(ootdLikeEntity)
                 .where(ootdLikeEntity.member.idx.eq(memberIdx))
@@ -290,7 +361,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
                 .fetch();
 
         // DTO 변환
-        List<OotdListResponseDTO> dtoList = ootdEntities.stream()
+        List<OotdResponseDTO> dtoList = ootdEntities.stream()
                 .map(entity -> {
                     // 이미지 리스트 조회
                     List<String> images = entity.getImages().stream()
@@ -313,7 +384,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
                                     .build())
                             .collect(Collectors.toList());
 
-                    return OotdListResponseDTO.builder()
+                    return OotdResponseDTO.builder()
                             .ootdId(entity.getId())
                             .profileImageUrl(entity.getMember().getProfileImageUrl())
                             .nickname(entity.getMember().getNickname())
@@ -332,7 +403,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
     }
 
     @Override
-    public Page<OotdListResponseDTO> findBookmarkedOotdList(Long memberIdx, Pageable pageable) {
+    public Page<OotdResponseDTO> findBookmarkedOotdList(Long memberIdx, Pageable pageable) {
         // 북마크한 OOTD ID 조회
         List<Long> bookmarkedOotdIds = from(ootdBookmarkEntity)
                 .where(ootdBookmarkEntity.member.idx.eq(memberIdx))
@@ -381,7 +452,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
                 .fetch();
 
         // DTO 변환
-        List<OotdListResponseDTO> dtoList = ootdEntities.stream()
+        List<OotdResponseDTO> dtoList = ootdEntities.stream()
                 .map(entity -> {
                     // 이미지 조회 (이미 조회한 첫 번째 이미지에서 찾기)
                     String image = firstImages.stream()
@@ -405,7 +476,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
                                     .build())
                             .collect(Collectors.toList());
 
-                    return OotdListResponseDTO.builder()
+                    return OotdResponseDTO.builder()
                             .ootdId(entity.getId())
                             .profileImageUrl(entity.getMember().getProfileImageUrl())
                             .nickname(entity.getMember().getNickname())
@@ -424,7 +495,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
     }
 
     @Override
-    public Page<OotdListResponseDTO> findByHashtag(String hashtag, Long currentMemberIdx, Pageable pageable) {
+    public Page<OotdResponseDTO> findByHashtag(String hashtag, Long currentMemberIdx, Pageable pageable) {
         JPQLQuery<gimeast.ootd.ootd.entity.OotdEntity> query = from(ootdEntity)
                 .leftJoin(ootdEntity.member, memberEntity).fetchJoin()
                 .leftJoin(ootdEntity.hashtags, ootdHashtagEntity)
@@ -478,7 +549,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
         final List<Long> finalBookmarkedOotdIds = bookmarkedOotdIds;
 
         // DTO 변환
-        List<OotdListResponseDTO> dtoList = ootdEntities.stream()
+        List<OotdResponseDTO> dtoList = ootdEntities.stream()
                 .map(entity -> {
                     // 이미지 조회 (이미 조회한 첫 번째 이미지에서 찾기)
                     String image = firstImages.stream()
@@ -502,7 +573,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
                                     .build())
                             .collect(Collectors.toList());
 
-                    return OotdListResponseDTO.builder()
+                    return OotdResponseDTO.builder()
                             .ootdId(entity.getId())
                             .profileImageUrl(entity.getMember().getProfileImageUrl())
                             .nickname(entity.getMember().getNickname())
@@ -521,7 +592,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
     }
 
     @Override
-    public Page<OotdListResponseDTO> findByNickname(String nickname, Long currentMemberIdx, Pageable pageable) {
+    public Page<OotdResponseDTO> findByNickname(String nickname, Long currentMemberIdx, Pageable pageable) {
         JPQLQuery<gimeast.ootd.ootd.entity.OotdEntity> query = from(ootdEntity)
                 .leftJoin(ootdEntity.member, memberEntity).fetchJoin()
                 .leftJoin(ootdEntity.hashtags, ootdHashtagEntity)
@@ -575,7 +646,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
         final List<Long> finalBookmarkedOotdIds = bookmarkedOotdIds;
 
         // DTO 변환
-        List<OotdListResponseDTO> dtoList = ootdEntities.stream()
+        List<OotdResponseDTO> dtoList = ootdEntities.stream()
                 .map(entity -> {
                     // 이미지 조회 (이미 조회한 첫 번째 이미지에서 찾기)
                     String image = firstImages.stream()
@@ -599,7 +670,7 @@ public class OotdRepositoryImpl extends QuerydslRepositorySupport implements Oot
                                     .build())
                             .collect(Collectors.toList());
 
-                    return OotdListResponseDTO.builder()
+                    return OotdResponseDTO.builder()
                             .ootdId(entity.getId())
                             .profileImageUrl(entity.getMember().getProfileImageUrl())
                             .nickname(entity.getMember().getNickname())

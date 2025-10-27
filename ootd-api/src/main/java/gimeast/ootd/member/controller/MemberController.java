@@ -4,7 +4,7 @@ import gimeast.ootd.common.dto.PageRequestDTO;
 import gimeast.ootd.member.dto.MemberSearchDTO;
 import gimeast.ootd.member.dto.MemberStatsDTO;
 import gimeast.ootd.member.service.MemberService;
-import gimeast.ootd.ootd.dto.OotdListResponseDTO;
+import gimeast.ootd.ootd.dto.OotdResponseDTO;
 import gimeast.ootd.ootd.service.OotdService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -40,32 +40,32 @@ public class MemberController {
     }
 
     @GetMapping("/{nickname}/posts")
-    public ResponseEntity<Page<OotdListResponseDTO>> getMemberOotdList(
+    public ResponseEntity<Page<OotdResponseDTO>> getMemberOotdList(
             @PathVariable String nickname,
             PageRequestDTO pageRequestDTO
     ) {
         Long memberIdx = memberService.getByNickname(nickname).getIdx();
-        Page<OotdListResponseDTO> ootdList = ootdService.getMyOotdList(pageRequestDTO, memberIdx);
+        Page<OotdResponseDTO> ootdList = ootdService.getMyOotdList(pageRequestDTO, memberIdx);
         return ResponseEntity.ok(ootdList);
     }
 
     @GetMapping("/{nickname}/liked-posts")
-    public ResponseEntity<Page<OotdListResponseDTO>> getMemberLikedOotdList(
+    public ResponseEntity<Page<OotdResponseDTO>> getMemberLikedOotdList(
             @PathVariable String nickname,
             PageRequestDTO pageRequestDTO
     ) {
         Long memberIdx = memberService.getByNickname(nickname).getIdx();
-        Page<OotdListResponseDTO> likedOotdList = ootdService.getLikedOotdList(pageRequestDTO, memberIdx);
+        Page<OotdResponseDTO> likedOotdList = ootdService.getLikedOotdList(pageRequestDTO, memberIdx);
         return ResponseEntity.ok(likedOotdList);
     }
 
     @GetMapping("/{nickname}/bookmarked-posts")
-    public ResponseEntity<Page<OotdListResponseDTO>> getMemberBookmarkedOotdList(
+    public ResponseEntity<Page<OotdResponseDTO>> getMemberBookmarkedOotdList(
             @PathVariable String nickname,
             PageRequestDTO pageRequestDTO
     ) {
         Long memberIdx = memberService.getByNickname(nickname).getIdx();
-        Page<OotdListResponseDTO> bookmarkedOotdList = ootdService.getBookmarkedOotdList(pageRequestDTO, memberIdx);
+        Page<OotdResponseDTO> bookmarkedOotdList = ootdService.getBookmarkedOotdList(pageRequestDTO, memberIdx);
         return ResponseEntity.ok(bookmarkedOotdList);
     }
 
