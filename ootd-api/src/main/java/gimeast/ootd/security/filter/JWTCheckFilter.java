@@ -84,23 +84,33 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             String path = request.getRequestURI();
             String method = request.getMethod();
 
-            // OOTD 조회 API는 토큰 없이도 허용 (비로그인 사용자도 조회 가능)
+            // GET 요청에 대한 공개 API 처리
             if ("GET".equals(method)) {
-                // GET /api/v1/ootd - 목록 조회
+                // OOTD 조회 API
                 if (path.equals("/api/v1/ootd")) {
                     log.info("Allowing unauthenticated access to GET /api/v1/ootd");
                     filterChain.doFilter(request, response);
                     return;
                 }
-                // GET /api/v1/ootd/{id} - 단건 조회
                 if (path.matches("/api/v1/ootd/\\d+")) {
                     log.info("Allowing unauthenticated access to GET /api/v1/ootd/{id}");
                     filterChain.doFilter(request, response);
                     return;
                 }
-                // GET /api/v1/ootd/search - 검색
                 if (path.startsWith("/api/v1/ootd/search")) {
                     log.info("Allowing unauthenticated access to GET /api/v1/ootd/search");
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+
+                // Member 프로필 조회 API
+                if (path.matches("/api/v1/member/[^/]+/posts")) {
+                    log.info("Allowing unauthenticated access to GET /api/v1/member/{nickname}/posts");
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+                if (path.matches("/api/v1/member/[^/]+/stats")) {
+                    log.info("Allowing unauthenticated access to GET /api/v1/member/{nickname}/stats");
                     filterChain.doFilter(request, response);
                     return;
                 }
