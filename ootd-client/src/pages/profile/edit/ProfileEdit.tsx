@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Link, useOutletContext, useParams } from 'react-router-dom';
+import { Link, useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import type { LayoutContextType } from '../../../types/context.ts';
 import ProfileHeaderSection from '../ProfileHeaderSection.tsx';
 import styles from './profileEdit.module.scss';
@@ -12,6 +12,8 @@ import type { Stats } from '../../../types/profile.ts';
 
 const ProfileEdit = () => {
     const { nickname } = useParams<{ nickname: string }>();
+    const { user } = useUserStore();
+    const navigate = useNavigate();
     const { setPageTitle } = useOutletContext<LayoutContextType>();
     const { updateProfileImageUrl } = useUserStore();
     const modalRef = useRef<HTMLDialogElement>(null);
@@ -82,6 +84,12 @@ const ProfileEdit = () => {
     useEffect(() => {
         setPageTitle('프로필 편집');
     }, [setPageTitle]);
+
+    useEffect(() => {
+        if (user?.nickname !== nickname) {
+            navigate('/', { replace: true });
+        }
+    }, [navigate, nickname, user?.nickname]);
 
     return (
         <div className={styles.profile_edit}>
