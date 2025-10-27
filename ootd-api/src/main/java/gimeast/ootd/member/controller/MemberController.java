@@ -62,8 +62,17 @@ public class MemberController {
     @GetMapping("/{nickname}/bookmarked-posts")
     public ResponseEntity<Page<OotdResponseDTO>> getMemberBookmarkedOotdList(
             @PathVariable String nickname,
-            PageRequestDTO pageRequestDTO
+            PageRequestDTO pageRequestDTO,
+            @AuthenticationPrincipal gimeast.ootd.security.auth.CustomUserPrincipal principal
     ) {
+        // 로그인한 사용자의 닉네임 조회
+        String currentUserNickname = memberService.getByIdx(principal.getIdx()).getNickname();
+
+        // 요청한 닉네임과 로그인한 사용자의 닉네임이 일치하는지 확인
+        if (!currentUserNickname.equals(nickname)) {
+            throw new RuntimeException("본인의 북마크 목록만 조회할 수 있습니다.");
+        }
+
         Long memberIdx = memberService.getByNickname(nickname).getIdx();
         Page<OotdResponseDTO> bookmarkedOotdList = ootdService.getBookmarkedOotdList(pageRequestDTO, memberIdx);
         return ResponseEntity.ok(bookmarkedOotdList);
