@@ -194,7 +194,7 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
                                 <ProductOgIcon />
                             )}
 
-                            <span className={styles.product_name}>{product.productName}</span>
+                            <span className={`multi-ellipsis ${styles.product_name}`}>{product.productName}</span>
                         </a>
                     </li>
                 ))}

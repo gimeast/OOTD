@@ -55,18 +55,14 @@ const Hashtag = () => {
     return (
         <>
             <h2 className='sr-only'>해시태그 검색</h2>
-            {!ootdData?.pages[0].content.length && (
-                <>
-                    <h3 className={styles.popular_hashtag}>인기 해시태그</h3>
-                    <ul className={styles.popular_hashtag_list}>
-                        {hashtags?.map(hashtag => (
-                            <li key={hashtag.id}>
-                                <button onClick={() => handleClickHashtag(hashtag.tagName)}>#{hashtag.tagName}</button>
-                            </li>
-                        ))}
-                    </ul>
-                </>
-            )}
+            <h3 className={styles.popular_hashtag}>인기 해시태그</h3>
+            <ul className={styles.popular_hashtag_list}>
+                {hashtags?.map(hashtag => (
+                    <li key={hashtag.id}>
+                        <button onClick={() => handleClickHashtag(hashtag.tagName)}>#{hashtag.tagName}</button>
+                    </li>
+                ))}
+            </ul>
 
             {ootdData && ootdData.pages[0]?.content.length === 0 ? (
                 <NoResult

@@ -249,3 +249,10 @@ main {
     clip-path: polygon(0 0, 0 0, 0 0); /* inset(50%) 와 동일한 표현 */
     border: 0;
 }
+
+.multi-ellipsis {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
