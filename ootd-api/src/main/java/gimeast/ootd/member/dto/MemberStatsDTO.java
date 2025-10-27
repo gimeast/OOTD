@@ -10,7 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MemberStatsDTO {
-    private Long postCount;      // 게시물 수
-    private Long followerCount;  // 팔로워 수 (추후 구현)
-    private Long followingCount; // 팔로잉 수 (추후 구현)
+    private String nickname;         // 닉네임
+    private String profileImageUrl;  // 프로필 이미지
+    private String bio;              // 자기소개
+    private Long postCount;          // 게시물 수
+    private Long followerCount;      // 팔로워 수 (추후 구현)
+    private Long followingCount;     // 팔로잉 수 (추후 구현)
 }

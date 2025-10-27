@@ -128,11 +128,18 @@ public class MemberService {
     }
 
     public MemberStatsDTO getMemberStats(Long memberIdx) {
+        // 회원 정보 조회
+        MemberEntity member = memberRepository.findById(memberIdx)
+                .orElseThrow(MemberExceptions.NOT_FOUND::get);
+
         // 게시물 수 조회
         long postCount = ootdRepository.countMyOotd(memberIdx);
 
         // 추후 팔로워/팔로잉 기능 구현 시 추가
         return MemberStatsDTO.builder()
+                .nickname(member.getNickname())
+                .profileImageUrl(member.getProfileImageUrl())
+                .bio(member.getBio())
                 .postCount(postCount)
                 .followerCount(0L)  // 추후 구현
                 .followingCount(0L) // 추후 구현
