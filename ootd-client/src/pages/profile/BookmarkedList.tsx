@@ -7,6 +7,7 @@ import type { OotdItemType } from '../../types/ootd.ts';
 import styles from './ootdList.module.scss';
 import useUserStore from '../../stores/useUserStore.ts';
 import { useScrollObserver } from '../../hooks/useScrollObserver.ts';
+import { Link } from 'react-router-dom';
 
 const BookmarkedList = () => {
     const { user } = useUserStore();
@@ -38,7 +39,9 @@ const BookmarkedList = () => {
                     {data.pages.map((page: PageResponseType<OotdItemType>) =>
                         page.content.map(item => (
                             <li key={item.ootdId} className={styles.ootd_item}>
-                                <img src={`${import.meta.env.VITE_API_BASE_URL}${item.ootdImage}`} alt='' />
+                                <Link to={`/ootd/${item.ootdId}`}>
+                                    <img src={`${import.meta.env.VITE_API_BASE_URL}${item.ootdImage}`} alt='' />
+                                </Link>
                             </li>
                         ))
                     )}

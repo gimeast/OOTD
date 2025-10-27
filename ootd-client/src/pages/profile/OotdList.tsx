@@ -7,6 +7,7 @@ import ProfileOotdAddIcon from '../../components/icons/ProfileOotdAddIcon.tsx';
 import NoResult from '../../components/common/NoResult.tsx';
 import useUserStore from '../../stores/useUserStore.ts';
 import { useScrollObserver } from '../../hooks/useScrollObserver.ts';
+import { Link } from 'react-router-dom';
 
 const OotdList = () => {
     const { user } = useUserStore();
@@ -38,7 +39,9 @@ const OotdList = () => {
                     {data.pages.map((page: PageResponseType<OotdItemType>) =>
                         page.content.map(item => (
                             <li key={item.ootdId} className={styles.ootd_item}>
-                                <img src={`${import.meta.env.VITE_API_BASE_URL}${item.ootdImage}`} alt='' />
+                                <Link to={`/ootd/${item.ootdId}`}>
+                                    <img src={`${import.meta.env.VITE_API_BASE_URL}${item.ootdImage}`} alt='' />
+                                </Link>
                             </li>
                         ))
                     )}
