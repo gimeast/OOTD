@@ -13,6 +13,7 @@ export const API_ENDPOINTS = {
     OOTD: {
         CREATE: '/api/v1/ootd',
         LIST: '/api/v1/ootd',
+        DETAIL: '/api/v1/ootd/{ootdId}',
         IMAGE: { UPLOAD: '/api/v1/upload/images' },
         LIKE: '/api/v1/ootd/{ootdId}/like',
         LIKED: '/api/v1/ootd/liked',

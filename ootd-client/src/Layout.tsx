@@ -12,9 +12,8 @@ const Layout = () => {
     const { isOpen, onClose, title, subTitle, confirmText, cancelText, onConfirm, closeOnBackdropClick } =
         useModalStore();
 
-    const exactPaths = ['/', '/ootd/add', '/likes', '/login'];
-    const prefixPaths = ['/search', '/profile'];
-    const bottomNav = exactPaths.includes(pathname) || prefixPaths.some(prefix => pathname.startsWith(prefix));
+    const hideBottomNavPaths = ['/join'];
+    const bottomNav = !hideBottomNavPaths.includes(pathname);
 
     return (
         <>

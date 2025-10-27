@@ -18,6 +18,7 @@ import ProfileEditBio from './pages/profile/edit/ProfileEditBio.tsx';
 import Hashtag from './pages/search/Hashtag.tsx';
 import Nickname from './pages/search/Nickname.tsx';
 import Style from './pages/search/Style.tsx';
+import OotdDetail from './pages/ootd/OotdDetail.tsx';
 
 function AppContent() {
     const { isChecking } = useAuthCheck();
@@ -38,6 +39,7 @@ function AppContent() {
                     <Route path='style' element={<Style />} />
                 </Route>
 
+                <Route path='ootd/:ootdId' element={<OotdDetail />} />
                 <Route
                     path='ootd/add'
                     element={
