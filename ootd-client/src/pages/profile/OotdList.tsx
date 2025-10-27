@@ -16,7 +16,7 @@ const OotdList = () => {
         queryFn: ({ pageParam }: { pageParam: number }): Promise<PageResponseType<OotdItemType>> =>
             apiClient(API_ENDPOINTS.MEMBER.OOTD.LIST.replace('{nickname}', String(nickname)), {
                 method: 'GET',
-                params: { page: pageParam, size: 12 },
+                params: { page: pageParam, size: 20 },
             }),
         getNextPageParam: (lastPage: PageResponseType<OotdItemType>, allPages) => {
             return lastPage.last ? undefined : allPages.length + 1;

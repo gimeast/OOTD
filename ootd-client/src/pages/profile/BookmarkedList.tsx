@@ -6,15 +6,19 @@ import type { PageResponseType } from '../../types/common.ts';
 import type { OotdItemType } from '../../types/ootd.ts';
 import styles from './ootdList.module.scss';
 import { useScrollObserver } from '../../hooks/useScrollObserver.ts';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import useUserStore from '../../stores/useUserStore.ts';
+import { useEffect } from 'react';
 
 const BookmarkedList = () => {
     const { nickname } = useParams<{ nickname: string }>();
+    const { user } = useUserStore();
+    const navigate = useNavigate();
 
     const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
-        queryKey: ['ootd', 'member', nickname, 'bookmarked'],
+        queryKey: ['ootd', 'member', user?.nickname, 'bookmarked'],
         queryFn: ({ pageParam }: { pageParam: number }): Promise<PageResponseType<OotdItemType>> =>
-            apiClient(API_ENDPOINTS.MEMBER.OOTD.BOOKMARKED.replace('{nickname}', String(nickname)), {
+            apiClient(API_ENDPOINTS.MEMBER.OOTD.BOOKMARKED.replace('{nickname}', String(user?.nickname)), {
                 method: 'GET',
                 params: { page: pageParam, size: 12 },
             }),
@@ -22,7 +26,7 @@ const BookmarkedList = () => {
             return lastPage.last ? undefined : allPages.length + 1;
         },
         initialPageParam: 1,
-        enabled: !!nickname,
+        enabled: !!user?.nickname,
     });
 
     useScrollObserver(() => {
@@ -30,6 +34,12 @@ const BookmarkedList = () => {
             void fetchNextPage();
         }
     });
+
+    useEffect(() => {
+        if (user?.nickname !== nickname) {
+            navigate('/', { replace: true });
+        }
+    }, []);
 
     return (
         <>

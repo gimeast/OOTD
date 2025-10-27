@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Link, NavLink, Outlet, useOutletContext, useParams } from 'react-router-dom';
+import { Link, NavLink, Outlet, useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import type { LayoutContextType } from '../../types/context.ts';
 import styles from './profile.module.scss';
 import LogoutIcon from '../../components/icons/LogoutIcon.tsx';
@@ -16,6 +16,7 @@ const Profile = () => {
     const { user, logout } = useUserStore();
     const { showComingSoonModal, openModal, onClose } = useModalStore();
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
 
     const { data: profileStat } = useQuery({
         queryKey: ['ootd', 'stats', nickname],
@@ -44,6 +45,7 @@ const Profile = () => {
             confirmText: '확인',
             onConfirm: async () => {
                 await logoutMutation.mutateAsync();
+                navigate('/', { replace: true });
             },
         });
     };
@@ -98,29 +100,33 @@ const Profile = () => {
             <section className={styles.profile_ootd_group_section}>
                 <h2 className='sr-only'>내 게시물, 저장, 태그 목록</h2>
                 <div className={styles.profile_tabs}>
-                    <NavLink
-                        to={`/profile/${nickname}`}
-                        replace={true}
-                        end
-                        className={({ isActive }) => (isActive ? styles.active : '')}
-                    >
-                        게시물
-                    </NavLink>
-                    <NavLink
-                        to={`/profile/${nickname}/bookmarked`}
-                        replace={true}
-                        className={({ isActive }) => (isActive ? styles.active : '')}
-                    >
-                        저장
-                    </NavLink>
-                    <NavLink
-                        to={`/profile/${nickname}/tagged`}
-                        onClick={() => showComingSoonModal()}
-                        replace={true}
-                        className={({ isActive }) => (isActive ? styles.active : '')}
-                    >
-                        태그
-                    </NavLink>
+                    {user?.nickname === nickname && (
+                        <>
+                            <NavLink
+                                to={`/profile/${nickname}`}
+                                replace={true}
+                                end
+                                className={({ isActive }) => (isActive ? styles.active : '')}
+                            >
+                                게시물
+                            </NavLink>
+                            <NavLink
+                                to={`/profile/${nickname}/bookmarked`}
+                                replace={true}
+                                className={({ isActive }) => (isActive ? styles.active : '')}
+                            >
+                                저장
+                            </NavLink>
+                            <NavLink
+                                to={`/profile/${nickname}/tagged`}
+                                onClick={() => showComingSoonModal()}
+                                replace={true}
+                                className={({ isActive }) => (isActive ? styles.active : '')}
+                            >
+                                태그
+                            </NavLink>
+                        </>
+                    )}
                 </div>
             </section>
 

@@ -24,7 +24,6 @@ function AppContent() {
     const { isChecking } = useAuthCheck();
     useScrollToTop();
 
-    // 인증 확인 중이면 로딩 표시
     if (isChecking) {
         return null;
     }
