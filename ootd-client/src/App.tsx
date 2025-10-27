@@ -26,7 +26,7 @@ function AppContent() {
 
     // 인증 확인 중이면 로딩 표시
     if (isChecking) {
-        return <div>로딩 중...</div>;
+        return null;
     }
 
     return (
