@@ -1,15 +1,17 @@
 import { useEffect, useRef } from 'react';
-import { Link, useOutletContext } from 'react-router-dom';
+import { Link, useOutletContext, useParams } from 'react-router-dom';
 import type { LayoutContextType } from '../../../types/context.ts';
 import ProfileHeaderSection from '../ProfileHeaderSection.tsx';
 import styles from './profileEdit.module.scss';
 import { API_ENDPOINTS, apiClient } from '../../../api';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import useUserStore from '../../../stores/useUserStore.ts';
 import DeleteIcon from '../../../components/icons/DeleteIcon.tsx';
 import useModalStore from '../../../stores/useModalStore.ts';
+import type { Stats } from '../../../types/profile.ts';
 
 const ProfileEdit = () => {
+    const { nickname } = useParams<{ nickname: string }>();
     const { setPageTitle } = useOutletContext<LayoutContextType>();
     const { updateProfileImageUrl } = useUserStore();
     const modalRef = useRef<HTMLDialogElement>(null);
@@ -28,6 +30,12 @@ const ProfileEdit = () => {
         }
     };
 
+    const { data: profileStat } = useQuery({
+        queryKey: ['ootd', 'stats', nickname],
+        queryFn: () => apiClient<Stats>(API_ENDPOINTS.MEMBER.STATS.replace('{nickname}', String(nickname))),
+        enabled: !!nickname,
+    });
+
     const imageMutation = useMutation({
         mutationFn: async (images: File[]) => {
             const formData = new FormData();
@@ -41,7 +49,7 @@ const ProfileEdit = () => {
         },
         onSuccess: data => {
             updateProfileImageUrl(data.profileImageUrl);
-            void queryClient.invalidateQueries({ queryKey: ['profile'] });
+            void queryClient.invalidateQueries({ queryKey: ['ootd'] });
             handleModalClose();
         },
     });
@@ -54,6 +62,7 @@ const ProfileEdit = () => {
         },
         onSuccess: data => {
             updateProfileImageUrl(data.profileImageUrl);
+            void queryClient.invalidateQueries({ queryKey: ['ootd'] });
             handleModalClose();
         },
     });
@@ -76,7 +85,13 @@ const ProfileEdit = () => {
 
     return (
         <div className={styles.profile_edit}>
-            <ProfileHeaderSection />
+            {profileStat && (
+                <ProfileHeaderSection
+                    nickname={profileStat.nickname}
+                    bio={profileStat.bio}
+                    profileImageUrl={profileStat.profileImageUrl}
+                />
+            )}
             <section className={styles.button_group_section}>
                 <h2 className='sr-only'>프로필 편집 버튼</h2>
                 <button className={styles.profile_image_change_btn} onClick={handleModalOpen}>

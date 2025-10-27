@@ -5,17 +5,16 @@ import ProfileBookmarkIcon from '../../components/icons/ProfileBookmarkIcon.tsx'
 import type { PageResponseType } from '../../types/common.ts';
 import type { OotdItemType } from '../../types/ootd.ts';
 import styles from './ootdList.module.scss';
-import useUserStore from '../../stores/useUserStore.ts';
 import { useScrollObserver } from '../../hooks/useScrollObserver.ts';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 const BookmarkedList = () => {
-    const { user } = useUserStore();
+    const { nickname } = useParams<{ nickname: string }>();
 
     const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
-        queryKey: ['ootd', 'bookmarked'],
+        queryKey: ['ootd', 'member', nickname, 'bookmarked'],
         queryFn: ({ pageParam }: { pageParam: number }): Promise<PageResponseType<OotdItemType>> =>
-            apiClient(API_ENDPOINTS.MEMBER.OOTD.BOOKMARKED.replace('{nickname}', String(user?.nickname)), {
+            apiClient(API_ENDPOINTS.MEMBER.OOTD.BOOKMARKED.replace('{nickname}', String(nickname)), {
                 method: 'GET',
                 params: { page: pageParam, size: 12 },
             }),
@@ -23,6 +22,7 @@ const BookmarkedList = () => {
             return lastPage.last ? undefined : allPages.length + 1;
         },
         initialPageParam: 1,
+        enabled: !!nickname,
     });
 
     useScrollObserver(() => {

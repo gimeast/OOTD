@@ -56,20 +56,13 @@ function AppContent() {
                         </ProtectedRoute>
                     }
                 />
-                <Route
-                    path='profile'
-                    element={
-                        <ProtectedRoute>
-                            <Profile />
-                        </ProtectedRoute>
-                    }
-                >
+                <Route path='profile/:nickname' element={<Profile />}>
                     <Route index element={<OotdList />} />
                     <Route path='bookmarked' element={<BookmarkedList />} />
                     <Route path='tagged' element={<TaggedList />} />
                 </Route>
                 <Route
-                    path='profile/edit'
+                    path='profile/:nickname/edit'
                     element={
                         <ProtectedRoute>
                             <ProfileEdit />
@@ -78,7 +71,7 @@ function AppContent() {
                 ></Route>
 
                 <Route
-                    path='profile/edit/bio'
+                    path='profile/:nickname/edit/bio'
                     element={
                         <ProtectedRoute>
                             <ProfileEditBio />

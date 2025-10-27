@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import type { LayoutContextType } from '../../../types/context.ts';
 import styles from './profileEditBio.module.scss';
 import BasicButton from '../../../components/common/button/BasicButton.tsx';
@@ -8,6 +8,7 @@ import { API_ENDPOINTS, apiClient } from '../../../api';
 import useUserStore from '../../../stores/useUserStore.ts';
 
 const ProfileEditBio = () => {
+    const { nickname } = useParams<{ nickname: string }>();
     const { setPageTitle } = useOutletContext<LayoutContextType>();
     const navigate = useNavigate();
     const { updateBio } = useUserStore();
@@ -19,8 +20,8 @@ const ProfileEditBio = () => {
             await apiClient(API_ENDPOINTS.MEMBER.BIO, { method: 'PATCH', params: { bio } }),
         onSuccess: () => {
             updateBio(bio);
-            void queryClient.invalidateQueries({ queryKey: ['profile'] });
-            navigate('/profile/edit', { replace: true });
+            void queryClient.invalidateQueries({ queryKey: ['ootd'] });
+            navigate(`/profile/${nickname}/edit`, { replace: true });
         },
     });
 

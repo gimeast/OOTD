@@ -1,28 +1,30 @@
 .profile_item {
-    padding: 1.5rem 0;
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    border-bottom: 1px solid $gray-200;
+    a {
+        padding: 1.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        border-bottom: 1px solid $gray-200;
 
-    img {
-        width: 6rem;
-        height: 6rem;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-    .profile_content {
-        h3 {
-            font-weight: 700;
-            font-size: fluid-width(1.6rem, 2rem);
-            line-height: 100%;
+        img {
+            width: 6rem;
+            height: 6rem;
+            border-radius: 50%;
+            object-fit: cover;
         }
-        p {
-            margin-top: 0.5rem;
-            font-weight: 400;
-            font-size: fluid-width(1.2rem, 1.6rem);
-            line-height: 100%;
-            color: $gray-500;
+        .profile_content {
+            h3 {
+                font-weight: 700;
+                font-size: fluid-width(1.6rem, 2rem);
+                line-height: 100%;
+            }
+            p {
+                margin-top: 0.5rem;
+                font-weight: 400;
+                font-size: fluid-width(1.2rem, 1.6rem);
+                line-height: 100%;
+                color: $gray-500;
+            }
         }
     }
 }

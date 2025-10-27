@@ -3,7 +3,7 @@ import type { PageResponseType } from '../../types/common.ts';
 import type { nicknameSearchType } from '../../types/ootd.ts';
 import { API_ENDPOINTS, apiClient } from '../../api';
 import { useScrollObserver } from '../../hooks/useScrollObserver.ts';
-import { useOutletContext } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import styles from './nickname.module.scss';
 import NoResult from '../../components/common/NoResult.tsx';
 import ProfileOotdAddIcon from '../../components/icons/ProfileOotdAddIcon.tsx';
@@ -19,7 +19,7 @@ const Nickname = () => {
         hasNextPage,
         isFetchingNextPage,
     } = useInfiniteQuery({
-        queryKey: ['profile', debouncedSearchInput],
+        queryKey: ['ootd', 'profile', debouncedSearchInput],
         queryFn: ({ pageParam }: { pageParam: number }): Promise<PageResponseType<nicknameSearchType>> =>
             apiClient(API_ENDPOINTS.MEMBER.SEARCH, {
                 method: 'GET',
@@ -31,8 +31,6 @@ const Nickname = () => {
         initialPageParam: 1,
         enabled: !!debouncedSearchInput,
     });
-
-    console.log('userData', userData);
 
     useScrollObserver(() => {
         if (hasNextPage && !isFetchingNextPage) {
@@ -54,18 +52,20 @@ const Nickname = () => {
                         {userData?.pages.flatMap((page: PageResponseType<nicknameSearchType>) =>
                             page.content.map(item => (
                                 <li key={item.idx} className={styles.profile_item}>
-                                    {item.profileImageUrl ? (
-                                        <img
-                                            src={`${import.meta.env.VITE_API_BASE_URL}${item.profileImageUrl}`}
-                                            alt='프로필 이미지'
-                                        />
-                                    ) : (
-                                        <ProfileIcon width='60' height='60' />
-                                    )}
-                                    <div className={styles.profile_content}>
-                                        <h3>{item?.nickname}</h3>
-                                        <p>{item?.bio}</p>
-                                    </div>
+                                    <Link to={`/profile/${item.nickname}`}>
+                                        {item.profileImageUrl ? (
+                                            <img
+                                                src={`${import.meta.env.VITE_API_BASE_URL}${item.profileImageUrl}`}
+                                                alt='프로필 이미지'
+                                            />
+                                        ) : (
+                                            <ProfileIcon width='60' height='60' />
+                                        )}
+                                        <div className={styles.profile_content}>
+                                            <h3>{item?.nickname}</h3>
+                                            <p>{item?.bio}</p>
+                                        </div>
+                                    </Link>
                                 </li>
                             ))
                         )}

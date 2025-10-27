@@ -8,7 +8,7 @@ import { NavLink } from 'react-router-dom';
 import useUserStore from '../../stores/useUserStore';
 
 const BottomNav = () => {
-    const isLoggedIn = useUserStore(state => state.isLoggedIn);
+    const { isLoggedIn, user } = useUserStore();
 
     return (
         <nav>
@@ -32,7 +32,7 @@ const BottomNav = () => {
                     {({ isActive }) => <LikeIcon className={isLoggedIn && isActive ? '' : styles.likeIcon} />}
                 </NavLink>
                 <NavLink
-                    to={isLoggedIn ? '/profile' : '/login'}
+                    to={isLoggedIn ? `/profile/${user?.nickname}` : '/login'}
                     className={({ isActive }) => (isActive ? styles.active : '')}
                 >
                     {({ isActive }) => <UserIcon className={isActive ? '' : styles.userIcon} />}
