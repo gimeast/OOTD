@@ -41,6 +41,7 @@ article.ootd_box {
             li {
                 flex: 0 0 100%;
                 scroll-snap-align: start;
+                background-color: black;
 
                 img {
                     width: 100%;
@@ -68,6 +69,13 @@ article.ootd_box {
         margin-top: 1rem;
         display: flex;
         gap: 2rem;
+
+        button {
+            svg {
+                width: fluid-width(2.7rem, 3rem);
+                height: fluid-width(2.4rem, 3rem);
+            }
+        }
 
         button:last-child {
             margin-left: auto;

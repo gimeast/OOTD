@@ -1,6 +1,6 @@
 const LikeIcon = ({ isActive }: { isActive?: boolean }) => {
     return (
-        <svg width='27' height='24' viewBox='0 0 27 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+        <svg width='100%' height='100%' viewBox='0 0 27 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
             {isActive ? (
                 <path
                     d='M18.7454 0C16.0635 0 13.7806 1.48 12.5 3.78C11.2194 1.49 8.93653 0 6.25464 0C2.80252 0 0 3.02 0 6.73C0 7.21 0.0463994 7.68 0.139198 8.13C1.49406 15.32 12.5 22 12.5 22C12.5 22 23.5059 15.32 24.8608 8.13C24.9536 7.68 25 7.21 25 6.73C25 3.01 22.1975 0 18.7546 0H18.7454Z'
