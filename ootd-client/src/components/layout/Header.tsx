@@ -2,6 +2,7 @@ import styles from './header.module.scss';
 import AlimIcon from '../icons/AlimIcon.tsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BackArrow from '../icons/BackArrow.tsx';
+import Logo from '../icons/Logo.tsx';
 
 const Header = ({ pageTitle }: { pageTitle: string }) => {
     const { pathname } = useLocation();
@@ -22,7 +23,9 @@ const Header = ({ pageTitle }: { pageTitle: string }) => {
                 </div>
             ) : (
                 <div className={styles.header_inner_box}>
-                    <h1 className={styles.logo}>OOTD</h1>
+                    <h1 className={styles.logo}>
+                        <Logo />
+                    </h1>
                     <AlimIcon className={styles.alim} />
                 </div>
             )}

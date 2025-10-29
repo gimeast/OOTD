@@ -23,14 +23,12 @@ header {
         align-items: center;
 
         & .logo {
-            font-family: Pacifico, serif;
-            font-size: fluid-width(2rem, 4rem);
-            line-height: normal;
+            width: fluid-width(6.2rem, 10rem);
         }
 
         & .alim {
-            width: fluid-width(2rem, 4rem);
-            height: fluid-width(2rem, 4rem);
+            width: fluid-width(2rem, 3rem);
+            height: fluid-width(2rem, 3rem);
         }
     }
 
