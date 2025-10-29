@@ -75,45 +75,31 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         log.info("JWTCheckFilter doFilter.........");
         log.info("requestURI: {}", request.getRequestURI());
 
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+
+        // 공개 API 여부 확인
+        boolean isPublicApi = false;
+        if ("GET".equals(method)) {
+            if (path.equals("/api/v1/ootd") ||
+                path.matches("/api/v1/ootd/\\d+") ||
+                path.startsWith("/api/v1/ootd/search") ||
+                path.matches("/api/v1/member/[^/]+/posts") ||
+                path.matches("/api/v1/member/[^/]+/stats")) {
+                isPublicApi = true;
+            }
+        }
+
         // 쿠키에서 Access Token 추출
         String accessToken = getCookieValue(request, "accessToken");
         log.info("accessToken from cookie: {}", accessToken);
 
         //Access Token이 없는 경우
         if (accessToken == null) {
-            String path = request.getRequestURI();
-            String method = request.getMethod();
-
-            // GET 요청에 대한 공개 API 처리
-            if ("GET".equals(method)) {
-                // OOTD 조회 API
-                if (path.equals("/api/v1/ootd")) {
-                    log.info("Allowing unauthenticated access to GET /api/v1/ootd");
-                    filterChain.doFilter(request, response);
-                    return;
-                }
-                if (path.matches("/api/v1/ootd/\\d+")) {
-                    log.info("Allowing unauthenticated access to GET /api/v1/ootd/{id}");
-                    filterChain.doFilter(request, response);
-                    return;
-                }
-                if (path.startsWith("/api/v1/ootd/search")) {
-                    log.info("Allowing unauthenticated access to GET /api/v1/ootd/search");
-                    filterChain.doFilter(request, response);
-                    return;
-                }
-
-                // Member 프로필 조회 API
-                if (path.matches("/api/v1/member/[^/]+/posts")) {
-                    log.info("Allowing unauthenticated access to GET /api/v1/member/{nickname}/posts");
-                    filterChain.doFilter(request, response);
-                    return;
-                }
-                if (path.matches("/api/v1/member/[^/]+/stats")) {
-                    log.info("Allowing unauthenticated access to GET /api/v1/member/{nickname}/stats");
-                    filterChain.doFilter(request, response);
-                    return;
-                }
+            if (isPublicApi) {
+                log.info("Allowing unauthenticated access to: {}", path);
+                filterChain.doFilter(request, response);
+                return;
             }
 
             handleException(response, new Exception("ACCESS TOKEN NOT FOUND"));
@@ -156,6 +142,12 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (Exception e) {
+            // 공개 API의 경우 토큰 검증 실패해도 통과 (principal=null로 처리)
+            if (isPublicApi) {
+                log.info("Token validation failed for public API, allowing access without authentication: {}", path);
+                filterChain.doFilter(request, response);
+                return;
+            }
             handleException(response, e);
         }
     }

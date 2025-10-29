@@ -117,6 +117,98 @@ public class OotdService {
         return new OotdDTO(savedEntity);
     }
 
+    @Transactional
+    public OotdDTO updateOotd(Long ootdId, OotdDTO ootdDTO, Long memberIdx) {
+        // OOTD 조회
+        OotdEntity ootdEntity = ootdRepository.findById(ootdId)
+                .orElseThrow(() -> new RuntimeException("OOTD not found"));
+
+        // 작성자 확인 (본인만 수정 가능)
+        if (!ootdEntity.getMember().getIdx().equals(memberIdx)) {
+            throw new RuntimeException("You don't have permission to update this OOTD");
+        }
+
+        // 내용 수정
+        ootdEntity.changeContent(ootdDTO.getContent());
+
+        // 기존 이미지, 해시태그, 상품 삭제
+        ootdEntity.getImages().clear();
+
+        // 기존 해시태그의 사용 횟수 감소
+        ootdEntity.getHashtags().forEach(ootdHashtag -> {
+            HashtagEntity hashtagEntity = ootdHashtag.getHashtagEntity();
+            hashtagEntity.decrementUsageCount();
+        });
+        ootdEntity.getHashtags().clear();
+
+        ootdEntity.getProducts().clear();
+
+        // 이미지 추가
+        if (ootdDTO.getImages() != null && !ootdDTO.getImages().isEmpty()) {
+            List<OotdImageEntity> images = ootdDTO.getImages().stream()
+                    .map(imageDTO -> OotdImageEntity.builder()
+                            .ootdEntity(ootdEntity)
+                            .imageUrl(imageDTO.getImageUrl())
+                            .imageOrder(imageDTO.getImageOrder())
+                            .originalFilename(imageDTO.getOriginalFilename())
+                            .fileSize(imageDTO.getFileSize())
+                            .build())
+                    .toList();
+
+            images.forEach(ootdEntity::addImage);
+        }
+
+        // 해시태그 추가
+        if (ootdDTO.getHashtags() != null && !ootdDTO.getHashtags().isEmpty()) {
+            List<OotdHashtagEntity> hashtags = ootdDTO.getHashtags().stream()
+                    .map(tagName -> {
+                        // 기존 해시태그 조회 또는 생성
+                        HashtagEntity hashtagEntity = hashtagRepository.findByTagName(tagName)
+                                .orElseGet(() -> {
+                                    HashtagEntity newHashtagEntity = HashtagEntity.builder()
+                                            .tagName(tagName)
+                                            .build();
+                                    return hashtagRepository.save(newHashtagEntity);
+                                });
+
+                        hashtagEntity.incrementUsageCount();
+
+                        return OotdHashtagEntity.builder()
+                                .ootdEntity(ootdEntity)
+                                .hashtagEntity(hashtagEntity)
+                                .build();
+                    })
+                    .toList();
+
+            hashtags.forEach(ootdEntity::addHashtag);
+        }
+
+        // 착용 상품 추가
+        if (ootdDTO.getProducts() != null && !ootdDTO.getProducts().isEmpty()) {
+            List<OotdProductEntity> products = ootdDTO.getProducts().stream()
+                    .map(productDTO -> {
+                        // 상품 링크가 있으면 og:image 추출
+                        String ogImage = null;
+                        if (productDTO.getProductLink() != null && !productDTO.getProductLink().trim().isEmpty()) {
+                            ogImage = ogImageExtractor.extractOgImage(productDTO.getProductLink());
+                        }
+
+                        return OotdProductEntity.builder()
+                                .ootdEntity(ootdEntity)
+                                .productName(productDTO.getProductName())
+                                .productLink(productDTO.getProductLink())
+                                .ogImage(ogImage)
+                                .displayOrder(productDTO.getDisplayOrder())
+                                .build();
+                    })
+                    .toList();
+
+            products.forEach(ootdEntity::addProduct);
+        }
+
+        return new OotdDTO(ootdEntity);
+    }
+
     @Transactional(readOnly = true)
     public Page<OotdResponseDTO> getOotdList(PageRequestDTO pageRequestDTO, Long currentMemberIdx) {
         Sort sort;

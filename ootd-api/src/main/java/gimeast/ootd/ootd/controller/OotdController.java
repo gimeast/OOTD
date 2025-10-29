@@ -15,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,6 +39,16 @@ public class OotdController {
     ) {
         OotdDTO savedOotd = ootdService.saveOotd(ootdDTO, principal.getIdx());
         return ResponseEntity.ok(savedOotd);
+    }
+
+    @PutMapping("/{ootdId}")
+    public ResponseEntity<OotdDTO> updateOotd(
+            @PathVariable Long ootdId,
+            @RequestBody OotdDTO ootdDTO,
+            @AuthenticationPrincipal CustomUserPrincipal principal
+    ) {
+        OotdDTO updatedOotd = ootdService.updateOotd(ootdId, ootdDTO, principal.getIdx());
+        return ResponseEntity.ok(updatedOotd);
     }
 
     @GetMapping
