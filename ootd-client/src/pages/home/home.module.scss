@@ -8,12 +8,12 @@
 
         & button {
             background-color: $gray-200;
-            width: 6rem;
-            height: 2.9rem;
-            border-radius: 1.5rem;
+            width: fluid-width(6rem, 7rem);
+            height: fluid-width(2.9rem, 3.5rem);
+            border-radius: fluid-width(1.5rem, 3rem);
 
             font-weight: 400;
-            font-size: 1.2rem;
+            font-size: fluid-width(1.2rem, 1.4rem);
             line-height: 100%;
         }
         & button.active {

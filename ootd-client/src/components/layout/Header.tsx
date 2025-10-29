@@ -3,10 +3,12 @@ import AlimIcon from '../icons/AlimIcon.tsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BackArrow from '../icons/BackArrow.tsx';
 import Logo from '../icons/Logo.tsx';
+import useModalStore from '../../stores/useModalStore.ts';
 
 const Header = ({ pageTitle }: { pageTitle: string }) => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
+    const { showComingSoonModal } = useModalStore();
 
     const handlePrev = () => {
         navigate(-1);
@@ -26,7 +28,9 @@ const Header = ({ pageTitle }: { pageTitle: string }) => {
                     <h1 className={styles.logo}>
                         <Logo />
                     </h1>
-                    <AlimIcon className={styles.alim} />
+                    <button onClick={showComingSoonModal}>
+                        <AlimIcon className={styles.alim} />
+                    </button>
                 </div>
             )}
         </header>
