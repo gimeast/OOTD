@@ -19,6 +19,17 @@
 | <img width="320" height="688" alt="image" src="https://github.com/user-attachments/assets/c80da19b-fd67-414a-b514-82c2e7eba09f" /> | <img width="317" height="690" alt="image" src="https://github.com/user-attachments/assets/4c4262f1-42a8-4d96-b166-717f9ab0feac" /> | <img width="320" height="687" alt="image" src="https://github.com/user-attachments/assets/064226b8-2e28-4b9e-8a07-351f77669e09" /> |
 | • 사진 업로드, 내용, 해시태그, 착용 상품 정보를 추가할 수 있다. | • 게시물에 좋아요를 누를 수 있다.<br>• 저장해두고 싶은 게시물이 있다면 찜하기 버튼을 클릭해서 프로필-저장 탭에서 확인할 수 있다. | • 검색 탭에서 해시태그를 조회할 수 있고 사용자 프로필을 조회할 수 있다. |
 
+
+### 추후 확장할 기능
+- 404페이지
+- 비밀번호 찾기
+- 회원가입/비밀번호찾기/비밀번호 변경시 이메일 인증 추가하기
+- 댓글 기능
+- 사용자 태그 기능
+- 팔로우 / 팔로잉 기능
+- 채팅 기능
+- 알림 기능
+
 ---
 
 ## 기술 스택
@@ -51,15 +62,3 @@
 [1]: https://www.figma.com/design/3pJslkSs5waNCzy4HcEaZq/OOTD?node-id=0-1&p=f&t=d5XSt8OL9N1rpAEh-0
 
 <img width="783" height="651" alt="스크린샷 2025-10-31 오전 1 48 17" src="https://github.com/user-attachments/assets/72c5e4a1-d735-422d-964d-363d9875b9c5" />
-
----
-
-## 추후 확장할 기능
-- 댓글 기능
-- 사용자 태그 기능
-- 팔로우 / 팔로잉 기능
-- 채팅
-- 404페이지
-- 회원가입/비밀번호찾기/비밀번호 변경시 이메일 인증 추가하기
-- 비밀번호 찾기
-- 알림 기능
