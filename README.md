@@ -43,8 +43,6 @@
 ## 데이터베이스 설계 (ERD)
 <img width="1478" height="910" alt="image" src="https://github.com/user-attachments/assets/97f78f14-a8f4-49de-8c66-6f538099c721" />
 
-
-
 ---
 
 ## 와이어프레임
@@ -54,3 +52,14 @@
 
 <img width="783" height="651" alt="스크린샷 2025-10-31 오전 1 48 17" src="https://github.com/user-attachments/assets/72c5e4a1-d735-422d-964d-363d9875b9c5" />
 
+---
+
+## 추후 확장할 기능
+- 댓글 기능
+- 사용자 태그 기능
+- 팔로우 / 팔로잉 기능
+- 채팅
+- 404페이지
+- 회원가입/비밀번호찾기/비밀번호 변경시 이메일 인증 추가하기
+- 비밀번호 찾기
+- 알림 기능
