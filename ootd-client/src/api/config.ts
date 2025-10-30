@@ -21,6 +21,7 @@ export const API_ENDPOINTS = {
         BOOKMARK: '/api/v1/ootd/{ootdId}/bookmark',
         SEARCH: '/api/v1/ootd/search',
         EDIT_DETAIL: '/api/v1/ootd/{ootdId}/edit',
+        DELETE: '/api/v1/ootd/{ootdId}',
     },
     MEMBER: {
         STATS: '/api/v1/member/{nickname}/stats',

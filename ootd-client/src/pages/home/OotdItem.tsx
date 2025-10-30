@@ -129,11 +129,23 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
         },
     });
 
+    const deleteMutation = useMutation({
+        mutationFn: async (ootdId: number) =>
+            await apiClient(API_ENDPOINTS.OOTD.DELETE.replace('{ootdId}', String(ootdId)), { method: 'DELETE' }),
+        onSuccess: handleModalClose,
+        onSettled: () => {
+            void queryClient.invalidateQueries({ queryKey: ['ootd'] });
+        },
+    });
+
     const handleLike = (ootdId: number) => {
         likeMutation.mutate(ootdId);
     };
     const handleBookmark = (ootdId: number) => {
         bookmarkMutation.mutate(ootdId);
+    };
+    const handleDeleteOotd = (ootdId: number) => {
+        deleteMutation.mutate(ootdId);
     };
 
     return (
@@ -231,7 +243,9 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
                         <Link to={`ootd/${item.ootdId}/edit`}>게시물 수정</Link>
                     </li>
                     <li>
-                        <button type='button'>게시물 삭제</button>
+                        <button type='button' onClick={() => handleDeleteOotd(item.ootdId)}>
+                            게시물 삭제
+                        </button>
                     </li>
                     <li>
                         <button type='button' onClick={handleModalClose}>
