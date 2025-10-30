@@ -7,6 +7,7 @@ import gimeast.ootd.hashtag.repository.HashtagRepository;
 import gimeast.ootd.member.entity.MemberEntity;
 import gimeast.ootd.member.repository.MemberRepository;
 import gimeast.ootd.ootd.dto.OotdDTO;
+import gimeast.ootd.ootd.dto.OotdImageDTO;
 import gimeast.ootd.ootd.dto.OotdResponseDTO;
 import gimeast.ootd.ootd.entity.OotdEntity;
 import gimeast.ootd.ootd.entity.OotdHashtagEntity;
@@ -131,6 +132,20 @@ public class OotdService {
         // 내용 수정
         ootdEntity.changeContent(ootdDTO.getContent());
 
+        // 새로운 이미지 URL 목록
+        List<String> newImageUrls = ootdDTO.getImages() != null ?
+                ootdDTO.getImages().stream()
+                        .map(OotdImageDTO::getImageUrl)
+                        .toList() :
+                List.of();
+
+        // 제거된 이미지만 파일 삭제
+        ootdEntity.getImages().forEach(image -> {
+            if (!newImageUrls.contains(image.getImageUrl())) {
+                fileUploadService.deleteFile(image.getImageUrl());
+            }
+        });
+
         // 기존 이미지, 해시태그, 상품 삭제
         ootdEntity.getImages().clear();
 
@@ -232,6 +247,20 @@ public class OotdService {
     @Transactional(readOnly = true)
     public OotdResponseDTO getOotd(Long ootdId, Long currentMemberIdx) {
         return ootdRepository.findOotd(currentMemberIdx, ootdId);
+    }
+
+    @Transactional(readOnly = true)
+    public OotdDTO getOotdForEdit(Long ootdId, Long memberIdx) {
+        // OOTD 조회
+        OotdEntity ootdEntity = ootdRepository.findById(ootdId)
+                .orElseThrow(() -> new RuntimeException("OOTD not found"));
+
+        // 작성자 확인 (본인만 조회 가능)
+        if (!ootdEntity.getMember().getIdx().equals(memberIdx)) {
+            throw new RuntimeException("You don't have permission to edit this OOTD");
+        }
+
+        return new OotdDTO(ootdEntity);
     }
 
     @Transactional(readOnly = true)

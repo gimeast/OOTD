@@ -71,6 +71,15 @@ public class OotdController {
         return ResponseEntity.ok(ootd);
     }
 
+    @GetMapping("/{ootdId}/edit")
+    public ResponseEntity<OotdDTO> getOotdForEdit(
+            @PathVariable Long ootdId,
+            @AuthenticationPrincipal CustomUserPrincipal principal
+    ) {
+        OotdDTO ootd = ootdService.getOotdForEdit(ootdId, principal.getIdx());
+        return ResponseEntity.ok(ootd);
+    }
+
     @GetMapping("/liked")
     public ResponseEntity<Page<OotdResponseDTO>> getLikedOotdList(
             PageRequestDTO pageRequestDTO,
