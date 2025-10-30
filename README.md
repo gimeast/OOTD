@@ -41,7 +41,9 @@
 - **GitHub**: 소스 코드 관리
 
 ## 데이터베이스 설계 (ERD)
-<img width="776" height="594" alt="image" src="https://github.com/user-attachments/assets/4a84445f-a71c-4572-96c7-1b1cafbc8418" />
+<img width="1478" height="910" alt="image" src="https://github.com/user-attachments/assets/97f78f14-a8f4-49de-8c66-6f538099c721" />
+
+
 
 ---
 
