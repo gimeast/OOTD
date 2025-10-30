@@ -228,7 +228,7 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
             <dialog className={styles.dialog} ref={modalRef} onClick={handleBackdropClick}>
                 <ul onClick={e => e.stopPropagation()}>
                     <li>
-                        <Link to='ootd/add'>게시물 수정</Link>
+                        <Link to={`ootd/${item.ootdId}/edit`}>게시물 수정</Link>
                     </li>
                     <li>
                         <button type='button'>게시물 삭제</button>

@@ -12,6 +12,7 @@ export const API_ENDPOINTS = {
     },
     OOTD: {
         CREATE: '/api/v1/ootd',
+        EDIT: '/api/v1/ootd/{ootdId}',
         LIST: '/api/v1/ootd',
         DETAIL: '/api/v1/ootd/{ootdId}',
         IMAGE: { UPLOAD: '/api/v1/upload/images' },
@@ -19,6 +20,7 @@ export const API_ENDPOINTS = {
         LIKED: '/api/v1/ootd/liked',
         BOOKMARK: '/api/v1/ootd/{ootdId}/bookmark',
         SEARCH: '/api/v1/ootd/search',
+        EDIT_DETAIL: '/api/v1/ootd/{ootdId}/edit',
     },
     MEMBER: {
         STATS: '/api/v1/member/{nickname}/stats',

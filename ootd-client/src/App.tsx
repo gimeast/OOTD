@@ -48,6 +48,14 @@ function AppContent() {
                     }
                 />
                 <Route
+                    path='ootd/:ootdId/edit'
+                    element={
+                        <ProtectedRoute>
+                            <OotdAdd />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
                     path='likes'
                     element={
                         <ProtectedRoute>

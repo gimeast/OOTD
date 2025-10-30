@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { LayoutContextType } from '../../types/context.ts';
 import ImageBox from '../../components/common/imgBox/ImageBox.tsx';
 import styles from './ootdAdd.module.scss';
@@ -8,18 +8,22 @@ import BasicButton from '../../components/common/button/BasicButton.tsx';
 import DeleteIcon from '../../components/icons/DeleteIcon.tsx';
 import { API_ENDPOINTS, apiClient } from '../../api';
 import useModalStore from '../../stores/useModalStore.ts';
+import type { OotdEditType, OotdMutationType, OotdImageType } from '../../types/ootd.ts';
 
 type Product = { productName: string; productLink: string };
 
 const OotdAdd = () => {
     const { setPageTitle } = useOutletContext<LayoutContextType>();
     const { openModal, onClose } = useModalStore();
-
+    const { ootdId } = useParams<{ ootdId: string }>();
+    const isEditMode: boolean = !!ootdId;
+    const [existingImages, setExistingImages] = useState<OotdImageType[]>([]);
     const [imageFiles, setImageFiles] = useState<File[]>([]);
     const [content, setContent] = useState('');
     const [hashtags, setHashtags] = useState('');
     const [products, setProducts] = useState<Product[]>([]);
     const [isActive, setIsActive] = useState<boolean>(false);
+    const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
     const navigate = useNavigate();
     const queryClient = useQueryClient();
@@ -37,15 +41,12 @@ const OotdAdd = () => {
         },
     });
 
-    const createOotdMutation = useMutation({
-        mutationFn: async (data: {
-            images: Array<Record<string, unknown>>;
-            content: string;
-            hashtags: string[];
-            products: Array<{ productName: string; productLink: string; displayOrder: number }>;
-        }) => {
-            return await apiClient(API_ENDPOINTS.OOTD.CREATE, {
-                method: 'POST',
+    const saveOotdMutation = useMutation({
+        mutationFn: async (data: OotdMutationType) => {
+            const endpoint =
+                isEditMode && ootdId ? API_ENDPOINTS.OOTD.EDIT.replace('{ootdId}', ootdId) : API_ENDPOINTS.OOTD.CREATE;
+            return await apiClient(endpoint, {
+                method: isEditMode ? 'PUT' : 'POST',
                 body: data,
             });
         },
@@ -65,6 +66,7 @@ const OotdAdd = () => {
         },
     });
 
+    const isLoading = uploadImageMutation.isPending || saveOotdMutation.isPending;
     const FILE_MAX_SIZE = 10 * 1024 * 1024; // 10MB
 
     const handleFileSelect = (file: File) => {
@@ -78,6 +80,9 @@ const OotdAdd = () => {
 
     const handleDeleteImage = (index: number) => {
         setImageFiles(prev => prev.filter((_, i) => i !== index));
+    };
+    const handleDeleteExistingImage = (index: number) => {
+        setExistingImages(prev => prev.filter((_, i) => i !== index));
     };
 
     const handleProductAdd = () => {
@@ -99,49 +104,70 @@ const OotdAdd = () => {
         e.preventDefault();
 
         try {
-            if (imageFiles[0].size > FILE_MAX_SIZE) {
-                alert('파일 크기가 너무 큽니다. 최대 용량은 10MB입니다.');
-                return;
-            }
+            let allImages = [];
 
-            const imageResult = await uploadImageMutation.mutateAsync(imageFiles);
-
-            const imagesWithOrder = (imageResult as Array<Record<string, unknown>>).map((image, index) => ({
-                ...image,
+            const existingImagesData = existingImages.map((img, index) => ({
+                id: img.id,
+                imageUrl: img.imageUrl,
                 imageOrder: index,
             }));
 
-            const productsWithOrder = products.map((product, index) => ({
-                ...product,
-                displayOrder: index,
-            }));
+            if (imageFiles.length > 0) {
+                const uploadedImages = await uploadImageMutation.mutateAsync(imageFiles);
+                const newImagesData = (uploadedImages as Array<Record<string, unknown>>).map((image, index) => ({
+                    ...image,
+                    imageOrder: existingImages.length + index,
+                }));
+                allImages = [...existingImagesData, ...newImagesData];
+            } else {
+                allImages = existingImagesData;
+            }
 
-            await createOotdMutation.mutateAsync({
-                images: imagesWithOrder,
+            const requestData = {
+                images: allImages,
                 content,
                 hashtags: hashtags
                     .split('#')
                     .filter(tag => tag.trim())
                     .map(tag => tag.trim()),
-                products: productsWithOrder,
-            });
+                products: products.map((product, index) => ({ ...product, displayOrder: index })),
+            };
+
+            await saveOotdMutation.mutateAsync(requestData);
+            setIsSubmit(true);
         } catch (error) {
             console.error('업로드 실패:', error);
             alert('업로드 중 오류가 발생했습니다.');
         }
     };
 
-    useEffect(() => {
-        setPageTitle('OOTD 업로드');
-    }, [setPageTitle]);
+    const { data: ootdData } = useQuery<OotdEditType>({
+        queryKey: ['ootd', 'edit', ootdId],
+        queryFn: async () =>
+            apiClient(API_ENDPOINTS.OOTD.EDIT_DETAIL.replace('{ootdId}', String(ootdId)), { method: 'GET' }),
+        enabled: isEditMode,
+    });
 
     useEffect(() => {
-        if (imageFiles.length > 0) {
-            setIsActive(true);
+        if (ootdData && !isSubmit) {
+            setContent(ootdData.content);
+            setHashtags(ootdData.hashtags.map(tag => `#${tag}`).join(' '));
+            setProducts(ootdData.products);
+            setExistingImages(ootdData.images);
         }
-    }, [imageFiles]);
+    }, [ootdData, isSubmit]);
 
-    const isLoading = uploadImageMutation.isPending || createOotdMutation.isPending;
+    useEffect(() => {
+        setPageTitle(isEditMode ? 'OOTD 수정' : 'OOTD 업로드');
+    }, [setPageTitle, isEditMode]);
+
+    useEffect(() => {
+        if (existingImages.length > 0 || imageFiles.length > 0) {
+            setIsActive(true);
+        } else {
+            setIsActive(false);
+        }
+    }, [existingImages, imageFiles]);
 
     return (
         <div className={styles.ootd_add}>
@@ -149,6 +175,14 @@ const OotdAdd = () => {
                 <section className={styles.image_section}>
                     <h2>사진 선택</h2>
                     <ul className={styles.image_list}>
+                        {existingImages.map((imageData, index) => (
+                            <li key={`existing-${index}`}>
+                                <ImageBox
+                                    imageUrl={`${import.meta.env.VITE_API_BASE_URL}${imageData.imageUrl}`}
+                                    onDelete={() => handleDeleteExistingImage(index)}
+                                />
+                            </li>
+                        ))}
                         {imageFiles.map((file, index) => (
                             <li key={index}>
                                 <ImageBox
@@ -157,7 +191,7 @@ const OotdAdd = () => {
                                 />
                             </li>
                         ))}
-                        {imageFiles.length < 4 && (
+                        {existingImages.length + imageFiles.length < 4 && (
                             <li>
                                 <ImageBox onFileSelect={handleFileSelect} />
                             </li>
