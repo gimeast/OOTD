@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { Link, useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import type { LayoutContextType } from '../../../types/context.ts';
 import ProfileHeaderSection from '../ProfileHeaderSection.tsx';
@@ -9,6 +9,7 @@ import useUserStore from '../../../stores/useUserStore.ts';
 import DeleteIcon from '../../../components/icons/DeleteIcon.tsx';
 import useModalStore from '../../../stores/useModalStore.ts';
 import type { Stats } from '../../../types/profile.ts';
+import { useModal } from '../../../hooks/useModal.ts';
 
 const ProfileEdit = () => {
     const { nickname } = useParams<{ nickname: string }>();
@@ -16,21 +17,9 @@ const ProfileEdit = () => {
     const navigate = useNavigate();
     const { setPageTitle } = useOutletContext<LayoutContextType>();
     const { updateProfileImageUrl } = useUserStore();
-    const modalRef = useRef<HTMLDialogElement>(null);
+    const { modalRef, handleModalOpen, handleModalClose, handleBackdropClick } = useModal();
     const { showComingSoonModal } = useModalStore();
     const queryClient = useQueryClient();
-
-    const handleModalOpen = () => {
-        if (modalRef.current) {
-            modalRef.current.showModal();
-        }
-    };
-
-    const handleModalClose = () => {
-        if (modalRef.current) {
-            modalRef.current.close();
-        }
-    };
 
     const { data: profileStat } = useQuery({
         queryKey: ['ootd', 'stats', nickname],
@@ -130,7 +119,7 @@ const ProfileEdit = () => {
                 </ul>
             </section>
 
-            <dialog ref={modalRef} className={styles.profile_image_change_modal}>
+            <dialog ref={modalRef} className={styles.profile_image_change_modal} onClick={handleBackdropClick}>
                 <div className={styles.modal_header}>
                     <h3>프로필 이미지 변경</h3>
                     <button onClick={handleModalClose}>

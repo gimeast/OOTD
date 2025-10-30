@@ -7,18 +7,31 @@ article.ootd_box {
 
     & .ootd_header {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        gap: 1.5rem;
 
-        font-weight: 700;
-        font-size: 1.4rem;
-        line-height: 100%;
+        .ootd_profile {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+
+            font-weight: 700;
+            font-size: 1.4rem;
+            line-height: 100%;
+        }
 
         img {
             width: 4.2rem;
             height: 4.2rem;
             border-radius: 50%;
             object-fit: cover;
+        }
+
+        .kebabBtn {
+            svg {
+                width: fluid-width(1rem, 2rem);
+                height: fluid-width(1.8rem, 2.2rem);
+            }
         }
     }
 
@@ -147,5 +160,43 @@ article.ootd_box {
         display: flex;
         column-gap: 1rem;
         flex-wrap: wrap;
+    }
+
+    .dialog {
+        border: none;
+        border-radius: 1rem;
+        touch-action: none;
+
+        &[open] {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            width: fluid-width(30rem, 40rem);
+            height: fluid-width(10.2rem, 12rem);
+
+            padding: 0 1.5rem;
+        }
+
+        ul {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+
+            li {
+                a,
+                button {
+                    display: block;
+                    width: 100%;
+                    text-align: left;
+                    font-size: fluid-width(1.2rem, 1.6rem);
+                    color: $gray-500;
+                }
+            }
+
+            li:nth-child(2) button {
+                color: $red-100;
+            }
+        }
     }
 }

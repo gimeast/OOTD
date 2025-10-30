@@ -91,6 +91,7 @@
         padding: 1.5rem;
         border-radius: 1rem;
         border: none;
+        touch-action: none;
 
         &::backdrop {
             background-color: rgba(0, 0, 0, 0.5);

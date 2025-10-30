@@ -12,12 +12,18 @@ import ProductOgIcon from '../../components/icons/ProductOgIcon.tsx';
 import type { OotdItemType } from '../../types/ootd.ts';
 import type { PageResponseType } from '../../types/common.ts';
 import useModalStore from '../../stores/useModalStore.ts';
+import KebabMenuIcon from '../../components/icons/KebabMenuIcon.tsx';
+import useUserStore from '../../stores/useUserStore.ts';
+import { useModal } from '../../hooks/useModal.ts';
+import { Link } from 'react-router-dom';
 
 const OotdItem = ({ item }: { item: OotdItemType }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const imgListRef = useRef<HTMLUListElement>(null);
     const queryClient = useQueryClient();
     const { showComingSoonModal } = useModalStore();
+    const { user } = useUserStore();
+    const { modalRef, handleModalOpen, handleModalClose, handleBackdropClick } = useModal();
 
     const handleScroll = () => {
         if (imgListRef.current) {
@@ -133,14 +139,25 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
     return (
         <article className={styles.ootd_box}>
             <div className={styles.ootd_header}>
-                {item.profileImageUrl ? (
-                    <div>
-                        <img src={`${import.meta.env.VITE_API_BASE_URL}${item.profileImageUrl}`} alt='프로필 이미지' />
-                    </div>
-                ) : (
-                    <ProfileIcon />
+                <div className={styles.ootd_profile}>
+                    {item.profileImageUrl ? (
+                        <div>
+                            <img
+                                src={`${import.meta.env.VITE_API_BASE_URL}${item.profileImageUrl}`}
+                                alt='프로필 이미지'
+                            />
+                        </div>
+                    ) : (
+                        <ProfileIcon />
+                    )}
+                    <span className={styles.nickname}>{item.nickname}</span>
+                </div>
+
+                {user?.nickname === item.nickname && (
+                    <button className={styles.kebabBtn} onClick={handleModalOpen}>
+                        <KebabMenuIcon />
+                    </button>
                 )}
-                <span className={styles.nickname}>{item.nickname}</span>
             </div>
 
             <div className={styles.ootd_img_box}>
@@ -207,6 +224,22 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
                     <span key={index}>#{hashtag}</span>
                 ))}
             </div>
+
+            <dialog className={styles.dialog} ref={modalRef} onClick={handleBackdropClick}>
+                <ul onClick={e => e.stopPropagation()}>
+                    <li>
+                        <Link to='ootd/add'>게시물 수정</Link>
+                    </li>
+                    <li>
+                        <button type='button'>게시물 삭제</button>
+                    </li>
+                    <li>
+                        <button type='button' onClick={handleModalClose}>
+                            취소
+                        </button>
+                    </li>
+                </ul>
+            </dialog>
         </article>
     );
 };
