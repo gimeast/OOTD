@@ -13,6 +13,8 @@ import gimeast.ootd.ootd.entity.OotdEntity;
 import gimeast.ootd.ootd.entity.OotdHashtagEntity;
 import gimeast.ootd.ootd.entity.OotdImageEntity;
 import gimeast.ootd.ootd.entity.OotdProductEntity;
+import gimeast.ootd.ootd.repository.OotdBookmarkRepository;
+import gimeast.ootd.ootd.repository.OotdLikeRepository;
 import gimeast.ootd.ootd.repository.OotdRepository;
 import gimeast.ootd.upload.service.FileUploadService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,8 @@ public class OotdService {
     private final HashtagRepository hashtagRepository;
     private final OgImageExtractor ogImageExtractor;
     private final FileUploadService fileUploadService;
+    private final OotdLikeRepository ootdLikeRepository;
+    private final OotdBookmarkRepository ootdBookmarkRepository;
 
     @Transactional
     public OotdDTO saveOotd(OotdDTO ootdDTO, Long memberIdx) {
@@ -222,6 +226,40 @@ public class OotdService {
         }
 
         return new OotdDTO(ootdEntity);
+    }
+
+    @Transactional
+    public void deleteOotd(Long ootdId, Long memberIdx) {
+        // OOTD 조회
+        OotdEntity ootdEntity = ootdRepository.findById(ootdId)
+                .orElseThrow(() -> new RuntimeException("OOTD not found"));
+
+        // 작성자 확인 (본인만 삭제 가능)
+        if (!ootdEntity.getMember().getIdx().equals(memberIdx)) {
+            throw new RuntimeException("You don't have permission to delete this OOTD");
+        }
+
+        // 1. 좋아요 삭제
+        ootdLikeRepository.deleteByOotdEntity(ootdEntity);
+
+        // 2. 북마크 삭제
+        ootdBookmarkRepository.deleteByOotdEntity(ootdEntity);
+
+        // 3. 이미지 파일 삭제 (실제 파일 시스템에서)
+        ootdEntity.getImages().forEach(image -> {
+            fileUploadService.deleteFile(image.getImageUrl());
+        });
+
+        // 4. 해시태그 사용 횟수 감소
+        ootdEntity.getHashtags().forEach(ootdHashtag -> {
+            HashtagEntity hashtagEntity = ootdHashtag.getHashtagEntity();
+            hashtagEntity.decrementUsageCount();
+        });
+
+        // 5. OOTD 엔티티 삭제 (cascade로 이미지, 해시태그, 프로덕트 자동 삭제)
+        ootdRepository.delete(ootdEntity);
+
+        log.info("OOTD 삭제 완료: ootdId={}, memberIdx={}", ootdId, memberIdx);
     }
 
     @Transactional(readOnly = true)
