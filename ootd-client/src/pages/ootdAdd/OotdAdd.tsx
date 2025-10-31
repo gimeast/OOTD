@@ -159,6 +159,12 @@ const OotdAdd = () => {
 
     useEffect(() => {
         setPageTitle(isEditMode ? 'OOTD 수정' : 'OOTD 업로드');
+        if (!isEditMode) {
+            setContent('');
+            setHashtags('');
+            setProducts([]);
+            setExistingImages([]);
+        }
     }, [setPageTitle, isEditMode]);
 
     useEffect(() => {
