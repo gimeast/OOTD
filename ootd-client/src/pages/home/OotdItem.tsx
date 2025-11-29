@@ -19,6 +19,9 @@ import { Link } from 'react-router-dom';
 
 const OotdItem = ({ item }: { item: OotdItemType }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
     const imgListRef = useRef<HTMLUListElement>(null);
     const queryClient = useQueryClient();
     const { showComingSoonModal } = useModalStore();
@@ -32,6 +35,35 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
             const newIndex = Math.round(scrollLeft / itemWidth);
             setCurrentIndex(newIndex);
         }
+    };
+
+    const handlePointerDown = (e: React.PointerEvent) => {
+        if (!imgListRef.current) return;
+        setIsDragging(true);
+        setStartX(e.pageX - imgListRef.current.offsetLeft);
+        setScrollLeft(imgListRef.current.scrollLeft);
+        e.currentTarget.setPointerCapture(e.pointerId);
+    };
+
+    const handlePointerCancel = () => {
+        setIsDragging(false);
+    };
+
+    const handlePointerUp = (e: React.PointerEvent) => {
+        setIsDragging(false);
+        e.currentTarget.releasePointerCapture(e.pointerId);
+    };
+
+    const handlePointerMove = (e: React.PointerEvent) => {
+        if (!isDragging || !imgListRef.current) return;
+        if (e.buttons !== 1) {
+            setIsDragging(false);
+            return;
+        }
+        e.preventDefault();
+        const x = e.pageX - imgListRef.current.offsetLeft;
+        const walk = (x - startX) * 2;
+        imgListRef.current.scrollLeft = scrollLeft - walk;
     };
 
     const handleImageIndexClick = (index: number) => {
@@ -173,10 +205,23 @@ const OotdItem = ({ item }: { item: OotdItemType }) => {
             </div>
 
             <div className={styles.ootd_img_box}>
-                <ul ref={imgListRef} className={styles.ootd_img_list} onScroll={handleScroll}>
+                <ul
+                    ref={imgListRef}
+                    className={styles.ootd_img_list}
+                    onScroll={handleScroll}
+                    onPointerDown={handlePointerDown}
+                    onPointerCancel={handlePointerCancel}
+                    onPointerUp={handlePointerUp}
+                    onPointerMove={handlePointerMove}
+                    style={{ touchAction: 'pan-y' }}
+                >
                     {item.ootdImages?.map((ootdImage, index) => (
                         <li key={index}>
-                            <img src={`${import.meta.env.VITE_API_BASE_URL}${ootdImage}`} alt='OOTD 이미지' />
+                            <img
+                                src={`${import.meta.env.VITE_API_BASE_URL}${ootdImage}`}
+                                alt='OOTD 이미지'
+                                draggable='false'
+                            />
                         </li>
                     ))}
                 </ul>
