@@ -1,0 +1,60 @@
+.notice {
+    margin-top: 1.2rem;
+    font-size: 1.3rem;
+    line-height: 1.8;
+    color: #444;
+
+    p {
+        margin-bottom: 0.8rem;
+    }
+
+    .section_title {
+        font-weight: 600;
+        color: #222;
+        margin: 1.2rem 0 0.4rem;
+    }
+
+    .account_list {
+        background: #f8f8f8;
+        border-radius: 0.6rem;
+        padding: 1rem 1.2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+
+        .account_item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            padding-bottom: 0.6rem;
+            border-bottom: 1px solid #eee;
+
+            &:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+
+            .label {
+                font-size: 1.1rem;
+                color: #888;
+            }
+
+            .value {
+                font-weight: 500;
+                color: #222;
+                font-size: 1.2rem;
+            }
+        }
+    }
+
+    .caution {
+        margin-top: 1.2rem;
+        padding: 0.8rem 1rem;
+        background: #fff8e1;
+        border-left: 3px solid #f5a623;
+        border-radius: 0.4rem;
+        color: #7a5c00;
+        font-size: 1.2rem;
+        line-height: 1.7;
+    }
+}

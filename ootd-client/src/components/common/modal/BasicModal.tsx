@@ -11,6 +11,7 @@ type BasicModalProps = {
     cancelText?: string;
     onConfirm?: () => void;
     closeOnBackdropClick?: boolean;
+    children?: React.ReactNode;
 };
 
 const BasicModal = ({
@@ -22,6 +23,7 @@ const BasicModal = ({
     cancelText,
     onConfirm,
     closeOnBackdropClick = true,
+    children,
 }: BasicModalProps) => {
     if (!isOpen) return null;
 
@@ -43,6 +45,7 @@ const BasicModal = ({
         <div className={styles.modal_backdrop} onClick={handleBackdropClick}>
             <div className={styles.modal} onClick={e => e.stopPropagation()}>
                 {<LogoSection h2={title} p={subTitle} />}
+                {children}
                 <div className={styles.modal_buttons}>
                     {cancelText && (
                         <BasicButton type='button' onClick={onClose}>
