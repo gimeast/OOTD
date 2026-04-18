@@ -1,16 +1,7 @@
 <img width="1432" height="807" alt="image 5" src="https://github.com/user-attachments/assets/8b95a73d-ecf1-49bf-8156-b392e971fdf0" />
 
-# OOTD ~~**( https://ootd.gimeast.com/ )**~~ ![Status](https://img.shields.io/badge/Service-Closed-red)
+# OOTD **( https://ootd.gimeast.com/ )**
 
-> [!CAUTION]
-> **현재 서비스가 폐쇄되었습니다.** 아래 테스트 계정 정보는 현재 유효하지 않습니다.
-
-## ~~테스트용 계정~~ (사용 불가)
-~~아이디: ootd@ootd.com~~  
-~~비밀번호: qwer1234!@#$~~
-
-> ~~💡 테스트 계정으로 로그인하여 모든 기능을 체험해보실 수 있습니다.~~
----
 ## 프로젝트 소개
 
 일상 속 나만의 패션을 자랑하고 스타일 정보를 함께 나누는 **패션 공유 플랫폼**입니다.
